@@ -33,9 +33,9 @@ SOFTWARE.
 
 namespace n02 {
 
-	/*
-		Unordered static array
-	*/
+    /*
+        Unordered static array
+    */
     template <class _BaseType, int _TotalLen = 32>
     class StaticArray
     {
