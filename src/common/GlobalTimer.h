@@ -34,6 +34,7 @@ SOFTWARE.
 #ifndef linux
 #include <windows.h>
 #include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 #else
 #include <time.h>
 #endif

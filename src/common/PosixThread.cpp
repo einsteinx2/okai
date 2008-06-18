@@ -30,7 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "PosixThread.h"
-#include "SocketAddress.h"
+
 
 namespace n02 {
 

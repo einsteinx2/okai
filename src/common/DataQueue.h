@@ -69,7 +69,7 @@ namespace n02 {
         DataQueue(int initialAllocation)
         {
             ptr = begin = (unsigned char*)malloc(initialAllocation);
-            end = begin + presetBufferLen;
+            end = begin + initialAllocation;
         }
 
         ~DataQueue()

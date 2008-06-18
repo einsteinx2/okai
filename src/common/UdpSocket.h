@@ -42,7 +42,7 @@ namespace n02 {
     public:
 
         UdpSocket(){}
-        UdpSocket(int port=0, int minBufferSize=8000, bool blocking = false)
+        UdpSocket(int port, int minBufferSize=8000, bool blocking = false)
             : BsdSocket(AF_INET, SOCK_DGRAM, IPPROTO_IP, port, blocking, minBufferSize)
         {}
 
