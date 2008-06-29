@@ -36,6 +36,7 @@ namespace n02 {
     void commonInitialize(){
         BsdSocket::initialize();
         GlobalTimer::initialize();
+		StringUtils::initialize();
     }
 
     void commonTerminate(){

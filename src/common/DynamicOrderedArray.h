@@ -29,33 +29,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 #pragma once
-
-#include <memory>
-
-#pragma intrinsic(memcpy)
+#include "_common.h"
 
 namespace n02 {
 
     /*
-    Ordered dynamic array
+    Class for managing dynamic ordered array
+    _BlockLen: must be > 0
     */
-
     template <class _BaseType, int _BlockLen = 32>
     class DynamicOrderedArray
     {
 
     protected:
 
-        _BaseType * items;	
-        int length;
+        /* holds the actual allocated block */
+        _BaseType * items;
 
+        /* items count */
+        int length;
 
     private:
 
+        /* Size of the allocated block */
         int _size;
 
     public:
 
+        /* constructor */
         DynamicOrderedArray(void)
         {
             length = 0;
@@ -63,59 +64,70 @@ namespace n02 {
             _size = 0;
         }
 
+        /* distructor */
         ~DynamicOrderedArray(void)
         {
             if (items) {
-                free(items);
+                delete items;
                 items = 0;
             }
             length = 0;
             _size = 0;
         }
 
-
+        /* adds an item to the list */
         inline void addItem(_BaseType item) {
             checkAllocationSize();
             items[length++] = item;
         }
 
-
+        /* adds an item to the list */
         inline void addItemPtr(_BaseType * itemPtr) {
             checkAllocationSize();
             items[length++] = *itemPtr;
         }
 
+        /* inserts an item at specified index */
         inline void insertItem(_BaseType item, int index)
         {
+            require(index >= 0);
+            checkAllocationSize();
             if (index >= length) {
                 addItem(item);
             } else {
                 memcpy(&items[index+1], &items[index], (length - index) * sizeof(_BaseType));
                 items[index] = item;
+                length++;
             }
         }
 
+        /* inserts an item at specified index */
         inline void insertItemPtr(_BaseType * itemPtr, int index)
         {
+            require(index >= 0);
+            checkAllocationSize();
             if (index >= length) {
                 addItemPtr(itemPtr);
             } else {
                 memcpy(&items[index+1], &items[index], (length - index) * sizeof(_BaseType));
                 items[index] = *itemPtr;
+                length++;
             }
         }
 
-
-        inline void removeIndex(int index) {
-            if (index >= 0 && index < length) {
-                if (length-1!=index) {
-                    memcpy(&items[index], &items[index+1], (length-1-index) * sizeof(_BaseType));
-                }
-                length = length-1;
+        /* removes item at index */
+        inline void removeIndex(int index)
+        {
+            require(index >= 0 && index < length);
+            if (length-1!=index) {
+                memcpy(&items[index], &items[index+1], (length-1-index) * sizeof(_BaseType));
             }
+            length = length-1;
         }
 
-        inline void removeItem(_BaseType item) {
+        /* remove an item by value */
+        inline void removeItem(_BaseType item)
+        {
             for (int i = 0; i < length; i++) {
                 if (items[i] == item) {
                     removeIndex(i);
@@ -124,58 +136,68 @@ namespace n02 {
             }
         }
 
-        inline void setItem(_BaseType item, int index) {
-            if (index >=0 && index < length) {
-                items[index] = item;
-            }
+        /* set value of an item on index */
+        inline void setItem(_BaseType item, int index)
+        {
+            require (index >=0 && index < length);
+            items[index] = item;
         }
 
-        inline void setItemPtr(_BaseType * item, int i) {
-            if (i >=0 && i < length) {
-                items[i] = *item;
-            }
+        /* set value of an item on index */
+        inline void setItemPtr(_BaseType * item, int index)
+        {
+            require (index >=0 && index < length);
+            items[index] = *item;
         }
 
-        inline _BaseType getItem(int index) {
+        /* get item at an index */
+        inline _BaseType getItem(int index)
+        {
+            require (index >=0 && index < length);
             return items[index];
         }
 
-        inline _BaseType * getItemPtr(int index) {
+        /* get item at an index */
+        inline _BaseType * getItemPtr(int index)
+        {
+            require (index >=0 && index < length);
             return &items[index];
         }
 
-        inline _BaseType& operator[] (const int index) {
-            if (index == length)
-                checkAllocationSize();				
+        /* array access operator overload */
+        inline _BaseType& operator[] (const int index)
+        {
+            require (index >=0 && index < length);	
             return items[index];
         }
 
-        inline void clearItems() {
+        /* reset item count to 0 */
+        inline void clearItems()
+        {
             length = 0;
             if (items != 0){
-                items = (_BaseType*)realloc(items, _BlockLen * sizeof(_BaseType));
-                _size = _BlockLen;
+                items = commonReAlloc<_BaseType>(items, length, _size = _BlockLen);
             }
         }
 
-        inline int itemsCount(){
+        /* returns size */
+        inline int itemsCount()
+        {
             return length;
         }
 
     private:
 
-        inline void checkAllocationSize() {
+        // makes sure there is extra space for one or more element
+        inline void checkAllocationSize(int extra = 1)
+        {
             if (items == 0) {
-                items = (_BaseType*)malloc(_BlockLen * sizeof(_BaseType));
-                _size = _BlockLen;
+                items = commonAlloc<_BaseType>(_size = common_max(_BlockLen, extra));
             } else {
-                if (length+1 >= _size) {
-                    _size = (1 + (length/_BlockLen)) * _BlockLen;
-                    items = (_BaseType*)realloc(items, _size * sizeof(_BaseType));
+                if (length + extra >= _size) {
+                    items = commonReAlloc<_BaseType>(items, length, _size = (extra + (length/_BlockLen)) * _BlockLen);
                 }
             }
         }
-
     };
-
 };

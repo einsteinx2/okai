@@ -28,41 +28,41 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
-#pragma once
-
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
-#include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
-#include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
 #include "trace.h"
+#include "Logger.h"
 
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+	typedef struct {
+		char * file;
+		char * function;
+		int line;
+	} TraceStackElement;
+
+#define TRACE_HISTORY_LEVEL 5
+#define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
+#define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
+
+	static TraceStackElement traceStack[TRACE_STACK_LEN];
+	static unsigned int traceStackPtr = 0;
+
+	void trace_log(){
+		for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
+			int index = (traceStackPtr-x) & TRACE_STACK_MASK;
+			LOGTRACE(%09u:%s:%i:%s,
+				(traceStackPtr-x),
+				traceStack[index].file,
+				traceStack[index].line,
+				traceStack[index].function);
+		}
+	}
+
+	void _n02_trace(char * file, char * function, int line) {
+		traceStack[traceStackPtr&TRACE_STACK_MASK].file = file;
+		traceStack[traceStackPtr&TRACE_STACK_MASK].function = function;
+		traceStack[traceStackPtr&TRACE_STACK_MASK].line = line;
+		traceStackPtr++;
+	}
 
 };
-
-
-
 

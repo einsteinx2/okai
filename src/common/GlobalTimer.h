@@ -44,9 +44,9 @@ SOFTWARE.
 #ifdef linux
 
 inline unsigned int timeGetTime() {
-	timespec ts;
-	clock_gettime(CLOCK_REALTIME, &ts);
-	return (ts.tv_sec * 1000 ) + (ts.tv_nsec / 1000000);
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    return (ts.tv_sec * 1000 ) + (ts.tv_nsec / 1000000);
 }
 
 inline void timeBeginPeriod(int) {}
@@ -56,40 +56,40 @@ inline void timeEndPeriod(int) {}
 
 namespace n02 {
 
-	class GlobalTimer {
+    class GlobalTimer {
 
-	protected:
+    protected:
 
-		unsigned int fixedTime;
+        unsigned int fixedTime;
 
-	public:
+    public:
 
-		inline unsigned int fixTime()
-		{
-			return fixedTime = getTime();
-		}
+        inline unsigned int fixGetTime()
+        {
+            return fixedTime = getTime();
+        }
 
-		inline unsigned int getFixedTime()
-		{
-			return fixedTime;
-		}
+        inline unsigned int getFixedTime()
+        {
+            return fixedTime;
+        }
 
-		static unsigned int getTime()
-		{
-			return timeGetTime();
-		}
+        static unsigned int getTime()
+        {
+            return timeGetTime();
+        }
 
-		static void initialize()
-		{
-			timeBeginPeriod(GLOBAL_TIMER_PERIOD);
-		}
+        static void initialize()
+        {
+            timeBeginPeriod(GLOBAL_TIMER_PERIOD);
+        }
 
-		static void terminate()
-		{
-			timeEndPeriod(GLOBAL_TIMER_PERIOD);
-		}
+        static void terminate()
+        {
+            timeEndPeriod(GLOBAL_TIMER_PERIOD);
+        }
 
-	};
+    };
 
 };
 

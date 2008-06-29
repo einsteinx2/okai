@@ -30,39 +30,57 @@ SOFTWARE.
 ******************************************************************************/
 
 #pragma once
+#include <tchar.h>
 
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
 #include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
-#include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
-#include "trace.h"
 
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+	struct ConfigurationItem {
+		TCHAR name[31];
+		enum {
+			INT, // &int
+			STRING, // char[len]
+			STRUCT, // &struct
+			STRLIST // DynamicOrderedArray<TCHAR*>
+		} type : 8;
+		void * pointer;
+		unsigned short length;
+		void * defaultValuePointer;
+	};
+
+	typedef ConfigurationItem ConfigurationItem;
+
+#define CONFIG_START(NAME) ConfigurationItem NAME[] = {
+#define CONFIG_ITEM(NAME, TYPE, PTR, LEN, DEFPTR) {NAME, ConfigurationItem::TYPE, PTR, LEN, DEFPTR},
+#define CONFIG_INTVAR(NAME, VER, DEF) CONFIG_ITEM(NAME, INT, &VER, sizeof(VER), (void*)DEF)
+#define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, DEF)
+#define CONFIG_STRUCTVAR(NAME, VER) CONFIG_ITEM(NAME, STRUCT, &VER, sizeof(VER), 0)
+#define CONFIG_STRLIST(NAME, VER, LEN) CONFIG_ITEM(NAME, STRLIST, &VER, LEN, 0)
+#define CONFIG_END	{0}	};
+
+	class ConfigurationManager :
+		protected DynamicOrderedArray<ConfigurationItem>
+	{
+	public:
+		ConfigurationManager(ConfigurationItem * configTable);
+		ConfigurationManager(ConfigurationItem * configTable, int len);
+		ConfigurationManager();
+		~ConfigurationManager();
+
+		void saveToFile(TCHAR * fileName, TCHAR * module = _T("default"));
+		void loadFromFile(TCHAR * fileName, TCHAR * module = _T("default"));
+
+		void save(TCHAR * modName);
+		void load(TCHAR * modName);
+
+		void add(ConfigurationItem*);
+		void remove(TCHAR * name);
+
+		void useConfgTable(ConfigurationItem * configTable);
+		void useConfgTable(ConfigurationItem * configTable, int len);
+
+	};
 
 };
-
-
-
 

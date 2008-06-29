@@ -28,41 +28,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+#include "_common.h"
 
-#pragma once
-
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
-#include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
 #include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
-#include "trace.h"
 
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+	void reportAssertionError(const char * condition, const char * file, const int line, const char * function) {
+
+		LOGBASIC("Assertion failure: %s @ %s:%i:%s", condition, file, line, function);
+
+	}
 
 };
-
-
-
-

@@ -29,72 +29,83 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 #pragma once
-
-#pragma intrinsic(memcpy)
+#include "_common.h"
 
 namespace n02 {
 
     /*
-    Ordered static array
+    Class for managing ordered static array
     */
-
     template <class _BaseType, int _TotalLen = 32>
     class StaticOrderedArray
     {
 
     protected:
 
+        /* items */
         _BaseType items[_TotalLen];
+        /* items count */
         int length;
 
     public:
 
+        /* constructor */
         StaticOrderedArray(void)
         {
             length = 0;
         }
 
+        /* adds an item to the list */
         inline void addItem(_BaseType item)
         {
+            require(length < _TotalLen);
             items[length++] = item;
         }
 
-
+        /* adds an item to the list */
         inline void addItemPtr(_BaseType * itemPtr)
         {
+            require(length < _TotalLen);
             items[length++] = *itemPtr;
         }
 
+        /* inserts an item */
         inline void insertItem(_BaseType item, int index)
         {
+            require(index >= 0);
             if (index >= length) {
                 addItem(item);
             } else {
                 memcpy(&items[index+1], &items[index], (length - index) * sizeof(_BaseType));
                 items[index] = item;
+                length++;
             }
         }
 
+        /* inserts an item */
         inline void insertItemPtr(_BaseType * itemPtr, int index)
         {
+            require(index >= 0);
             if (index >= length) {
                 addItemPtr(itemPtr);
             } else {
                 memcpy(&items[index+1], &items[index], (length - index) * sizeof(_BaseType));
                 items[index] = *itemPtr;
+                length++;
             }
         }
 
+        /* inserts an item */
         inline void removeIndex(int index)
         {
-            if (index >= 0 && index < length) {
-                if (length-1!=index) {
-                    memcpy(&items[index], &items[index+1], (length-1-index) * sizeof(_BaseType));
-                }
-                length = length-1;
+            require (index >= 0 && index < length);
+            if (length-1!=index) {
+                memcpy(&items[index], &items[index+1], (length-1-index) * sizeof(_BaseType));
             }
+            length = length-1;
         }
 
+        /* inserts an item */
         inline void removeItem(_BaseType item)
         {
             for (int i = 0; i < length; i++)
@@ -106,40 +117,48 @@ namespace n02 {
             }
         }
 
+        /* set an item value at an index */
         inline void setItem(_BaseType item, int index)
         {
-            if (index >=0 && index < length) {
-                items[index] = item;
-            }
+            require(index >=0 && index < length);
+            items[index] = item;
         }
 
-        inline void setItemPtr(_BaseType * item, int i)
+        /* set an item value at an index */
+        inline void setItemPtr(_BaseType * item, int index)
         {
-            if (i >=0 && i < length) {
-                items[i] = *item;
-            }
+            require(index >=0 && index < length);
+            items[index] = *item;
         }
 
+        /* get an item */
         inline _BaseType getItem(int index)
         {
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        /* returns item pointer */
         inline _BaseType * getItemPtr(int index)
         {
+            require(index >=0 && index < length);
             return &items[index];
         }
 
+        /* array access operator overload */
         inline _BaseType& operator[] (const int index)
         {
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        // resets item count to 0
         inline void clearItems()
         {
             length = 0;
         }
 
+        // return size
         inline int itemsCount()
         {
             return length;

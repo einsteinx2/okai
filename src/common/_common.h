@@ -31,38 +31,85 @@ SOFTWARE.
 
 #pragma once
 
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
-#include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
-#include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
-#include "trace.h"
+#include <string.h>
+#pragma intrinsic(memcpy, strlen)
+
+//#define USE_ASSERT
+//#define DISABLE_CHECKS
+
+#ifndef DISABLE_CHECKS
+#define ENABLE_CHECKS
+#endif
+
+#ifdef USE_ASSERT
+
+#ifdef NDEBUG
+
+#ifndef DISABLE_CHECKS
+#undef NODEBUG
+#define NODEBUGREF
+
+#endif
+
+#endif
+
+#include <assert.h>
+
+
+#ifdef NODEBUGREF
+#define NODEBUG
+#endif
+
+#endif
 
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+	void reportAssertionError(const char * condition, const char * file, const int line, const char * function);
+
+
+#ifdef ENABLE_CHECKS
+
+#ifdef USE_ASSERT
+
+	#define require(CONDITION) assert(CONDITION)
+
+#else
+	
+#define require(CONDITION) \
+	if (!(CONDITION)) \
+	reportAssertionError(#CONDITION, __FILE__, __LINE__, __FUNCTION__)
+
+#endif
+
+#else
+
+#define require(CONDITION)
+
+#endif
+
+	template <class baseType> inline baseType * commonAlloc(int length) {
+		return new baseType[length];
+	}
+
+	template <class baseType> inline void commonFree(baseType * allocated) {
+		require(allocated != 0);
+		delete allocated;
+	}
+
+	template <class baseType> inline baseType * commonReAlloc(baseType * allocated, int currentLength, int length) {
+		require(allocated != 0);
+		if (currentLength < length) {
+			baseType * newlyAllocated = commonAlloc<baseType>(length);
+			memcpy(newlyAllocated, allocated, currentLength * sizeof(baseType));
+			commonFree<baseType>(allocated);
+			return newlyAllocated;
+		} else {
+			return allocated;
+		}
+	}
+
+#define common_max(a, b) ((a >= b)? a : b)
+#define common_min(a, b) ((a <= b)? a : b)
 
 };
-
-
-
 

@@ -30,32 +30,35 @@ SOFTWARE.
 ******************************************************************************/
 #pragma once
 
-#include <memory>
-
-#pragma intrinsic(memcpy)
+#include "_common.h"
 
 namespace n02 {
 
     /*
-    Unordered dynamic array
+    Class for manazing and sizing dynamic arrays
+    _BlockLen: must be > 0
     */
-
     template <class _BaseType, int _BlockLen = 32>
     class DynamicArray
     {
 
     protected:
 
+        /* pointer to our allocated memory block */
         _BaseType * items;
+
+        /* no of items */
         int length;
 
 
     private:
 
+        /* size of the allocated block */
         int _size;
 
     public:
 
+        /* constructor */
         DynamicArray(void)
         {
             length = 0;
@@ -63,6 +66,7 @@ namespace n02 {
             _size = 0;
         }
 
+        /* distructor */
         ~DynamicArray(void)
         {
             if (items) {
@@ -73,30 +77,31 @@ namespace n02 {
             _size = 0;
         }
 
-
+        /* Adds an item to the list */
         inline void addItem(_BaseType item)
         {
             checkAllocationSize();
             items[length++] = item;
         }
 
-
+        /* Adds an item to the list via pointer */
         inline void addItemPtr(_BaseType * itemPtr)
         {
             checkAllocationSize();
             items[length++] = *itemPtr;
         }
 
+        /* removes an item from the list via index */
         inline void removeIndex(int index)
         {
-            if (index >= 0 && index < length) {
-                if (length-1!=index) {
-                    items[index] = items[length-1];
-                }
-                length = length-1;
+            require(index >= 0 && index < length);
+            if (length-1!=index) {
+                items[index] = items[length-1];
             }
+            length = length-1;
         }
 
+        /* removes an item from the list via value */
         inline void removeItem(_BaseType item)
         {
             for (int i = 0; i < length; i++) {
@@ -107,45 +112,51 @@ namespace n02 {
             }
         }
 
+        /* set the value of an item pointed by index */
         inline void setItem(_BaseType item, int index)
         {
-            if (index >=0 && index < length) {
-                items[index] = item;
-            }
+            require(index >=0 && index < length);
+            items[index] = item;
         }
 
-        inline void setItemPtr(_BaseType * item, int i)
+        /* set the value of an item pointed by index */
+        inline void setItemPtr(_BaseType * item, int index)
         {
-            if (i >=0 && i < length) {
-                items[i] = *item;
-            }
+            require(index >=0 && index < length);
+            items[index] = *item;
         }
 
-        inline _BaseType getItem(int index){
+        /* get the value of an item pointed by index */
+        inline _BaseType getItem(int index)
+        {
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        /* set the pointere of an item pointed by index */
         inline _BaseType * getItemPtr(int index)
         {
+            require(index >=0 && index < length);
             return &items[index];
         }
 
+        /* array access operator overload */
         inline _BaseType& operator[] (const int index)
         {
-            if (index == length)
-                checkAllocationSize();	
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        /* clear items count */
         inline void clearItems()
         {
             length = 0;
-            if (items != 0){
-                items = (_BaseType*)realloc(items, _BlockLen * sizeof(_BaseType));
-                _size = _BlockLen;
+            if (items != 0) {
+                items = commonReAlloc<_BaseType>(items, length, _size = _BlockLen);
             }
         }
 
+        /* get size */
         inline int itemsCount()
         {
             return length;
@@ -153,15 +164,14 @@ namespace n02 {
 
     private:
 
-        inline void checkAllocationSize()
+        // makes sure there is extra space for one or more element
+        inline void checkAllocationSize(int extra = 1)
         {
             if (items == 0) {
-                items = (_BaseType*)malloc(_BlockLen * sizeof(_BaseType));
-                _size = _BlockLen;
+                items = commonAlloc<_BaseType>(_size = common_max(_BlockLen, extra));
             } else {
-                if (length+1 >= _size) {
-                    _size = (1 + (length/_BlockLen)) * _BlockLen;
-                    items = (_BaseType*)realloc(items, _size * sizeof(_BaseType));
+                if (length + extra >= _size) {
+                    items = commonReAlloc<_BaseType>(items, length, _size = (extra + (length/_BlockLen)) * _BlockLen);
                 }
             }
         }

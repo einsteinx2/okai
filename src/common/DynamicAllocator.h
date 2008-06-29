@@ -31,55 +31,59 @@ SOFTWARE.
 #pragma once
 
 #include "DynamicArray.h"
+#include "ListGenerics.h"
 
 namespace n02 {
 
-    // unverified
-
-    template <class _BaseType, int _BlockLen>
+    template <class _BaseType, int _BlockLen=32, int _MaximumAllocation=999>
     class DynamicAllocator
     {
 
     protected:
 
+        /* list of allocated items */
         DynamicArray<_BaseType*, _BlockLen> allocated;
-
 
     public:
 
+        /* distructor */
         ~DynamicAllocator()
         {
-
-            resetAllocation();			
+            resetAllocation();
         }
 
+        /* allocate a single object */
         inline _BaseType * allocate()
         {
-
-            _BaseType * return_value = new _BaseType;
+            register _BaseType * return_value = new _BaseType;
             allocated.addItem(return_value);
             return return_value;
         }
 
+        /* free an allocated item */
         inline void free(_BaseType * element)
         {
+            require(allocated.itemsCount() > 0);
+            require(DynamicArray_find<_BaseType *>((DynamicArray<_BaseType *>&)allocated, element) != -1);
             allocated.removeItem(element);
             delete element;
         }
 
+        /* returns the number of allocated object */
         inline int allocatedCount()
         {
             return allocated.itemsCount();
         }
 
+        /* returns the number of free objects */
         inline int freeCount()
         {
-            return 555;
+            return _MaximumAllocation - allocated.itemsCount();
         }
 
+        /* reset all allocation */
         inline void resetAllocation()
         {
-
             if (allocated.itemsCount()) {
                 for (int x = 0; x < allocated.itemsCount(); x++) {
                     delete allocated[x];

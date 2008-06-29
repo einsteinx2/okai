@@ -28,41 +28,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
-
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
-#include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
-#include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
-#include "trace.h"
 
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+#if (!defined(DISABLE_TRACE) || defined(FORCE_GLOBAL_TRACE)) && !defined(DISABLE_ALL_TRACING)
+#define DO_TRACE
+#else
+#ifdef DISABLE_TRACE
+#undef DISABLE_TRACE
+#endif /* DISABLE_TRACE */
+#endif /* (!defined(DISABLE_TRACE) || defined(FORCE_GLOBAL_TRACE)) && !defined(DISABLE_ALL_TRACING) */
+
+	void _n02_trace(char * file, char * function, int line);
+	void trace_log();
+
+#ifdef DO_TRACE
+#define TRACE() n02::_n02_trace(__FILE__, __FUNCTION__, __LINE__)
+#else
+#define TRACE()
+#endif /* DO_TRACE */
+
 
 };
-
-
-
 

@@ -32,12 +32,12 @@ SOFTWARE.
 #pragma once
 
 #include "DynamicOrderedArray.h"
+#include "_common.h"
 
 namespace n02 {
 
     /*
     Dynamic Stack
-	* unverified
     */
 
     template <class _BaseType, int _BlockLen = 32>
@@ -46,65 +46,84 @@ namespace n02 {
     {
     public:
 
-        inline void push(_BaseType item){
+        // push an item on the stack
+        inline void push(_BaseType item)
+        {
             addItem(item);
         }
 
-        inline void pushPtr(_BaseType * itemPtr){
+        // push an item on the stack
+        inline void pushPtr(_BaseType * itemPtr)
+        {
             addItemPtr(itemPtr);
         }
 
-        inline _BaseType pop(){
+        // pops an item from the list
+        inline _BaseType pop()
+        {
+            register int index = itemsCount()-1;
+            require(index >= 0);
+            register _BaseType * returnValue = getItemPtr(index);
             removeIndex(index);
-            return getItem(itemsCount());
+            return *returnValue;
         }
 
-        inline void popPtr(_BaseType * itemPtr){
-            int index = itemsCount()-1;
-            if (index >= 0) {
-                *itemPtr = *getItemPtr(index);
-                removeIndex(index);
-            }
+        // pops an item from the list
+        inline void popPtr(_BaseType * itemPtr)
+        {
+            register int index = itemsCount()-1;
+            require(index >= 0);
+            *itemPtr = *getItemPtr(index);
+            removeIndex(index);
         }
 
-        inline _BaseType peek(int offset){
-            _BaseType * ptr;
-            if ( (ptr = peekPtr(item) ) != 0)
-                return *ptr;
-            _BaseType item;
-            return item;
+        // peeks an item on the stack at specified offset from the top
+        inline _BaseType peek(int offset)
+        {
+            return *peekPtr(offset);
         }
 
-        inline void peek(_BaseType * item, int offset){
-            _BaseType * ptr;
-            if ( (ptr = peekPtr(item) ) != 0)
-                *item = *ptr;
+        // peeks an item on the stack at specified offset from the top
+        inline void peek(_BaseType * item, int offset)
+        {
+            *item = *peekPtr(offset);
         }
 
-        inline void peekPtr(int offset){
-            int index = itemsCount() - 1 - offset;
-            if (index >= 0 && index < itemsCount()) {
-                return getItemPtr(index);
-            } else {
-                return 0;
-            }
+        // peeks pointer of an item on the stack at specified offset from the top
+        inline _BaseType * peekPtr(int offset)
+        {
+            require(offset < length && length > 0);
+            return getItemPtr(length - 1 - offset);
         }
 
-        inline _BaseType top(){
+        // returns the top element
+        inline _BaseType top()
+        {
             return peek(0);
         }
 
-        inline void topPtr(_BaseType * item){
+        // returns the top element
+        inline void topPtr(_BaseType * item)
+        {
             peek(item, 0);
         }
 
-        inline _BaseType * topPtr(){
+        // returns the top element
+        inline _BaseType * topPtr()
+        {
             return peekPtr(0);
         }
 
-        inline int length()
+        // returns stack height
+        inline int itemsCount()
         {
-            return itemsCount();
+            return length;
+        }
+
+        // reset stack
+        inline void clearItems()
+        {
+            length = 0;
         }
     };
 };

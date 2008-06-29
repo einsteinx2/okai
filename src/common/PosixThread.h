@@ -38,42 +38,63 @@ SOFTWARE.
 
 namespace n02 {
 
-	class PosixThread {
+    /*
+    Class for handling threads
+    */
 
-	private:
+    class PosixThread {
 
-		volatile void * handle;
-		volatile bool running;
-		int priority;
-		volatile void * waitable;
+    private:
 
-	public:
-		
-		virtual void run(void) {}
+        // handle of the thread
+        volatile void * handle;
+        // true while the thread is running
+        volatile bool running;
+        // priority of the thread
+        int priority;
+        // pointer to reference to waitable mechanisms
+        volatile void * waitable;
 
-		PosixThread(bool captureCurrent = false);
-		~PosixThread();
+    public:
+
+        virtual void run(void) {}
+
+        /* constructor */
+        PosixThread(bool captureCurrent = false);
+        /* distructor */
+        ~PosixThread();
 
 
-		int start();
-		int stop();
-		bool isRunning();
-		bool isWaiting();
+        /* start the thread, returns 0 on success */
+        int start();
+        /* stop the thread, returns 0 on success */
+        int stop();
 
-		int prioritize(int priority);
+        /* returns if the thread is running */
+        bool isRunning();
+        /* returns if the thread is waiting to be notified */
+        bool isWaiting();
 
-		bool wait(int timeout);
+        /* set priority for the thread */
+        int prioritize(int priority);
 
-		void notify();
+        /* wait for netfy for specified no of ms. returns true on notify, false for everything else */
+        bool wait(int timeout);
 
-		static void yield();
-		static void sleep(int ms);
+        /* notify */
+        void notify();
 
-	private:
+        /* give up the thread's current timeslice */
+        static void yield();
+        /* sleep for a while */
+        static void sleep(int ms);
 
-		friend void* nPThreaadCCNV posix_thread_proc (PosixThread* thread);
+    private:
 
-	};
+        /* thread proc */
+        friend void* nPThreaadCCNV posix_thread_proc (PosixThread* thread);
+
+    };
 };
 
 #ifndef linux

@@ -31,7 +31,6 @@ SOFTWARE.
 
 #include "PosixThread.h"
 
-
 namespace n02 {
 
 	void* nPThreaadCCNV posix_thread_proc (PosixThread* thread)

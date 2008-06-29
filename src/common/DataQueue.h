@@ -31,47 +31,49 @@ SOFTWARE.
 
 #pragma once
 
-#include <memory>
-
-#ifndef min
-#define min(a,b) ((a<b)? a:b)
-#endif
+#include "_common.h"
 
 namespace n02 {
 
     /*
     Queue for data?
-    * unverified
     */
-
     class DataQueue {
 
     protected:
 
+		/* pointer to write cursor */
         unsigned char *	ptr;
+		/* pointer to begining of the buffer */
         unsigned char *	begin;
+		/* pointer to the end of the buffer */
         unsigned char *	end;
 
     public:
 
+		/* constructor */
         DataQueue ()
         {
             begin = end = ptr = 0;
         }
 
+		/* constructor */
         DataQueue(void * presetBuffer, int presetBufferLen)
         {
-            begin = (unsigned char*)malloc(presetBufferLen);
+			require(presetBuffer != 0 && presetBufferLen > 0);
+            begin = commonAlloc<unsigned char>(presetBufferLen);
             ptr = end = begin + presetBufferLen;
             memcpy(begin, presetBuffer, presetBufferLen);
         }
 
+		/* constructor */
         DataQueue(int initialAllocation)
         {
-            ptr = begin = (unsigned char*)malloc(initialAllocation);
+            ptr = begin = commonAlloc<unsigned char>(initialAllocation);
             end = begin + initialAllocation;
         }
 
+		/* distructor */
         ~DataQueue()
         {
             if (begin) {
@@ -82,34 +84,38 @@ namespace n02 {
 
     public:
 
-        void * front() {
-            return (void*)begin;
+		/* return front */
+        inline void * front()
+		{
+            return reinterpret_cast<void*>(begin);
         }
 
+		/* enqueue some data */
         int push(const void * data, int dataLen)
         {
-
-            if (dataLen > 0) {			
-                ensureSized(dataLen);
-                memcpy(ptr, data, dataLen);
-                ptr += dataLen;
-            }
+            require (dataLen > 0 && data != 0);
+			ensureSized(dataLen);
+			memcpy(ptr, data, dataLen);
+			ptr += dataLen;
             return ptr - begin;
         }
 
-        int peek (void * dataBuffer, int dataBufferLen)
+		/* peek at the data */
+		int peek (void * data, int dataLen)
         {
+			require (dataLen > 0 && data != 0);
             int min_copy_length;
-            if ((min_copy_length = min (dataBufferLen, ptr - begin)) > 0) {
-                memcpy(dataBuffer, begin, min_copy_length);
+            if ((min_copy_length = common_min (dataLen, ptr - begin)) > 0) {
+                memcpy(data, begin, min_copy_length);
                 return min_copy_length;
             }
             return 0;
         }
 
-        void pop (int lenToRemove)
+        /* blank data removal */
+		void pop (int lenToRemove)
         {
-            lenToRemove = min(lenToRemove, ptr - begin);
+            lenToRemove = common_min (lenToRemove, ptr - begin);
 
             if (lenToRemove > 0) {
                 memcpy(begin, begin+lenToRemove, lenToRemove);
@@ -117,10 +123,11 @@ namespace n02 {
             }			
         }
 
+		/* data removal */
         int pop (void * dataBuffer, int dataBufferLen)
         {
             int min_copy_length;
-            if ((min_copy_length = min (dataBufferLen, ptr - begin)) > 0) {
+            if ((min_copy_length = common_min (dataBufferLen, ptr - begin)) > 0) {
                 memcpy(dataBuffer, begin, min_copy_length);
                 memcpy(begin, begin+min_copy_length, min_copy_length);
                 ptr -= min_copy_length;
@@ -129,11 +136,13 @@ namespace n02 {
             return 0;
         }
 
+		/* reset pointer */
         void reset()
         {
             ptr = begin;
         }
 
+		/* return queued length */
         int length() {
             return ptr - begin;
         }
@@ -149,13 +158,13 @@ namespace n02 {
                     while (begin + new_size < ptr + extraDataLen) {
                         new_size = new_size << 1;
                     }
-                    ptr -= (int) begin;
-                    begin = (unsigned char*)realloc(begin, new_size);
-                    ptr += (int) begin;
+                    ptr -= reinterpret_cast<int>(begin);
+                    begin = commonReAlloc<unsigned char>(begin, reinterpret_cast<int>(ptr), new_size);
+                    ptr += reinterpret_cast<int>(begin);
                     end = begin + new_size;
                 }
             } else {
-                begin = ptr = (unsigned char*)malloc(extraDataLen * 8);
+                begin = ptr = commonAlloc<unsigned char>(extraDataLen * 8);
                 end = begin + extraDataLen * 8;
             }
         }

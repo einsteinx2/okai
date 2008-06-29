@@ -32,10 +32,13 @@ SOFTWARE.
 #pragma once
 
 #include "StaticArray.h"
+#include "_common.h"
 
 namespace n02 {
 
-    // unverified
+    /*
+    Class to manage a fixed no of allocations
+    */
 
     template <class _BaseType, int _Count>
     class StaticAllocator
@@ -44,39 +47,50 @@ namespace n02 {
     protected:
 
 
+        /* the actual items */
         _BaseType items[_Count];
+
+        /* list of unallocated items */
         StaticArray<_BaseType*, _Count> unallocated;
 
 
     public:
 
+        /* constructor */
         StaticAllocator()
         {
             resetAllocation();
         }
 
+        /* allocate 1 element */
         inline _BaseType * allocate()
         {
-            _BaseType * _riele = unallocated[0];
-            unallocated.removei(0);
+            require(unallocated.itemsCount() > 0);
+            register _BaseType * _riele = unallocated[0];
+            unallocated.removeIndex(0);
             return _riele;
         }
 
+        // free allocated element
         inline void free(_BaseType * element)
         {
-            unallocated.add(element);
+            require(element >= &items[0] && element <= &items[_Count-1]);
+            unallocated.addItem(element);
         }
 
+        /* returns no of allocated objects count */
         inline int allocatedCount()
         {
             return _Count - unallocated.itemsCount();
         }
 
+        /* returns no of free elements count */
         inline int freeCount()
         {
             return unallocated.itemsCount();
         }
 
+        /* resets allocation */
         void resetAllocation()
         {
             unallocated.clearItems();

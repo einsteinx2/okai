@@ -30,7 +30,6 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "SocketAddress.h"
-#include <memory.h>
 #include "StringUtils.h"
 
 #define in_addr_t int
@@ -60,7 +59,7 @@ namespace n02 {
 		if (addr.sin_addr.s_addr == (in_addr_t)-1) {
 			hostent * h = gethostbyname(host);
 			if (h!=0) {
-				addr.sin_addr = *(struct in_addr*)(h->h_addr_list[0]);
+				addr.sin_addr = *reinterpret_cast<struct in_addr*>(h->h_addr_list[0]);
 				return true;
 			}
 			return false;
@@ -97,7 +96,7 @@ namespace n02 {
 	{
 		static char print_space[25];
 		void * args [] = {(void*)inet_ntoa(addr.sin_addr), (void*)getPort()};
-		StringUtils::jprintf(print_space, "%1$s:%2$i", args);
+		StringUtils::cprintf(print_space, "%1$s:%2$i", args);
 		return print_space;
 	}
 

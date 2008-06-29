@@ -39,17 +39,23 @@ SOFTWARE.
 
 #define BIG_RECV_BUFFER_SIZE (32 << 10)
 
-
 namespace n02 {
+
+	/* bsd sockets class */
 
     class BsdSocket
     {
 
     protected:
+		/* sockets descriptor
+		value is SOCKET_ERROR when not active
+		*/
         SOCKET sock;
+		/* default send/recv address */
         SocketAddress defaultAddress;
 
     public:
+		/* constructors and distrutors */
         BsdSocket();
         BsdSocket(int family, int type, int protocol, int paramPort, bool blocking, int minBufferSize);
         ~BsdSocket();
@@ -57,33 +63,36 @@ namespace n02 {
 
     protected:
 
+		/* socket call */
         bool socket(int family, int type, int protocol, int paramPort, bool blocking, int minBufferSize);
+		/* close call */
         void close();
 
+		/* misc functions for setting socket parameters */
         void setMinimumBufferSize(int minBufferSize);
         void setBlockingMode(bool blocking);
 
+		/* function for retriving local address */
         void getLocalAddress(SocketAddress * saPtr);
 
 
+		// callback when data arrives
+		virtual void dataArrivalCallback() {}
     public:
 
-        virtual void dataArrivalCallback() {}
-
+		/* send */
         inline int send(char * buffer, int length)
         {
             return (sendto(sock, buffer, length, 0, defaultAddress.getAddrPtr(), defaultAddress.getSize()) == SOCKET_ERROR);
         }
 
+		/* send */
         inline int sendTo(char * buffer, int length, SocketAddress * addressPtr)
         {
-            if (addressPtr){
-                return (sendto(sock, buffer, length, 0, addressPtr->getAddrPtr(), addressPtr->getSize()) == SOCKET_ERROR);
-            } else {
-                return send(buffer, length);
-            }
+            return (sendto(sock, buffer, length, 0, addressPtr->getAddrPtr(), addressPtr->getSize()) == SOCKET_ERROR);
         }
 
+		/* recv */
         inline bool recv (char * buffer, int * length)
         {
             int temp_len;
@@ -94,36 +103,35 @@ namespace n02 {
             return false;
         }
 
-        inline bool recvFrom (char * buffer, int * length, SocketAddress * addressPtr)
+        /* recv */
+		inline bool recvFrom (char * buffer, int * length, SocketAddress * addressPtr)
         {
-            if (addressPtr) {
-                int temp_len;
-                if ((temp_len = recvfrom(sock, buffer, *length, 0, addressPtr->getAddrPtr(), addressPtr->getSizePtr())) > 0) {
-                    *length = temp_len;
-                    return true;
-                }
-                return false;
-            } else {
-                return recv(buffer, length);
-            }
+			int temp_len;
+			if ((temp_len = recvfrom(sock, buffer, *length, 0, addressPtr->getAddrPtr(), addressPtr->getSizePtr())) > 0) {
+				*length = temp_len;
+				return true;
+			}
+			return false;
         }
 
 
 
-    protected:
-
+    private:
+		/* sockets management stuff */
         static StaticArray<BsdSocket*, FD_SETSIZE> socketsList;
         static SOCKET ndfs;
         static fd_set fdList;
         static fd_set tempFdList;
+		static void calcNdfs();
+
+	protected:
+		/* big buffer for receiving data */
         static char bigRecvBuffer[BIG_RECV_BUFFER_SIZE];
 
     public:
         static inline bool step(int secs, int ms);
         static void initialize();
         static void terminate();
-    private:
-        static void calcNdfs();
 
     };
 

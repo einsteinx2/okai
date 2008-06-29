@@ -31,10 +31,12 @@ SOFTWARE.
 
 #pragma once
 
+#include "_common.h"
+
 namespace n02 {
 
     /*
-        Unordered static array
+    Class for managing an unordered static array
     */
     template <class _BaseType, int _TotalLen = 32>
     class StaticArray
@@ -42,37 +44,44 @@ namespace n02 {
 
     protected:
 
+        /* the actual array */
         _BaseType items[_TotalLen];
+        /* number of items */
         int length;
 
     public:
 
+        /* constructor */
         StaticArray(void)
         {
             length = 0;
         }
 
+        /* Adds an item to the list */
         inline void addItem(_BaseType item)
         {
+            require(length < _TotalLen);
             items[length++] = item;
         }
 
-
+        /* Adds an item to the list via pointer */
         inline void addItemPtr(_BaseType * itemPtr)
         {
+            require(length < _TotalLen);
             items[length++] = *itemPtr;
         }
 
+        /* Removes an item from the list  pointed by index */
         inline void removeIndex(int index)
         {
-            if (index >= 0 && index < length) {
-                if (length-1!=index) {
-                    items[index] = items[length-1];
-                }
-                length = length-1;
+            require(index >= 0 && index < length);
+            if (length-1!=index) {
+                items[index] = items[length-1];
             }
+            length = length-1;
         }
 
+        /* Removes an item from the list by value */
         inline void removeItem(_BaseType item)
         {
             for (int i = 0; i < length; i++)
@@ -84,40 +93,52 @@ namespace n02 {
             }
         }
 
+        /* set the value of an item pointed by index */
         inline void setItem(_BaseType item, int index)
         {
+            require(index >=0 && index < length);
             if (index >=0 && index < length) {
                 items[index] = item;
             }
         }
 
+        /* set the value of an item pointed by index */
         inline void setItemPtr(_BaseType * item, int index)
         {
+            require(index >=0 && index < length);
             if (index >=0 && index < length) {
                 items[index] = *item;
             }
         }
 
+        /* Get an item in the array */
         inline _BaseType getItem(int index)
         {
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        /* Get pointer to an item in the array */
         inline _BaseType * getItemPtr(int index)
         {
+            require(index >=0 && index < length);
             return &items[index];
         }
 
+        /* array access operator */
         inline _BaseType& operator[] (const int index)
         {
+            require(index >=0 && index < length);
             return items[index];
         }
 
+        /* reset items count to 0 */
         inline void clearItems()
         {
             length = 0;
         }
 
+        /* returns the no of items in the array */
         inline int itemsCount()
         {
             return length;

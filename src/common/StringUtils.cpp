@@ -30,6 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "StringUtils.h"
+#include <string.h>
 
 namespace n02 {
 
@@ -41,11 +42,11 @@ namespace n02 {
 		'c', 'd', 'e', 'f'
 	};
 
-	static unsigned char c2htable[256] = {0};
+	static unsigned char c2htable[256];
 
-	static char b2ptable[256] = {0};
+	static char b2ptable[256];
 
-	static char tempBuffer[32];
+	static char tempBuffer[128];
 
 
 	static inline void char_to_hex_(char * strbuffer, unsigned char byte) {
@@ -55,8 +56,20 @@ namespace n02 {
 		*strbuffer = h2ctable[lob];
 	}
 
+	static inline void char_to_hex_T(TCHAR * strbuffer, unsigned char byte) {
+		unsigned char lob = byte & 0xf;
+		unsigned char hib = (byte & 0xf0)>>4;
+		*strbuffer++ = h2ctable[hib];
+		*strbuffer = h2ctable[lob];
+	}
+
 
 	void StringUtils::initialize() {
+		
+		memset(c2htable, 0, sizeof(c2htable));
+		memset(b2ptable, 0, sizeof(b2ptable));
+		
+
 		c2htable['0'] = 0;
 		c2htable['1'] = 1;
 		c2htable['2'] = 2;
@@ -77,6 +90,7 @@ namespace n02 {
 		for (int x = 0; x < 256; x++) {
 			b2ptable[x] = '.';
 		}
+
 		for (char x = ' '; x <= '~'; x++) {
 			b2ptable[x] = x;
 		}
@@ -95,9 +109,28 @@ namespace n02 {
 		uintToAlpha(a, u);
 
 	}
+
+	void StringUtils::intToAlphaT(TCHAR * a, const int i) {
+
+		unsigned int u = (unsigned int) i;
+		if (u & (1<<31)) { //signed
+			u = ~(u-1);
+			*a++ = '-';
+		}
+		uintToAlphaT(a, u);
+
+	}
+
+
 	char * StringUtils::intToAlpha(const int i) {
 		intToAlpha(tempBuffer, i);
 		return tempBuffer;
+	}
+
+
+	TCHAR * StringUtils::intToAlphaT(const int i) {
+		intToAlphaT((TCHAR*)tempBuffer, i);
+		return (TCHAR*)tempBuffer;
 	}
 
 	void StringUtils::uintToAlpha(char * a, const unsigned int i) {
@@ -115,10 +148,32 @@ namespace n02 {
 		*a = 0;	
 	}
 
+	void StringUtils::uintToAlphaT(TCHAR * a, const unsigned int i) {
+		unsigned int _i = i;
+		TCHAR buffer[12];
+		int co = 0;
+		while (_i > 0 || co == 0) {
+			TCHAR c = (_i % 10);
+			_i = _i / 10;
+			buffer[co++] = c + '0';
+		}
+		while (co>0) {
+			*a++ = buffer[--co];
+		}
+		*a = 0;	
+	}
+
+
 	char * StringUtils::uintToAlpha(const unsigned int i) {
 		uintToAlpha(tempBuffer, i);
 		return tempBuffer;	
 	}
+
+	TCHAR * StringUtils::uintToAlphaT(const unsigned int i) {
+		uintToAlphaT((TCHAR*)tempBuffer, i);
+		return (TCHAR*)tempBuffer;
+	}
+
 
 	void StringUtils::uintToHex(char * a, const unsigned int i) {
 		unsigned int _i = i;
@@ -128,10 +183,27 @@ namespace n02 {
 		a -= 2; char_to_hex_(a, _i & 0xFF); _i = _i >> 8;
 		a -= 2; char_to_hex_(a, _i & 0xFF);
 	}
+
+	void StringUtils::uintToHexT(TCHAR * a, const unsigned int i) {
+		unsigned int _i = i;
+		a += 8; *a = 0;
+		a -= 2; char_to_hex_T(a, _i & 0xFF); _i = _i >> 8;
+		a -= 2; char_to_hex_T(a, _i & 0xFF); _i = _i >> 8;
+		a -= 2; char_to_hex_T(a, _i & 0xFF); _i = _i >> 8;
+		a -= 2; char_to_hex_T(a, _i & 0xFF);
+	}
+
 	char * StringUtils::uintToHex(const unsigned int i) {
 		uintToHex(tempBuffer, i);
 		return tempBuffer;	
 	}
+
+	TCHAR * StringUtils::uintToHexT(const unsigned int i) {
+		uintToHexT((TCHAR*)tempBuffer, i);
+		return (TCHAR*)tempBuffer;	
+	}
+
+
 	unsigned int StringUtils::alphaToUint(const char * a) {
 
 		unsigned int _i = 0;
@@ -144,6 +216,15 @@ namespace n02 {
 
 	}
 
+	unsigned int StringUtils::alphaToUintT(const TCHAR * a) {
+		unsigned int _i = 0;
+		while (isAlnumT(*a)) {
+			_i *= 10;
+			_i += *a++ - '0';
+		}
+		return _i;
+	}
+
 	int StringUtils::alphaToInt(const char * a) {
 		int sign = 1;
 		if (*a=='-') {
@@ -151,6 +232,15 @@ namespace n02 {
 			a++;
 		}
 		return alphaToUint(a) * sign;
+	}
+
+	int StringUtils::alphaToIntT(const TCHAR * a) {
+		int sign = 1;
+		if (*a=='-') {
+			sign = -1;
+			a++;
+		}
+		return alphaToUintT(a) * sign;
 	}
 
 	// buffering
@@ -168,7 +258,29 @@ namespace n02 {
 		*strbuffer = 0;
 	}
 
+	void StringUtils::bytesToStrT(TCHAR * strbuffer, const unsigned char * bytes_buffer, const int _len, const int spacing) {
+		int len = _len;
+		int counter = 0;
+		while (len-->0) {
+			char_to_hex_T(strbuffer, *bytes_buffer++);
+			strbuffer += 2;
+			if (++counter % spacing == 0) {
+				*strbuffer = ' ';
+				strbuffer++;
+			}
+		}
+		*strbuffer = 0;
+	}
+
 	void StringUtils::strToBytes(unsigned char * bytes_buffer, char * strbuffer, int len) {
+		while (len-->0) {
+			unsigned char hib = c2htable[*strbuffer++];
+			unsigned char lob = c2htable[*strbuffer++];
+			*bytes_buffer++ = (hib << 4) | lob;
+		}
+	}
+
+	void StringUtils::strToBytesT(unsigned char * bytes_buffer, TCHAR * strbuffer, int len) {
 		while (len-->0) {
 			unsigned char hib = c2htable[*strbuffer++];
 			unsigned char lob = c2htable[*strbuffer++];
@@ -198,6 +310,9 @@ namespace n02 {
 		return (x >= 'a' && x <= 'z') || (x >= 'A' && x <= 'A');
 	}
 	bool StringUtils::isAlnum(char x) {
+		return (x >= '0' && x <= '9');
+	}
+	bool StringUtils::isAlnumT(TCHAR x) {
 		return (x >= '0' && x <= '9');
 	}
 	void StringUtils::trim(char * buffer) {
@@ -286,6 +401,57 @@ namespace n02 {
 		}
 	}
 
+	static void advance_get_token_T(const TCHAR ** txt, nprintfToken * token){
+		const TCHAR * str = *txt;
+
+		token->fieldWidth = 0;
+
+		if (*str == '%') {
+			str++;
+
+			token->argno = StringUtils::alphaToIntT(str);
+
+			while (StringUtils::isAlnumT(*str))
+				str++;
+
+			str++;
+
+			switch (*str++) {
+			case 'u':
+				token->type = npft_uint;
+				break;
+			case 'd':
+			case 'i':
+				token->type = npft_int;
+				break;
+			case 's':
+				token->type = npft_str;
+				break;
+			case 'c':
+				token->type = npft_char;
+				break;
+			case 'X':
+			case 'x':
+				token->type = npft_hex;
+				break;
+			};
+
+			*txt = str;
+
+		} else {
+			//static text
+			if (*str) { //parse till we receive end of line or a variable
+				token->type = npft_static;
+				while (*str && *str != '%') {
+					token->fieldWidth++;
+					str++;			
+				}
+				*txt = str;
+			} else { // end of line
+				token->type = npft_end;
+			}
+		}
+	}
 
 
 
@@ -293,7 +459,7 @@ namespace n02 {
 #define ARGNO(N, T) ((T)(arglist[N]))
 
 	// string formating
-	void StringUtils::jprintf ( char *buffer, const char *format, void**arglist ) {
+	void StringUtils::cprintf ( char *buffer, const char *format, void**arglist ) {
 
 		const char * fmt = format;
 
@@ -351,6 +517,68 @@ namespace n02 {
 				};
 
 			} while(token.type != npft_end);
+		}
+	}
+
+	// string formating
+	void StringUtils::tprintf ( TCHAR *buffer, const TCHAR *format, void**arglist ) {
+
+		const TCHAR * fmt = format;
+
+		if (format !=0 && *format != 0) {
+
+			nprintfToken token;
+
+			token.type = npft_end;
+
+			do {
+				const TCHAR * base = fmt;
+				advance_get_token_T(&fmt, &token);
+
+				switch (token.type) {
+				case npft_uint:
+					{
+						StringUtils::uintToAlphaT(buffer, ARGNO(token.argno, unsigned int));
+						buffer += _tcslen(buffer);
+					}
+					break;
+				case npft_int:
+					{
+						StringUtils::intToAlphaT(buffer, ARGNO(token.argno, int));
+						buffer += _tcslen(buffer);
+					}
+					break;
+				case npft_hex:
+					{
+						StringUtils::uintToHexT(buffer, ARGNO(token.argno, unsigned int));
+						buffer += _tcslen(buffer);
+					}
+					break;
+				case npft_char:
+					{
+						TCHAR c = ARGNO(token.argno, char);
+						*buffer++ = c;
+					}
+					break;
+				case npft_str:
+					{
+						TCHAR* str =ARGNO(token.argno, TCHAR*);
+						while (*str) {
+							*buffer++ = *str++;
+						}
+					}
+					break;
+				case npft_static:
+					while (token.fieldWidth-->0){
+						*buffer++ = *base++;
+					}
+					break;
+				case npft_end:
+					*buffer = 0;
+					break;
+				};
+
+			} while(token.type != npft_end);
 
 		}
 
@@ -358,5 +586,120 @@ namespace n02 {
 
 #undef ARGNO
 
+
+	/*
+	The following code was taken from Julian Storer's JUCE so (c) him
+	*/
+
+	int StringUtils::TCHARToUTF8 (unsigned char * buffer, const TCHAR * text) 
+	{
+#ifdef UNICODE
+		int num = 0, index = 0;
+
+		for (;;)
+		{
+			const unsigned int c = (unsigned int) text [index++];
+
+			if (c >= 0x80)
+			{
+				int numExtraBytes = 1;
+
+				if (c >= 0x800)
+				{
+					++numExtraBytes;
+
+					if (c >= 0x10000)
+					{
+						++numExtraBytes;
+
+						if (c >= 0x200000)
+						{
+							++numExtraBytes;
+
+							if (c >= 0x4000000)
+								++numExtraBytes;
+						}
+					}
+				}
+
+				buffer [num++] = (unsigned char) ((0xff << (7 - numExtraBytes)) | (c >> (numExtraBytes * 6)));
+				while (--numExtraBytes >= 0)
+					buffer [num++] = (unsigned char) (0x80 | (0x3f & (c >> (numExtraBytes * 6))));
+			}
+			else
+			{
+				if (buffer != 0)
+					buffer [num] = (unsigned char) c;
+
+				++num;
+			}
+
+			if (c == 0)
+				break;
+		}
+
+		return num;
+#else
+		int len = strlen(text);
+		memcpy(buffer, text, len);
+		return len;
+#endif
+
+	}
+
+	int StringUtils::UTF8ToTCHAR (TCHAR * dest, const unsigned char * buffer, int bufferSizeBytes)
+	{
+#ifdef UNICODE
+		TCHAR * pd = dest;
+		int numBytes;
+		for (numBytes = 0; numBytes < bufferSizeBytes; ++numBytes)
+			if (buffer [numBytes] == 0)
+				break;
+
+		int i = 0;
+		while (i < numBytes)
+		{
+			const unsigned char  c = buffer [i++];
+
+			if ((c & 0x80) != 0)
+			{
+				int mask = 0x7f;
+				int bit = 0x40;
+				int numExtraValues = 0;
+
+				while (bit != 0 && (c & bit) != 0)
+				{
+					bit >>= 1;
+					mask >>= 1;
+					++numExtraValues;
+				}
+
+				int n = (c & mask);
+
+				while (--numExtraValues >= 0 && i < bufferSizeBytes)
+				{
+					const unsigned char c = buffer[i];
+
+					if ((c & 0xc0) != 0x80)
+						break;
+
+					n <<= 6;
+					n |= (c & 0x3f);
+					++i;
+				}
+
+				*dest++ = (TCHAR) n;
+			}
+			else
+			{
+				*dest++ = (TCHAR) c;
+			}
+		}
+		return dest - pd - 1;
+#else
+		memcpy(dest, buffer, bufferSizeBytes);
+		return bufferSizeBytes;
+#endif
+	}
 };
 

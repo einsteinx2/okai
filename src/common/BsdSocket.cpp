@@ -30,7 +30,10 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "BsdSocket.h"
+#include "_common.h"
+#include "Logger.h"
 
+// TODO : Test
 namespace n02 {
 
     StaticArray<BsdSocket*, FD_SETSIZE> BsdSocket::socketsList;
@@ -46,7 +49,7 @@ namespace n02 {
         WSAData ws;
 
         if (WSAStartup(0x0202, &ws)!=0) {
-            //TODO: Error Message
+            LOG(Winsock 2.2 initialization failed);
         }
     }
 
@@ -61,10 +64,7 @@ namespace n02 {
         sock = (SOCKET)SOCKET_ERROR;
         if (socketsList.itemsCount() > 0){
             for (int x = 0; x < socketsList.itemsCount(); x++) {
-                if (socketsList[x] == this) {
-                    // TODO: Error report for duplicate socket object
-                    return;
-                }
+                require(socketsList[x] != this);
             }
         }
         socketsList.addItem(this);
@@ -75,10 +75,7 @@ namespace n02 {
         sock = (SOCKET)SOCKET_ERROR;
         if (socketsList.itemsCount() > 0){
             for (int x = 0; x < socketsList.itemsCount(); x++) {
-                if (socketsList[x] == this) {
-                    // TODO: Error report for duplicate socket object
-                    return;
-                }
+				require(socketsList[x] != this);
             }
         }
         socketsList.addItem(this);
@@ -138,11 +135,11 @@ namespace n02 {
                 calcNdfs();
                 return true;
             } else {
-                // TODO: Error report bind failed
+				LOG(Socket bind failed port = %i; protocol = %i; type = %i, paramPort, protocol, type);
                 return false;
             }
         } else {
-            // TODO: Error report Socket is -1
+            LOG(Socket returned -1 protocol = %i; type = %i, protocol, type);
             return false;
         }
 
@@ -209,7 +206,7 @@ namespace n02 {
     {
         ndfs = 0;
         for (int i = 0; i < socketsList.itemsCount(); i++) {
-            ndfs = max(socketsList[i]->sock, ndfs);
+            ndfs = common_max(socketsList[i]->sock, ndfs);
         }
     }
 

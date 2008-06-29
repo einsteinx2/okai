@@ -29,40 +29,61 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#pragma once
-
-#include "BsdSocket.h"
-#include "ConfigurationManager.h"
-#include "DataQueue.h"
-#include "DynamicAllocator.h"
-#include "DynamicArray.h"
-#include "DynamicBuffer.h"
-#include "DynamicOrderedArray.h"
-#include "DynamicQueue.h"
-#include "DynamicStack.h"
-#include "GlobalTimer.h"
-#include "LinkedList.h"
-#include "ListGenerics.h"
-#include "Logger.h"
-#include "PosixThread.h"
-#include "SocketAddress.h"
-#include "StaticAllocator.h"
-#include "StaticArray.h"
-#include "StaticBuffer.h"
-#include "StaticOrderedArray.h"
-#include "StaticQueue.h"
-#include "StaticStack.h"
-#include "StringUtils.h"
-#include "UdpSocket.h"
-#include "trace.h"
-
 namespace n02 {
 
-    void commonInitialize();
-    void commonTerminate();
+    class Logger {
+    private:
+
+        void * fileHandle;
+
+    public:
+
+        Logger(char * file, bool append);
+        Logger();
+        virtual ~Logger();
+
+        virtual void initialize(char * file, bool append);
+        virtual void terminate();
+        virtual void logLine(char * line);
+
+        void logcprintf(char * format, void**args);
+        void logprintf(char * format, ...);
+        void logBuffer(void * bytes, int length, char * name);
+
+    };
+
+    extern Logger defaultLogger;
+
+#ifdef LOG
+#undef LOG
+#endif
+
+#ifdef LOGTRACE
+#undef LOGTRACE
+#endif
+
+#ifdef LOGBUFFER
+#undef LOGBUFFER
+#endif
+
+#ifdef DONT_LOG
+#define LOG(X, ...)
+#define LOGTRACE(X, ...)
+
+#define LOGBUFFER(X, Y)
+
+#undef DONT_LOG
+#else
+#define LOG(X, ...)\
+    defaultLogger.logprintf(__FUNCTION__ ## "(" #X ")" , __VA_ARGS__)
+
+#define LOGBASIC(X, ...)\
+    defaultLogger.logprintf(X, __VA_ARGS__)
+
+#define LOGTRACE(X, ...)\
+    defaultLogger.logprintf(#X, __VA_ARGS__)
+
+#define LOGBUFFER(N, X, Y) defaultLogger.logBuffer((void*)X, (int)Y, N)
+#endif
 
 };
-
-
-
-

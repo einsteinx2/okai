@@ -32,120 +32,191 @@ SOFTWARE.
 #pragma once
 
 #include "StaticOrderedArray.h"
+#include "_common.h"
 
 namespace n02 {
 
     /*
-    Static Queue
-    * unverified
+    Represents a Queue object implemented over ordered static array
     */
-
-    template <class _BaseType, int _TotalLen = 32>
+    template <class _BaseType, int _TotalLength = 32>
     class StaticQueue        
     {
     protected:
-        _BaseType items[_TotalLen];
-        int length;
-        unsigned int base;
+        /* The queue items */
+        _BaseType items[_TotalLength];
 
+        /* length of the queue */
+        int length;
+
+        /* base of the queue */
+        unsigned int base;
+        /*
+        base = 2, len = 3:
+        [-][-][1][2][3][-][-][-]		
+        base = 5, len = 5:
+        [4][5][-][-][-][1][2][3]
+        */
     public:
 
+        /* constructor */
         StaticQueue() {
             length = base = 0;
         }
 
-        inline void push(_BaseType item){
-            items[(base + length++) % _TotalLen] = item;
+        /* enqueue an item */
+        inline void push(_BaseType item)
+        {
+            require(length < _TotalLength);
+            items[(base + length++) % _TotalLength] = item;
+        }
+        /* enqueue an item */
+        inline void pushPtr(_BaseType * itemPtr)
+        {
+            require(length < _TotalLength);
+            items[(base + length++) % _TotalLength] = *itemPtr;
         }
 
-        inline void pushPtr(_BaseType * itemPtr){
-            items[(base + length++) % _TotalLen] = *itemPtr;
-        }
-
-        inline void pushFront(_BaseType item){
+        /* put in the front of the queue */
+        inline void pushFront(_BaseType item)
+        {
+            require(length < _TotalLength);
             length++;
-            items[(--base) % _TotalLen] = item;
+            items[(--base) % _TotalLength] = item;
         }
 
-        inline void pushFront(_BaseType * itemPtr){
+        /* put in the front of the queue */
+        inline void pushFront(_BaseType * itemPtr)
+        {
+            require(length < _TotalLength);
             length++;
-            items[(--base) % _TotalLen] = *itemPtr;
+            items[(--base) % _TotalLength] = *itemPtr;
         }
 
-        inline _BaseType pop(){
+        /* un-queue an item */
+        inline _BaseType pop()
+        {
+            require(length > 0);
             length--;
-            return items[(base++) % _TotalLen];
-        }
-        inline void popPtr(_BaseType * itemPtr){
-            length--;
-            *itemPtr = items[(base++) % _TotalLen];
+            return items[(base++) % _TotalLength];
         }
 
-        inline void pop2(){
+        /* un-queue an item */
+        inline void popPtr(_BaseType * itemPtr)
+        {
+            require(length > 0);
+            length--;
+            *itemPtr = items[(base++) % _TotalLength];
+        }
+
+        /* send an item to hell */
+        inline void popBlank()
+        {
+            require(length > 0);
             length--;
             base++;
         }
 
-        inline _BaseType popBack(){
+        /* abduct the last person in the queue */
+        inline _BaseType popBack()
+        {
+            require(length > 0);
             length--;
-            return items[(base+length) % _TotalLen];
+            return items[(base+length) % _TotalLength];
         }
 
-        inline void popBackPtr(_BaseType * itemPtr){
+        /* abduct the last person in the queue */
+        inline void popBackPtr(_BaseType * itemPtr)
+        {
+            require(length > 0);
             length--;
-            *itemPtr = items[(base+length) % _TotalLen];
+            *itemPtr = items[(base+length) % _TotalLength];
         }
 
 
-        inline _BaseType popBack2(){
+        /* send the last person in the queue to hell */
+        inline _BaseType popBackBlank()
+        {
+            require(length > 0);
             length--;
         }
 
-        inline _BaseType peek(int offset){
-            return items[(base+offset) % _TotalLen];
+        /* peek ahead in the queue */
+        inline _BaseType peek(int offset)
+        {
+            require(length > 0 && offset < length);
+            return items[(base+offset) % _TotalLength];
         }
 
-        inline void peek(_BaseType * item, int offset){
-            *item = items[(base+offset) % _TotalLen];
+        /* peek ahead in the queue */
+        inline void peek(_BaseType * item, int offset)
+        {
+            require(length > 0 && offset < length);
+            *item = items[(base+offset) % _TotalLength];
         }
 
-        inline _BaseType* peekPtr(int offset){
-            return &items[(base+offset) % _TotalLen];
+        /* peek ahead in the queue */
+        inline _BaseType* peekPtr(int offset)
+        {
+            require(length > 0 && offset < length);
+            return &items[(base+offset) % _TotalLength];
         }
 
-        inline _BaseType peekBack(int offset){
+        /* peek from the back */
+        inline _BaseType peekBack(int offset)
+        {
             return peek(size()-offset-1);
         }
 
-        inline void peekBack(_BaseType * item, int offset){
+        /* peek from the back */
+        inline void peekBack(_BaseType * item, int offset)
+        {
             peek(item, size()-offset-1);
         }
 
-        inline _BaseType* peekBackPtr(int offset){
+        /* peek from the back */
+        inline _BaseType* peekBackPtr(int offset)
+        {
             return peekPtr(size()-offset-1);
         }
 
-        inline _BaseType front(){
+        /* returns the front of thq queue */
+        inline _BaseType front()
+        {
+            require(length > 0);
             return peek(0);
         }
 
-        inline void frontPtr(_BaseType * item){
+        /* returns the front of thq queue */
+        inline void frontPtr(_BaseType * item)
+        {
+            require(length > 0);
             peek(item, 0);
         }
 
-        inline _BaseType back(){
+        /* returns the back of thq queue */
+        inline _BaseType back()
+        {
             return peek(size()-1);
         }
 
-        inline _BaseType * backPtr(){
+        /* returns the back of thq queue */
+        inline _BaseType * backPtr()
+        {
             return peekPtr(size()-1);
         }
 
+        /* returns the back of thq queue */
         inline int size()
         {
             return length;
         }
+        inline int itemsCount()
+        {
+            return length;
+        }
 
+        /* reset queue */
         inline void clear()
         {
             length = 0;
