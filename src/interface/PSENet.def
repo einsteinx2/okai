@@ -1,0 +1,25 @@
+LIBRARY   n02
+EXPORTS
+	NETinit @5
+	NETshutdown @11
+	NETconfigure @4
+	NETtest @12
+	NETabout @1
+	NETopen @6
+	NETclose @2
+	NETpause @8
+	NETresume @10
+	NETqueryPlayer @9
+	NETsendPadData
+	NETrecvPadData
+	NETsendData
+	NETrecvData
+	NETsetInfo
+	NETkeypressed
+	PSEgetLibType @14
+	PSEgetLibVersion @15
+	PSEgetLibName @16
+	NETcompareData @3
+	NETpadState @7
+	NETtransferData @13
+

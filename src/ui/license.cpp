@@ -28,38 +28,66 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+#include "common.h"
+#include "clientgui.h"
+#include "juceLicenseComponent.h"
 
-#pragma once
-// TODO : Review
-// TODO : Test
 namespace n02 {
 
-    // All games should have this
-#define GCAPS_NORMAL		1
-    // Can play around with sates
-#define GCAPS_STATES	2
+	SIMPLEWINDOW(License, "License Window", Colours::whitesmoke, DocumentWindow::closeButton, juceLicenseComponent, 600, 320);
 
-    class GamesList {
+	static int licenseNotAccepted;
+
+	void LicenseDeclined() {
+		JUCEApplication::quit();
+		licenseNotAccepted = 1;
+	}
+	void LicenseAccepted() {
+		licenseNotAccepted = 0;
+		JUCEApplication::quit();
+	}
+
+	void License::OnClose(){
+		 LicenseDeclined();
+	}
+
+	class OpenKailleraLicenseApp: public JUCEApplication {
 	public:
-        // Initialization
-        static void initialize();
-        static void terminate();
-        static void reset();
+		void initialise (const String& commandLineParameters) {
+			License::createAndShow();
+		}
 
-        // Incrementing
-        static void add(char * name, int maxPlayers = 2, int caps = GCAPS_NORMAL);
-        static void addCaps(char * name, int caps);
+		void shutdown() {
 
-        // Iteration
-        static char * start(int * index);
-        static char * next(int * curIndex);
-        static char * find(const char * game);
-        static bool select(const char * game);
-		static bool selectByIndex(const int index);
-        static int selectedMaxPlayers();
-        static int selectedCaps();
-		static int getCount();
+		}
 
-    };
+		const String getApplicationName() {
+			return T("okai license");
+		}
+	};
+	
+
+	CONFIG_START(licenseConfig)
+	CONFIG_INTVAR(_T("accepted"), licenseNotAccepted, 1)
+	CONFIG_END
+
+	char *argv[] = {"", ""};
+
+	int GuiShowLicenseDialog() {
+
+		LOG(License dialog);
+
+		ConfigurationManager config(licenseConfig);
+		config.load(_T("license"));
+
+		if (licenseNotAccepted) {
+			JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
+		}
+
+		config.save(_T("license"));
+
+		return licenseNotAccepted;
+	}
 
 };
+

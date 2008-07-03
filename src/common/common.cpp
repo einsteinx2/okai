@@ -37,11 +37,13 @@ namespace n02 {
         BsdSocket::initialize();
         GlobalTimer::initialize();
 		StringUtils::initialize();
+		defaultLogger.initialize("n02.log", false);
     }
 
     void commonTerminate(){
+		defaultLogger.terminate();
         BsdSocket::terminate();
-        GlobalTimer::terminate();
+        GlobalTimer::terminate();		
     }
 
 };

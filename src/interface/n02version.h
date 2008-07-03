@@ -28,38 +28,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+#ifndef N02_VERSION
+#define N02_VERSION
 
-#pragma once
-// TODO : Review
-// TODO : Test
-namespace n02 {
+#define N02_NAME "n02"
 
-    // All games should have this
-#define GCAPS_NORMAL		1
-    // Can play around with sates
-#define GCAPS_STATES	2
+#define N02_VERSION_MAJOR 0
+#define N02_VERSION_MINOR 15
+#define N02_VERSION_STR "0.15"
+#define N02_VERSION_REVISION 16
+#define N02_VERSION_ADDTXT "prototype"
 
-    class GamesList {
-	public:
-        // Initialization
-        static void initialize();
-        static void terminate();
-        static void reset();
+#define N02_DESCRIPTION "Open Kaillera client: n02 v0.15 prototype revision 16 http://okai.sf.net"
 
-        // Incrementing
-        static void add(char * name, int maxPlayers = 2, int caps = GCAPS_NORMAL);
-        static void addCaps(char * name, int caps);
+#endif
 
-        // Iteration
-        static char * start(int * index);
-        static char * next(int * curIndex);
-        static char * find(const char * game);
-        static bool select(const char * game);
-		static bool selectByIndex(const int index);
-        static int selectedMaxPlayers();
-        static int selectedCaps();
-		static int getCount();
-
-    };
-
-};

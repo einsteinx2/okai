@@ -28,38 +28,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
-// TODO : Review
-// TODO : Test
+
+#include "module.h"
+
 namespace n02 {
 
-    // All games should have this
-#define GCAPS_NORMAL		1
-    // Can play around with sates
-#define GCAPS_STATES	2
+	extern TransportModule02 transport;
 
-    class GamesList {
-	public:
-        // Initialization
-        static void initialize();
-        static void terminate();
-        static void reset();
+	void transportInitialize();
+	void transportTerminate();
 
-        // Incrementing
-        static void add(char * name, int maxPlayers = 2, int caps = GCAPS_NORMAL);
-        static void addCaps(char * name, int caps);
+	void N02CCNV transportSetActiveByName(char * name);
+	void N02CCNV transportSetActiveByIndex(int index);
 
-        // Iteration
-        static char * start(int * index);
-        static char * next(int * curIndex);
-        static char * find(const char * game);
-        static bool select(const char * game);
-		static bool selectByIndex(const int index);
-        static int selectedMaxPlayers();
-        static int selectedCaps();
-		static int getCount();
+	void transportResetActivation();
+	bool transportWasReActivated();
 
-    };
 
 };

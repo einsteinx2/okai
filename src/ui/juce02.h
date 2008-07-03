@@ -28,38 +28,39 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
-// TODO : Review
-// TODO : Test
-namespace n02 {
 
-    // All games should have this
-#define GCAPS_NORMAL		1
-    // Can play around with sates
-#define GCAPS_STATES	2
+#include "juce.h"
 
-    class GamesList {
-	public:
-        // Initialization
-        static void initialize();
-        static void terminate();
-        static void reset();
+// support header for using juce inside this program
 
-        // Incrementing
-        static void add(char * name, int maxPlayers = 2, int caps = GCAPS_NORMAL);
-        static void addCaps(char * name, int caps);
+#define SIMPLEWINDOW(Name, Title, Background, Buttons, Component, W, H)		\
+	class Name : public DocumentWindow {									\
+	public:																	\
+		Name()																\
+			: DocumentWindow(T(Title), Background, Buttons)					\
+		{																	\
+			cmponnt = new Component();										\
+			setContentComponent(cmponnt, true, true);						\
+		}																	\
+		~Name() {															\
+			setContentComponent (0, true);									\
+			cmponnt = 0;													\
+		}																	\
+		void closeButtonPressed() {											\
+			OnClose();														\
+		}																	\
+		static Name * window;												\
+		static Component * cmponnt;											\
+		static void createAndShow() {										\
+			window = new Name();											\
+			window->centreWithSize (W, H + window->getTitleBarHeight());	\
+			window->setVisible (true);										\
+		}																	\
+		static void OnClose();												\
+	};																		\
+	Name * Name##::window;													\
+	Component * Name##::cmponnt
 
-        // Iteration
-        static char * start(int * index);
-        static char * next(int * curIndex);
-        static char * find(const char * game);
-        static bool select(const char * game);
-		static bool selectByIndex(const int index);
-        static int selectedMaxPlayers();
-        static int selectedCaps();
-		static int getCount();
 
-    };
 
-};

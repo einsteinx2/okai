@@ -53,6 +53,9 @@ namespace n02 {
 	static DynamicOrderedArray<Game, 128> games;
 	static int selectedGame;
 
+	int GamesList::getCount() {
+		return games.itemsCount();		
+	}
 
 	void GamesList::initialize()
 	{
