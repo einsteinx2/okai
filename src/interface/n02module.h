@@ -253,7 +253,7 @@ typedef struct {
 } GameListInterface02;
 
 #define GCAPS_TRAD		1
-#define GCAPS_STATES	2
+#define GCAPS_STATES	8
 
 #define MTYPE02_GAMELIST "gamelist"
 

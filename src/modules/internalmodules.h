@@ -2,7 +2,8 @@
 	MODULE(modGameList) \
 	MODULE(modModulesHandler) \
 	MODULE(modDefStress) \
-	MODULE(modDefStressRun)
+	MODULE(modDefStressRun) \
+	MODULE(modKaillera)
 
 
 //	MODULE(modModulesConfig)\

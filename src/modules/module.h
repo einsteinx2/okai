@@ -187,8 +187,7 @@ return 0;
 // </gui>
 
 static int N02CCNV getGameplayType() {
-
-
+	return GAME_TYPE_GAMEPLAY;
 }
 
 static void N02CCNV  reserved(int, int)

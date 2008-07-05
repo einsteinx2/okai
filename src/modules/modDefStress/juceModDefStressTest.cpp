@@ -133,7 +133,7 @@ juceModDefStressTest::juceModDefStressTest ()
 		int index = 0;
 		if (game) {
 			do {
-				if (modHelper.gameList->getCaps(game) & 1 /*GCAPS_STATES*/) {
+				if (modHelper.gameList->getCaps(game) & GCAPS_STATES) {
 					cmbGames->addItem(game, index);
 				}
 				index++;
@@ -141,11 +141,11 @@ juceModDefStressTest::juceModDefStressTest ()
 		}
 	}
 	{ // modes
-		ModuleAbstraction02 * mod = modHelper.modHandler->find(MTYPE02_TRANSPORT);
+		ModuleAbstraction02 * mod = n02::modHelper.modHandler->find(MTYPE02_TRANSPORT);
 		if (mod != 0) {
 			do {
 				cmbModes->addItem(mod->name, mod->index);
-			} while ((mod = modHelper.modHandler->findNext(mod))!=0);
+			} while ((mod = n02::modHelper.modHandler->findNext(mod))!=0);
 		}
 	}
     //[/Constructor]

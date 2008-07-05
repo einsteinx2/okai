@@ -52,17 +52,42 @@ namespace n02 {
 		int delay = 0;
 		static n02AutorunInterface * autorun = 0;
 
+
+		class : public Timer {
+			void timerCallback() {
+
+				static int prevFrame = 0;
+				static unsigned int prevTime = 0;
+
+				if (running == 0) {
+					ModDefStressTestWindow::cmponnt->updateStatus(0);
+				} else {
+					
+					unsigned int dt = GlobalTimer::getTime() - prevTime;
+					unsigned int df = frame - prevFrame;
+					if (dt != 0)
+						ModDefStressTestWindow::cmponnt->updateStatus( 1000 * df / dt);
+
+					prevFrame = frame;
+					prevTime = GlobalTimer::getTime();
+				}
+			}
+		} timer;
+
+
 		void uiStartGame(const char * gameName) {
 			if (running != 0) {
-				//TODO: Print error message that the thing is already running
+				AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "A game is already running.", "ok");
 			} else {
 				if (strlen(gameName) > 0) {
 					modHelper.startGame(gameName, 1, 1);
+					timer.startTimer(2000);
 				}
 			}
 		}
 		void uiStopGame() {
 			running = 0;
+			timer.stopTimer();
 		}
 
 		void uiModChangeCallback(int index) {
@@ -115,6 +140,7 @@ namespace n02 {
 		static void N02CCNV endGame()
 		{
 			running = 0;
+			timer.stopTimer();
 		}
 		static void N02CCNV sendAsyncData(const void *, const int, const int)
 		{
@@ -127,17 +153,17 @@ namespace n02 {
 		static int  N02CCNV recvSyncData(void *, const int)
 		{
 			LOG(0);
-			return 0;
+			return -1;
 		}
 		static int  N02CCNV syncData(void *, const int)
 		{
 			LOG(0);
-			return 0;
+			return -1;
 		}
 		static int  N02CCNV syncDataCheck (int)
 		{
 			LOG(0);
-			return 0;
+			return -1;
 		}
 		static void N02CCNV sendChat (const char *)
 		{

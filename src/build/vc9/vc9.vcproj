@@ -474,6 +474,38 @@
 			<Filter
 				Name="n02.kaillera"
 				>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerGame.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerGame.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\modKaillera.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\modKaillera.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="n02.p2p"
@@ -486,6 +518,26 @@
 			<Filter
 				Name="zsnesnet"
 				>
+			</Filter>
+			<Filter
+				Name="helpers"
+				>
+				<File
+					RelativePath="..\..\modules\addEditIP.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\addEditIP.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceAddEditIPDialog.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceAddEditIPDialog.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

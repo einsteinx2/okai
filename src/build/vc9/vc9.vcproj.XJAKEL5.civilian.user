@@ -37,7 +37,7 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="..\..\..\release\fba.exe"
+				Command="..\..\..\release\dsa.exe"
 				WorkingDirectory="..\..\..\release"
 				CommandArguments=""
 				Attach="false"

@@ -37,7 +37,7 @@ namespace n02 {
     // All games should have this
 #define GCAPS_NORMAL		1
     // Can play around with sates
-#define GCAPS_STATES	2
+#define GCAPS_STATES		8
 
     class GamesList {
 	public:
