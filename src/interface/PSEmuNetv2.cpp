@@ -20,13 +20,13 @@ NETPADSTATE((struct tnetpadpsx *)&netpadpsx1,(struct tnetpadpsx *)&netpadpsx2);
 Regards,
 Carlos.
 */
-long CALLBACK NETcompareData(void * blockPointer, int length) { // <- 2 parameters confirmed
+long CALLBACK NETcompareData(void * /*blockPointer*/, int /*length*/) { // <- 2 parameters confirmed
 	return 0;
 }
-long CALLBACK NETpadState(tNetPadPSX* p1, tNetPadPSX * p2) {
+long CALLBACK NETpadState(tNetPadPSX* /*p1*/, tNetPadPSX * /*p2*/) {
 	return 0;
 }
-long CALLBACK NETtransferData(char * name, void * blockPointer, int length) {
+long CALLBACK NETtransferData(char * /*name*/, void * /*blockPointer*/, int /*length*/) {
 	return 0;
 }
 
@@ -70,7 +70,7 @@ opens the connection.
 shall return PSE_ERR_SUCCESS on success, else PSE_ERR_FATAL.
 PSE_ERR_FATAL is also returned if the user selects offline mode.
 */
-long CALLBACK NETopen(void* hWnd) {
+long CALLBACK NETopen(void* /*hWnd*/) {
 	//MessageBox(hWnd,0,_T(__FUNCTION__),0);
 	return PSE_ERR_SUCCESS;
 }
@@ -118,7 +118,7 @@ long CALLBACK NETqueryPlayer() {
 this should be called for the first pad only on each side.
 */
 
-long CALLBACK NETsendPadData(void *pData, int Size) {
+long CALLBACK NETsendPadData(void * /*pData*/, int /*Size*/) {
 	MessageBox(0,0,_T(__FUNCTION__),0);
 	// normal send will do
 	return PSE_ERR_FATAL;
@@ -131,7 +131,7 @@ long CALLBACK NETsendPadData(void *pData, int Size) {
 call this for Pad 1/2 to get the data sent by the above func.
 */
 
-long CALLBACK NETrecvPadData(void *pData, int Pad) {
+long CALLBACK NETrecvPadData(void * /*pData*/, int /*Pad*/) {
 	MessageBox(0,0,_T(__FUNCTION__),0);
 	// this comes paired with above function
 	return PSE_ERR_FATAL;
@@ -143,7 +143,7 @@ long CALLBACK NETrecvPadData(void *pData, int Pad) {
 /*
 sends Size bytes from pData to the other side.
 */
-long CALLBACK NETsendData(void *pData, int Size, int Mode){
+long CALLBACK NETsendData(void * /*pData*/, int /*Size*/, int /*Mode*/){
 	MessageBox(0,0,_T(__FUNCTION__),0);
 	// if mode is blocking, wait for confirmation too
 	return PSE_ERR_FATAL;
@@ -154,7 +154,7 @@ long CALLBACK NETsendData(void *pData, int Size, int Mode){
 /*
 receives Size bytes from pData to the other side.
 */
-long CALLBACK NETrecvData(void *pData, int Size, int Mode){
+long CALLBACK NETrecvData(void * /*pData*/, int /*Size*/, int /*Mode*/){
 	MessageBox(0,0,_T(__FUNCTION__),0);
 	// if mode is blocking, wait for confirmation too
 	return PSE_ERR_FATAL;
@@ -165,7 +165,7 @@ long CALLBACK NETrecvData(void *pData, int Size, int Mode){
 /*
 sets the netInfo struct.
 */
-void CALLBACK NETsetInfo(netInfo *info) {
+void CALLBACK NETsetInfo(netInfo * /*info*/) {
 	// store this
 	MessageBox(0,0,_T(__FUNCTION__),0);
 }
@@ -176,7 +176,7 @@ void CALLBACK NETsetInfo(netInfo *info) {
 (linux only)
 key is a XK_?? (X11) keycode.
 */
-void CALLBACK NETkeypressed(int key){
+void CALLBACK NETkeypressed(int /*key*/){
 	// probably for getting key value
 	MessageBox(0,0,_T(__FUNCTION__),0);
 }

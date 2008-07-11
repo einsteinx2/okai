@@ -49,6 +49,9 @@ SOFTWARE.
 		}																	\
 		void closeButtonPressed() {											\
 			OnClose();														\
+			running = false;												\
+			if (syncThread)													\
+				syncThread->notify();										\
 		}																	\
 		static Name * window;												\
 		static Component * cmponnt;											\
@@ -57,10 +60,32 @@ SOFTWARE.
 			window->centreWithSize (W, H + window->getTitleBarHeight());	\
 			window->setVisible (true);										\
 		}																	\
+		static void createAndShowModal() {									\
+			window = new Name();											\
+			window->centreWithSize (W, H + window->getTitleBarHeight());	\
+			window->setVisible (true);										\
+			window->runModalLoop();											\
+		}																	\
+		static void waitForClose() {										\
+			running = true;													\
+			syncThread = new PosixThread(true);								\
+			while (running)													\
+				syncThread->wait(100000);									\
+			delete syncThread;												\
+			syncThread = 0;													\
+		}																	\
 		static void OnClose();												\
+		static volatile bool running;										\
+		static PosixThread * syncThread;									\
 	};																		\
 	Name * Name##::window;													\
-	Component * Name##::cmponnt
+	Component * Name##::cmponnt;											\
+	volatile bool Name##::running;											\
+	PosixThread * Name##::syncThread = 0
 
 
+
+#define COMMAND(X, Y) ((X << 24) | Y)
+#define COMMAND_X(X) ((0xFF000000&X)>>24)
+#define COMMAND_Y(X) (0xFFFFFF&X)
 

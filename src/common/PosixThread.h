@@ -89,6 +89,8 @@ namespace n02 {
         /* sleep for a while */
         static void sleep(int ms);
 
+		static int getCurrentThreadId();
+
     private:
 
         /* thread proc */

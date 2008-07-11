@@ -16,6 +16,7 @@ namespace n02 {
 		addedit::returnValue = 0;
 		juceAddEditIPDialog * newCmp;
 		DialogWindow::showModalDialog(T("Add Item"), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
+		delete newCmp;
 		return addedit::returnValue == 1;
 	}
 	bool EditIP(Component * parent, TCHAR * NAME, TCHAR * IP) {
@@ -27,6 +28,8 @@ namespace n02 {
 		juceAddEditIPDialog * newCmp;
 
 		DialogWindow::showModalDialog(T("Edit Item"), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
+
+		delete newCmp;
 
 		return addedit::returnValue == 1;
 	}

@@ -30,16 +30,17 @@ SOFTWARE.
 ******************************************************************************/
 #include "trace.h"
 #include "Logger.h"
-
+#include "PosixThread.h"
 namespace n02 {
 
 	typedef struct {
 		char * file;
 		char * function;
 		int line;
+		int threadID;
 	} TraceStackElement;
 
-#define TRACE_HISTORY_LEVEL 5
+#define TRACE_HISTORY_LEVEL 7
 #define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
 #define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
 
@@ -49,8 +50,9 @@ namespace n02 {
 	void trace_log(){
 		for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
 			int index = (traceStackPtr-x) & TRACE_STACK_MASK;
-			LOGTRACE(%09u:%s:%i:%s,
+			LOGTRACE(%09u:%i-%s:%i:%s,
 				(traceStackPtr-x),
+				traceStack[index].threadID,
 				traceStack[index].file,
 				traceStack[index].line,
 				traceStack[index].function);
@@ -61,6 +63,7 @@ namespace n02 {
 		traceStack[traceStackPtr&TRACE_STACK_MASK].file = file;
 		traceStack[traceStackPtr&TRACE_STACK_MASK].function = function;
 		traceStack[traceStackPtr&TRACE_STACK_MASK].line = line;
+		traceStack[traceStackPtr&TRACE_STACK_MASK].threadID = PosixThread::getCurrentThreadId();
 		traceStackPtr++;
 	}
 

@@ -156,8 +156,17 @@ namespace n02 {
             return bytes_to_remove;
         }
 
+		inline int skipString()
+        {
+            register int bytes_to_remove = common_min(static_cast<int>(strlen(reinterpret_cast<char*>(ptr)) + 1), end - ptr);
+            if (bytes_to_remove > 0) {
+                ptr += bytes_to_remove;
+            }
+            return bytes_to_remove;
+        }
+
 #define _primitive_read_return(_type) \
-    require(end - ptr < sizeof(_type)); \
+    require(end - ptr > sizeof(_type)); \
     register _type return_value = *reinterpret_cast<_type*>(ptr);\
     ptr += sizeof(_type);\
     return return_value;

@@ -29,8 +29,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "Logger.h"
-#include "StringUtils.h"
+#include "common.h"
+
 #include <cstdio>
 #include <cstdarg>
 #include <fstream>
@@ -79,6 +79,8 @@ namespace n02 {
         if (fileHandle != 0) {
             ofstream * of = reinterpret_cast<ofstream*>(fileHandle);
             of->write(line, strlen(line));
+			of->write("\r\n", 2);
+			of->flush();
         }
     }
 
@@ -86,18 +88,16 @@ namespace n02 {
     {
         char print_buffer[1025];
         StringUtils::cprintf(print_buffer, format, args);
-        strcat(print_buffer, "\r\n");
         logLine(print_buffer);
     }
 
     void Logger::logprintf(char * format, ...)
     {
-        char print_format_buffer[512];
         char print_buffer[1025];
+		sprintf(print_buffer, "%i: ", PosixThread::getCurrentThreadId());
         va_list args;
-        va_start( args, format);
-        sprintf(print_format_buffer, "%s\r\n", format);
-        vsprintf(print_buffer, print_format_buffer, args);
+        va_start(args, format);
+        vsprintf(print_buffer + strlen(print_buffer), format, args);
         va_end( args );
         logLine(print_buffer);
     }

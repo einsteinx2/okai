@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Jul 2008 3:10:01 am
+  Creation date:  6 Jul 2008 3:06:03 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,11 +19,39 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_NEWJUCERCOMPONENT_JUCEKAILLERASERVERGAME_ACD315B4__
-#define __JUCER_HEADER_NEWJUCERCOMPONENT_JUCEKAILLERASERVERGAME_ACD315B4__
+#ifndef __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__
+#define __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce.h"
+#include "juce02.h"
+namespace n02 {
+	namespace kaillera {
+
+		class KailleraPlayersList: public TableListBoxModel {
+			int  getNumRows ();
+			void  paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected);
+			void  paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected);
+		};
+
+		void uiStartGameCallback();
+		void uiLeaveGameCallback();
+		void uiKickGameCallback();
+
+		class KailleraGameChatInput: public TextEditorListener {
+			void  textEditorTextChanged (TextEditor &editor){}
+			void  textEditorReturnKeyPressed (TextEditor &editor);
+			void  textEditorEscapeKeyPressed (TextEditor &editor){}
+			void  textEditorFocusLost (TextEditor &editor){}
+		};
+
+		extern int activeGameCaps;
+		extern int selectedAutorunIndex;
+		extern int selectedDelayParam;
+		extern int recordingEnabled;
+		extern bool hosting;
+
+	};
+};
 //[/Headers]
 
 
@@ -36,17 +64,23 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class NewJucerComponent  : public Component,
-                           public ButtonListener,
-                           public ComboBoxListener
+class juceKailleraServerGame  : public Component,
+                                public ButtonListener,
+                                public ComboBoxListener
 {
 public:
     //==============================================================================
-    NewJucerComponent ();
-    ~NewJucerComponent();
+    juceKailleraServerGame ();
+    ~juceKailleraServerGame();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	void appendText(String & text);
+	void clearText();
+	void updateAutorunItems();
+	void updatePlayers();
+	void redrawPlayersRow(int index);
+	void handleCommandMessage(int  commandId);
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -60,26 +94,29 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	n02::kaillera::KailleraPlayersList kailleraPlayers;
+	int textLength;
+	n02::kaillera::KailleraGameChatInput chatInput;
     //[/UserVariables]
 
     //==============================================================================
-    TextEditor* textEditor;
-    TextEditor* textEditor2;
-    TextButton* textButton;
-    Component* component;
-    TextButton* textButton2;
-    TextButton* textButton3;
-    TextButton* textButton4;
-    ComboBox* comboBox;
-    Label* label;
-    ComboBox* comboBox2;
-    Label* label2;
+    TextEditor* txtChat;
+    TextEditor* txtChatInput;
+    TableListBox* lstPlayers;
+    TextButton* btnStartGame;
+    TextButton* btnLeaveGame;
+    TextButton* btnKick;
+    ComboBox* cmbRun;
+    Label* lblRun;
+    ComboBox* cmbDelay;
+    Label* lblDelay;
+    ToggleButton* chkRecord;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    NewJucerComponent (const NewJucerComponent&);
-    const NewJucerComponent& operator= (const NewJucerComponent&);
+    juceKailleraServerGame (const juceKailleraServerGame&);
+    const juceKailleraServerGame& operator= (const juceKailleraServerGame&);
 };
 
 
-#endif   // __JUCER_HEADER_NEWJUCERCOMPONENT_JUCEKAILLERASERVERGAME_ACD315B4__
+#endif   // __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__

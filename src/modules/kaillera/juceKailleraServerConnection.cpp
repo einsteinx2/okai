@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  4 Jul 2008 4:06:40 pm
+  Creation date:  6 Jul 2008 5:18:42 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -20,6 +20,8 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "common.h"
+using namespace n02;
 //[/Headers]
 
 #include "juceKailleraServerConnection.h"
@@ -31,39 +33,42 @@
 //==============================================================================
 juceKailleraServerConnection::juceKailleraServerConnection ()
     : lstUsers (0),
-      textEditor (0),
-      textEditor2 (0),
-      textButton (0),
-      component (0)
+      txtChat (0),
+      txtChatInput (0),
+      btnNewGame (0),
+      lstGames (0)
 {
-    addAndMakeVisible (lstUsers = new Component());
+    addAndMakeVisible (lstUsers = new TableListBox (T("usersList"), &kailleraUsers));
     lstUsers->setName (T("new component"));
 
-    addAndMakeVisible (textEditor = new TextEditor (T("new text editor")));
-    textEditor->setMultiLine (true);
-    textEditor->setReturnKeyStartsNewLine (false);
-    textEditor->setReadOnly (true);
-    textEditor->setScrollbarsShown (true);
-    textEditor->setCaretVisible (true);
-    textEditor->setPopupMenuEnabled (true);
-    textEditor->setText (String::empty);
+    addAndMakeVisible (txtChat = new TextEditor (T("new text editor")));
+    txtChat->setTooltip (T("chat messages appear here"));
+    txtChat->setMultiLine (true);
+    txtChat->setReturnKeyStartsNewLine (false);
+    txtChat->setReadOnly (true);
+    txtChat->setScrollbarsShown (true);
+    txtChat->setCaretVisible (true);
+    txtChat->setPopupMenuEnabled (true);
+    txtChat->setText (String::empty);
 
-    addAndMakeVisible (textEditor2 = new TextEditor (T("new text editor")));
-    textEditor2->setMultiLine (false);
-    textEditor2->setReturnKeyStartsNewLine (false);
-    textEditor2->setReadOnly (false);
-    textEditor2->setScrollbarsShown (true);
-    textEditor2->setCaretVisible (true);
-    textEditor2->setPopupMenuEnabled (true);
-    textEditor2->setText (String::empty);
+    addAndMakeVisible (txtChatInput = new TextEditor (T("new text editor")));
+    txtChatInput->setTooltip (T("type here and press return to send chat messages"));
+    txtChatInput->setMultiLine (false);
+    txtChatInput->setReturnKeyStartsNewLine (false);
+    txtChatInput->setReadOnly (false);
+    txtChatInput->setScrollbarsShown (true);
+    txtChatInput->setCaretVisible (true);
+    txtChatInput->setPopupMenuEnabled (true);
+    txtChatInput->setText (String::empty);
 
-    addAndMakeVisible (textButton = new TextButton (T("new button")));
-    textButton->setButtonText (T("new game"));
-    textButton->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
-    textButton->addButtonListener (this);
+    addAndMakeVisible (btnNewGame = new TextButton (T("new button")));
+    btnNewGame->setTooltip (T("create a game on the server"));
+    btnNewGame->setButtonText (T("new game"));
+    btnNewGame->setConnectedEdges (Button::ConnectedOnLeft | Button::ConnectedOnRight);
+    btnNewGame->addButtonListener (this);
 
-    addAndMakeVisible (component = new Component());
-    component->setName (T("new component"));
+    addAndMakeVisible (lstGames = new TableListBox (T("gamesList"), &kailleraGames));
+    lstGames->setName (T("new component"));
 
 
     //[UserPreSize]
@@ -72,21 +77,48 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
     setSize (750, 500);
 
     //[Constructor] You can add your own custom stuff here..
+	TRACE();
+
+	// Users List
+	lstUsers->getHeader()->addColumn("Nick", 1, 80, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn("Ping", 2, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn("C.S.", 3, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn("Status", 4, 30, 30, -1, TableHeaderComponent::notSortable);
+
+	lstUsers->setColour (TableListBox::outlineColourId, Colours::grey);
+	lstUsers->setOutlineThickness (1);
+
+	lstGames->getHeader()->addColumn("Game", 1, 320, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn("App", 2, 180, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn("Owner", 3, 110, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn("Status", 4, 55, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn("Players", 5, 50, 30, -1, TableHeaderComponent::notSortable);
+
+	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
+	lstGames->setOutlineThickness (1);
+
+	txtChatInput->addListener(&chatInputListener);
+
+	textLength = 0;
+
+	TRACE();
     //[/Constructor]
 }
 
 juceKailleraServerConnection::~juceKailleraServerConnection()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+	TRACE();
     //[/Destructor_pre]
 
     deleteAndZero (lstUsers);
-    deleteAndZero (textEditor);
-    deleteAndZero (textEditor2);
-    deleteAndZero (textButton);
-    deleteAndZero (component);
+    deleteAndZero (txtChat);
+    deleteAndZero (txtChatInput);
+    deleteAndZero (btnNewGame);
+    deleteAndZero (lstGames);
 
     //[Destructor]. You can add your own custom destruction code here..
+	TRACE();
     //[/Destructor]
 }
 
@@ -104,11 +136,11 @@ void juceKailleraServerConnection::paint (Graphics& g)
 
 void juceKailleraServerConnection::resized()
 {
-    lstUsers->setBounds (744 - 192, 8, 192, 336);
-    textEditor->setBounds (8, 8, (192) + 544, 312);
-    textEditor2->setBounds (8, 320, 472, 24);
-    textButton->setBounds (480, 320, 71, 24);
-    component->setBounds (8, 344, 736, 152);
+    lstUsers->setBounds (getWidth() - 6 - 192, 8, 192, proportionOfHeight (0.6720f));
+    txtChat->setBounds (8, 8, getWidth() - 206, (proportionOfHeight (0.6720f)) - 24);
+    txtChatInput->setBounds (8, (8) + (proportionOfHeight (0.6720f)) - 24, getWidth() - 278, 24);
+    btnNewGame->setBounds (getWidth() - 270, (8) + (proportionOfHeight (0.6720f)) - 24, 71, 24);
+    lstGames->setBounds (8, (8) + (proportionOfHeight (0.6720f)), getWidth() - 14, proportionOfHeight (0.3040f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -118,10 +150,11 @@ void juceKailleraServerConnection::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == textButton)
+    if (buttonThatWasClicked == btnNewGame)
     {
-        //[UserButtonCode_textButton] -- add your button handler code here..
-        //[/UserButtonCode_textButton]
+        //[UserButtonCode_btnNewGame] -- add your button handler code here..
+		n02::kaillera::uiNewGameCallback();
+        //[/UserButtonCode_btnNewGame]
     }
 
     //[UserbuttonClicked_Post]
@@ -131,6 +164,39 @@ void juceKailleraServerConnection::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+void juceKailleraServerConnection::appendText(String & text) {
+	txtChat->setHighlightedRegion(textLength, 0);
+	txtChat->insertTextAtCursor (text);
+	textLength += text.length();
+}
+
+void juceKailleraServerConnection::clearText() {
+	textLength = 0;
+	txtChat->setText("", false);
+}
+void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
+	LOG(%i, commandId);
+	TRACE();
+	int last = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->command;
+	TRACE();
+	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
+	TRACE();
+	if (last <= 3) {
+		TRACE();
+		lstUsers->updateContent();
+		lstUsers->repaint();
+	} else {
+		TRACE();
+		lstGames->updateContent();
+		lstGames->repaint();
+	}
+	TRACE();
+}
+
+void juceKailleraServerConnection::sendCommand(n02::kaillera::KailleraListsCommand * cmd) {
+	postCommandMessage(reinterpret_cast<int>(cmd));
+}
+
 //[/MiscUserCode]
 
 
@@ -149,22 +215,24 @@ BEGIN_JUCER_METADATA
                  initialHeight="500">
   <BACKGROUND backgroundColour="ffffffff"/>
   <GENERICCOMPONENT name="new component" id="8b78dd76054f6a1a" memberName="lstUsers"
-                    virtualName="" explicitFocusOrder="0" pos="744r 8 192 336" class="Component"
-                    params=""/>
-  <TEXTEDITOR name="new text editor" id="84ef9fa8765d7afd" memberName="textEditor"
-              virtualName="" explicitFocusOrder="0" pos="8 8 544 312" posRelativeW="8b78dd76054f6a1a"
-              initialText="" multiline="1" retKeyStartsLine="0" readonly="1"
-              scrollbars="1" caret="1" popupmenu="1"/>
-  <TEXTEDITOR name="new text editor" id="5d7f853814619b93" memberName="textEditor2"
-              virtualName="" explicitFocusOrder="0" pos="8 320 472 24" initialText=""
+                    virtualName="" explicitFocusOrder="0" pos="6Rr 8 192 67.2%" class="TableListBox"
+                    params="T(&quot;usersList&quot;), &amp;kailleraUsers"/>
+  <TEXTEDITOR name="new text editor" id="84ef9fa8765d7afd" memberName="txtChat"
+              virtualName="" explicitFocusOrder="0" pos="8 8 206M 24M" posRelativeH="8b78dd76054f6a1a"
+              tooltip="chat messages appear here" initialText="" multiline="1"
+              retKeyStartsLine="0" readonly="1" scrollbars="1" caret="1" popupmenu="1"/>
+  <TEXTEDITOR name="new text editor" id="5d7f853814619b93" memberName="txtChatInput"
+              virtualName="" explicitFocusOrder="0" pos="8 24R 278M 24" posRelativeY="8b78dd76054f6a1a"
+              tooltip="type here and press return to send chat messages" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
-  <TEXTBUTTON name="new button" id="ca7fb394f3815c91" memberName="textButton"
-              virtualName="" explicitFocusOrder="0" pos="480 320 71 24" buttonText="new game"
-              connectedEdges="3" needsCallback="1" radioGroupId="0"/>
-  <GENERICCOMPONENT name="new component" id="9340b1da010dd5f9" memberName="component"
-                    virtualName="" explicitFocusOrder="0" pos="8 344 736 152" class="Component"
-                    params=""/>
+  <TEXTBUTTON name="new button" id="ca7fb394f3815c91" memberName="btnNewGame"
+              virtualName="" explicitFocusOrder="0" pos="270R 24R 71 24" posRelativeY="8b78dd76054f6a1a"
+              tooltip="create a game on the server" buttonText="new game" connectedEdges="3"
+              needsCallback="1" radioGroupId="0"/>
+  <GENERICCOMPONENT name="new component" id="9340b1da010dd5f9" memberName="lstGames"
+                    virtualName="" explicitFocusOrder="0" pos="8 0R 14M 30.4%" posRelativeY="8b78dd76054f6a1a"
+                    class="TableListBox" params="T(&quot;gamesList&quot;), &amp;kailleraGames"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

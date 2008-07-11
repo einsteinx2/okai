@@ -492,6 +492,12 @@ void juceKailleraServerSelect::updateIP(String & ip) {
 void juceKailleraServerSelect::updateLV() {
 	lstServers->updateContent();
 }
+void juceKailleraServerSelect::updateServers(){
+	lstServers->updateContent();
+}
+void juceKailleraServerSelect::redrawServersRow(int index) {
+	lstServers->repaintRow(index);
+}
 //[/MiscUserCode]
 
 

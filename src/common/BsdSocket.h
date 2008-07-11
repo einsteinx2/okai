@@ -81,22 +81,22 @@ namespace n02 {
     public:
 
 		/* send */
-        inline int send(char * buffer, int length)
+        inline int send(const void * buffer, const int length)
         {
-            return (sendto(sock, buffer, length, 0, defaultAddress.getAddrPtr(), defaultAddress.getSize()) == SOCKET_ERROR);
+            return (sendto(sock, reinterpret_cast<const char*>(buffer), length, 0, defaultAddress.getAddrPtr(), defaultAddress.getSize()) == SOCKET_ERROR);
         }
 
 		/* send */
-        inline int sendTo(char * buffer, int length, SocketAddress * addressPtr)
+        inline int sendTo(const void * buffer, const int length, SocketAddress & addressPtr)
         {
-            return (sendto(sock, buffer, length, 0, addressPtr->getAddrPtr(), addressPtr->getSize()) == SOCKET_ERROR);
+            return (sendto(sock, reinterpret_cast<const char*>(buffer), length, 0, addressPtr.getAddrPtr(), addressPtr.getSize()) == SOCKET_ERROR);
         }
 
 		/* recv */
-        inline bool recv (char * buffer, int * length)
+        inline bool recv (void * buffer, int * length)
         {
             int temp_len;
-            if ((temp_len = ::recv(sock, buffer, *length, 0)) > 0) {
+            if ((temp_len = ::recv(sock, reinterpret_cast<char*>(buffer), *length, 0)) > 0) {
                 *length = temp_len;
                 return true;
             }
@@ -104,10 +104,10 @@ namespace n02 {
         }
 
         /* recv */
-		inline bool recvFrom (char * buffer, int * length, SocketAddress * addressPtr)
+		inline bool recvFrom (void * buffer, int * length, SocketAddress * addressPtr)
         {
 			int temp_len;
-			if ((temp_len = recvfrom(sock, buffer, *length, 0, addressPtr->getAddrPtr(), addressPtr->getSizePtr())) > 0) {
+			if ((temp_len = recvfrom(sock, reinterpret_cast<char*>(buffer), *length, 0, addressPtr->getAddrPtr(), addressPtr->getSizePtr())) > 0) {
 				*length = temp_len;
 				return true;
 			}
@@ -129,7 +129,7 @@ namespace n02 {
         static char bigRecvBuffer[BIG_RECV_BUFFER_SIZE];
 
     public:
-        static inline bool step(int secs, int ms);
+        static bool step(int secs, int ms);
         static void initialize();
         static void terminate();
 

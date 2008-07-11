@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Jul 2008 5:29:20 pm
+  Creation date:  7 Jul 2008 11:59:57 am
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,24 +19,14 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
-#define __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
+#ifndef __JUCER_HEADER_JUCEABORTABLESTATUSWINDOW_JUCEABORTABLESTATUSWINDOW_DC47E865__
+#define __JUCER_HEADER_JUCEABORTABLESTATUSWINDOW_JUCEABORTABLESTATUSWINDOW_DC47E865__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "juce.h"
 namespace n02 {
-	namespace kaillera {
-		class ServersListListboxModel
-			: public TableListBoxModel {
-				int  getNumRows ();
-				void  paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected);
-				void  paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected);
-				void  cellClicked (int rowNumber, int columnId, const MouseEvent &e);
-				void  cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e);
-				void  deleteKeyPressed (int lastRowSelected);
-				void  returnKeyPressed (int lastRowSelected);
-		};
-	};
+	extern bool cancelled;
+	extern volatile bool cancelableInitialized;
 };
 //[/Headers]
 
@@ -50,27 +40,21 @@ namespace n02 {
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class juceKailleraServerSelect  : public Component,
-                                  public ComboBoxListener,
-                                  public ButtonListener
+class juceAbortableStatusWindow  : public Component,
+                                   public ButtonListener
 {
 public:
     //==============================================================================
-    juceKailleraServerSelect ();
-    ~juceKailleraServerSelect();
+    juceAbortableStatusWindow ();
+    ~juceAbortableStatusWindow();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-	void saveConfig();
-	void updateIP(String & ip);
-	void updateLV();
-	void updateServers();
-	void redrawServersRow(int index);
+	void updateStatus(char * status);
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     void buttonClicked (Button* buttonThatWasClicked);
 
 
@@ -79,36 +63,17 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-
-
-	n02::kaillera::ServersListListboxModel serversListModel;
-
-
     //[/UserVariables]
 
     //==============================================================================
-    ComboBox* cmbModes;
-    TableListBox* lstServers;
-    TextButton* btnAdd;
-    TextButton* btnEdit;
-    TextButton* btnDelete;
-    TextEditor* txtNick;
-    Label* label;
-    Label* label2;
-    ComboBox* cmbConnection;
-    TextEditor* txtIP;
-    Label* label3;
-    Label* label4;
-    TextButton* btnConnect;
-    TextButton* btnPing;
-    TextButton* btnMastersList;
-    Path internalPath1;
+    TextButton* btnCancel;
+    Label* lblStatus;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    juceKailleraServerSelect (const juceKailleraServerSelect&);
-    const juceKailleraServerSelect& operator= (const juceKailleraServerSelect&);
+    juceAbortableStatusWindow (const juceAbortableStatusWindow&);
+    const juceAbortableStatusWindow& operator= (const juceAbortableStatusWindow&);
 };
 
 
-#endif   // __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
+#endif   // __JUCER_HEADER_JUCEABORTABLESTATUSWINDOW_JUCEABORTABLESTATUSWINDOW_DC47E865__

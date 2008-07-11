@@ -36,7 +36,7 @@ SOFTWARE.
 #include "DataQueue.h"
 #include "DynamicAllocator.h"
 #include "DynamicArray.h"
-#include "DynamicBuffer.h"
+
 #include "DynamicOrderedArray.h"
 #include "DynamicQueue.h"
 #include "DynamicStack.h"
@@ -55,6 +55,10 @@ SOFTWARE.
 #include "StringUtils.h"
 #include "UdpSocket.h"
 #include "trace.h"
+#include "DynamicBuffer.h"
+#ifdef WIN32
+#include "SEH_win32.h"
+#endif
 
 namespace n02 {
 

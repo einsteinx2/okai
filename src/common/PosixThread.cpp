@@ -133,6 +133,10 @@ namespace n02 {
 		Sleep(ms);
 	}
 
+	int PosixThread::getCurrentThreadId() {
+		return GetCurrentThreadId();
+	}
+
 };
 
 #endif

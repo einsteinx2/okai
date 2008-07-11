@@ -259,7 +259,7 @@ namespace n02 {
 		autorunInitialize();
 		GuiInitialize();
 
-		LOG(Activate context in %x, v);
+		LOG(Activate context in %x %i, v, PosixThread::getCurrentThreadId());
 
 		if (GuiShowLicenseDialog() ==0) {
 

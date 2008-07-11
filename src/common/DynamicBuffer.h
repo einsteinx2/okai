@@ -62,12 +62,11 @@ namespace n02 {
         /* constructor */
         DynamicBuffer()
         {
-            reset();
             ptr = end = begin = body = 0;
         }
 
         /* constructor */
-        DynamicBuffer(const char * sourceBuffer, const int length)
+        DynamicBuffer(const unsigned char * sourceBuffer, const int length)
         {
             presetBufferPtr(sourceBuffer, length);
         }
@@ -171,8 +170,17 @@ namespace n02 {
             return bytes_to_remove;
         }
 
+		inline int skipString()
+        {
+            register int bytes_to_remove = common_min(static_cast<int>(strlen(reinterpret_cast<char*>(ptr)) + 1), end - ptr);
+            if (bytes_to_remove > 0) {
+                ptr += bytes_to_remove;
+            }
+            return bytes_to_remove;
+        }
+
 #define _primitive_read_return(_type) \
-    require(end - ptr < sizeof(_type)); \
+    require(end - ptr >= sizeof(_type)); \
     register _type return_value = *reinterpret_cast<_type*>(ptr);\
     ptr += sizeof(_type);\
     return return_value;
@@ -180,7 +188,8 @@ namespace n02 {
         /* read signed 32 bit integer */
         inline int readSignedInt32()
         {
-            _primitive_read_return(int);
+            
+			_primitive_read_return(int);
         }
 
         /* read signed 16 bit integer */
@@ -256,7 +265,7 @@ namespace n02 {
             return ptr - begin;
         }
 
-        inline void presetBuffer(const char * sourceBuffer, const int length)
+        inline void presetBuffer(const unsigned char * sourceBuffer, const int length)
         {
             if (body)
                 free(body);
@@ -284,7 +293,7 @@ namespace n02 {
 
     protected:
 
-        inline void ensureSized(int extraLen)
+        void ensureSized(int extraLen)
         {
             if (begin) {
                 if (ptr + extraLen > end) {
@@ -306,7 +315,4 @@ namespace n02 {
             }
         }
     };
-
 };
-
-

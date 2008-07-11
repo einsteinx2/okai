@@ -459,6 +459,7 @@ namespace n02 {
 #define ARGNO(N, T) ((T)(arglist[N]))
 
 	// string formating
+	// TODO: This shit needs a lot of work
 	void StringUtils::cprintf ( char *buffer, const char *format, void**arglist ) {
 
 		const char * fmt = format;

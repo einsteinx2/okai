@@ -38,12 +38,18 @@ namespace n02 {
         GlobalTimer::initialize();
 		StringUtils::initialize();
 		defaultLogger.initialize("n02.log", false);
+#ifdef WIN32
+		sehInitialize();
+#endif
     }
 
     void commonTerminate(){
 		defaultLogger.terminate();
         BsdSocket::terminate();
-        GlobalTimer::terminate();		
+        GlobalTimer::terminate();
+#ifdef WIN32
+		sehTerminate();
+#endif
     }
 
 };

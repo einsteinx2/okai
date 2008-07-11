@@ -94,9 +94,11 @@ namespace n02 {
 
 	char * SocketAddress::toString()
 	{
-		static char print_space[25];
-		void * args [] = {(void*)inet_ntoa(addr.sin_addr), (void*)getPort()};
-		StringUtils::cprintf(print_space, "%1$s:%2$i", args);
+		static char print_space[55];
+		*print_space = 0;
+		strcpy(print_space, inet_ntoa(addr.sin_addr));
+		strcat(print_space, ":");
+		StringUtils::intToAlpha(print_space + strlen(print_space), getPort());
 		return print_space;
 	}
 

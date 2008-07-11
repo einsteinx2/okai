@@ -112,6 +112,16 @@ namespace n02 {
 		return 0;	
 	}
 
+	char * GamesList::current(int * curIndex)
+	{
+		if (curIndex) {
+			if (*curIndex >= 0 && *curIndex < games.itemsCount()) {
+				return games[*curIndex].name;
+			}
+		}
+		return 0;
+	}
+
 	char * GamesList::find(const char * game)
 	{
 		if (game) {

@@ -41,6 +41,14 @@ namespace n02 {
 
 	void GuiInitialize() {
 		LOG(Initializing gui);
+
+		SystemStats system;
+		
+		LOG(Juce version %s, system.getJUCEVersion().toUTF8());
+
+		String stat;
+		stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
+		LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
 	}
 
 	/* Thread juice */
@@ -61,7 +69,7 @@ namespace n02 {
 	public:
 		volatile int juceInitialized;
 		void run(){
-			LOG(Juce Thread Entry);
+			LOG(Juce Thread Entry %i, PosixThread::getCurrentThreadId());
 			JUCEApplication::main(0, argv, new OpenKailleraJUCEApp);
 			LOG(Juce Thread Exit);
 		}
@@ -79,7 +87,7 @@ namespace n02 {
 	class GuiThread: public PosixThread {
 	public:
 		void run() {
-			LOG(Gui thread in);
+			LOG(Gui thread entry %i, PosixThread::getCurrentThreadId());
 
 			juceThread.juceInitialized = 0;
 			juceThread.start();

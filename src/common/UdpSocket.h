@@ -48,7 +48,7 @@ namespace n02 {
 
         bool initialize(int port=0, int minBufferSize=8000, bool blocking = false)
         {
-            return BsdSocket::socket(AF_INET, SOCK_DGRAM, IPPROTO_IP, port, blocking, minBufferSize);;
+            return BsdSocket::socket(AF_INET, SOCK_DGRAM, IPPROTO_IP, port, blocking, minBufferSize);
         }
 
         virtual void dataArrivalCallback(){}
@@ -56,3 +56,4 @@ namespace n02 {
     };
 
 };
+

@@ -244,16 +244,8 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="os dependent"
+				Name="other os dependent"
 				>
-				<File
-					RelativePath="..\..\common\BsdSocket.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\BsdSocket.h"
-					>
-				</File>
 				<File
 					RelativePath="..\..\common\ConfigurationManager.cpp"
 					>
@@ -274,18 +266,18 @@
 					RelativePath="..\..\common\PosixThread.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\common\SocketAddress.cpp"
+				<Filter
+					Name="win32 only"
 					>
-				</File>
-				<File
-					RelativePath="..\..\common\SocketAddress.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\UdpSocket.h"
-					>
-				</File>
+					<File
+						RelativePath="..\..\common\SEH_win32.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\common\SEH_win32.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="misc"
@@ -312,6 +304,30 @@
 				</File>
 				<File
 					RelativePath="..\..\common\trace.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sockets"
+				>
+				<File
+					RelativePath="..\..\common\BsdSocket.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\BsdSocket.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\SocketAddress.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\SocketAddress.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\common\UdpSocket.h"
 					>
 				</File>
 			</Filter>
@@ -475,6 +491,14 @@
 				Name="n02.kaillera"
 				>
 				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.cpp"
 					>
 				</File>
@@ -499,11 +523,43 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\modules\kaillera\kaillera_ClientCore.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_ClientCore.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_Instruction.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\modules\kaillera\modKaillera.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\modules\kaillera\modKaillera.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\uiServerWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\uiServerWindowLists.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\uiServerWindowLists.h"
 					>
 				</File>
 			</Filter>
@@ -531,11 +587,35 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\modules\gameSelect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\gameSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceAbortableStatusWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceAbortableStatusWindow.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\modules\juceAddEditIPDialog.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\modules\juceAddEditIPDialog.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceGameSelect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceGameSelect.h"
 					>
 				</File>
 			</Filter>
