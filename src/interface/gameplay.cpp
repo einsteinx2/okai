@@ -58,11 +58,13 @@ namespace n02 {
 
 	static int  N02CCNV gameplaySynchronizeGame(void * syncData, int len){
 		int return_val = transport.synchronizeGame(syncData, len);
+#if 0
 		{
 			char strBuffer[256];
 			StringUtils::bytesToStr(strBuffer, (unsigned char*)syncData, len);
 			LOG(%s; %i; ret=%i, strBuffer, len, return_val);
 		}
+#endif
 		recorder.addGameSyncData(syncData, return_val);
 		return return_val;
 	}
@@ -96,12 +98,13 @@ namespace n02 {
 	static int  N02CCNV gameplaySyncData(void * value, const int len){
 		int return_val = transport.syncData(value, len);
 		recorder.addSyncData(value, return_val);
+#if 0
 		{
 			char strBuffer[256];
 			StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
 			LOG(%s; %i; ret=%i, strBuffer, len, return_val);
 		}
-
+#endif
 		return return_val;
 	}
 	static int N02CCNV gameplaySyncDataCheck () {

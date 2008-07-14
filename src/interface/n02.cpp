@@ -260,6 +260,7 @@ namespace n02 {
 		GuiInitialize();
 
 		LOG(Activate context in %x %i, v, PosixThread::getCurrentThreadId());
+		LOG(%s, N02_DESCRIPTION);
 
 		if (GuiShowLicenseDialog() ==0) {
 

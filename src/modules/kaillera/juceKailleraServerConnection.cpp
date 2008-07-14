@@ -175,7 +175,7 @@ void juceKailleraServerConnection::clearText() {
 	txtChat->setText("", false);
 }
 void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
-	LOG(%i, commandId);
+	//LOG(%i, commandId);
 	TRACE();
 	int last = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->command;
 	TRACE();

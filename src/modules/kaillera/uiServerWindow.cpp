@@ -363,12 +363,14 @@ namespace n02 {
 		}
 		static void N02CCNV gameEnded ()
 		{
-			modHelper.endGame();
-			gameRunning = false;
+			if (gameRunning) {
+				modHelper.endGame();
+				gameRunning = false;
 
-			String text;
-			text << "* Game ended \r";
-			KailleraServerGame::cmponnt->appendText(text);
+				String text;
+				text << "* Game ended \r";
+				KailleraServerGame::cmponnt->appendText(text);
+			}
 		}
 
 		static ClientCoreCallbacks callbacks = {

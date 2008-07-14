@@ -99,7 +99,7 @@ namespace n02 {
 
 			
 			void send(Instruction & instr) {
-				LOG(instruction send %x, instr.type);
+				//LOG(instruction send %x, instr.type);
 				connection.includeInstruction(instr);
 				if (instr.type == GAMEDATA || instr.type == GAMCDATA || state == CONNECTED || state == LOADING || state == LOADED) {
 					connection.sendMessage();
@@ -141,7 +141,7 @@ namespace n02 {
 
 			// state transformation function
 			void updateState(CoreStateInput input) {
-				LOG(state=%i[%i], state, input);
+				//LOG(state=%i[%i], state, input);
 				TRACE();
 				switch (state) {
 					case UNINITIALIZED:
@@ -299,6 +299,17 @@ namespace n02 {
 							callbacks.gameEnded();
 							state = INGAME;
 							return;
+						} else if (input == RECVED_GAMRLEAV) {
+							callbacks.gameEnded();
+							if (flags.LEAVE_REQUESTED != 1)
+								callbacks.gameKicked();
+							flags.LEAVE_REQUESTED = 0;
+							callbacks.gameClosed();
+							state = LOGGEDIN;
+							return;
+						} else if (input == ACTION_LEAVE) {
+							flags.LEAVE_REQUESTED = 1;
+							return;
 						}
 						break;
 					case LOADED:
@@ -314,7 +325,6 @@ namespace n02 {
 							return;
 						} else if (input == ACTION_SYNC_IDLE) {
 							unsigned int time = GlobalTimer::getTime();
-
 							if (time - gameInfo.lastDataSentTime > 5000) {
 								gameInfo.lastDataSentTime = time;
 								if (time - lastTimeoutSent > 12000) {
@@ -327,6 +337,17 @@ namespace n02 {
 									connection.sendMessage();
 								}
 							}
+							return;
+						} else if (input == RECVED_GAMRLEAV) {
+							callbacks.gameEnded();
+							if (flags.LEAVE_REQUESTED != 1)
+								callbacks.gameKicked();
+							flags.LEAVE_REQUESTED = 0;
+							callbacks.gameClosed();
+							state = LOGGEDIN;
+							return;
+						} else if (input == ACTION_LEAVE) {
+							flags.LEAVE_REQUESTED = 1;
 							return;
 						}
 						break;
@@ -341,18 +362,33 @@ namespace n02 {
 							return;
 						} else if (input == ACTION_RUNNING_IDLE) {
 							unsigned int time = GlobalTimer::getTime();
-							if (gameInfo.inBuffer.length() < gameInfo.totalInputLength && (time - gameInfo.lastDataSentTime) > 100) {
-								gameInfo.lastDataSentTime = time;
-								if (time - lastTimeoutSent > 10000) {
-									Instruction drop(GAMRDROP);
-									drop.writeSignedInt8(0);
-									send(drop);
-									callbacks.gameEnded();
-									state = INGAME;
-								} else {
-									connection.sendMessage(((gameInfo.delay + 6)/userInfo.connectionSetting) + 1);
+							if (gameInfo.inBuffer.length() < gameInfo.totalInputLength) {
+								if((time - gameInfo.lastDataSentTime) > 100) {
+									gameInfo.lastDataSentTime = time;
+									if (time - lastTimeoutSent > 10000) {
+										Instruction drop(GAMRDROP);
+										drop.writeSignedInt8(0);
+										send(drop);
+										callbacks.gameEnded();
+										state = INGAME;
+									} else {
+										connection.sendMessage(((gameInfo.delay + 6)/userInfo.connectionSetting) + 1);
+									}
 								}
+							} else {
+								lastTimeoutSent = time;
 							}
+							return;
+						} else if (input == RECVED_GAMRLEAV) {
+							callbacks.gameEnded();
+							if (flags.LEAVE_REQUESTED != 1)
+								callbacks.gameKicked();
+							flags.LEAVE_REQUESTED = 0;
+							callbacks.gameClosed();
+							state = LOGGEDIN;
+							return;
+						} else if (input == ACTION_LEAVE) {
+							flags.LEAVE_REQUESTED = 1;
 							return;
 						}
 						break;
@@ -363,7 +399,7 @@ namespace n02 {
 				LOG(erroneous state %i[%i], state, input);
 				char xxx[234];
 				wsprintfA(xxx, "erroneous state/input %i[%i]", state, input);
-				MessageBoxA(0,xxx,0,0);
+				callbacks.clientLoginStatusChange(xxx);
 				TRACE();
 			}
 
@@ -392,7 +428,7 @@ namespace n02 {
 			}
 
 			void instructionArrivalCallback(Instruction & ki) {
-				LOG(instruction arrival %x, ki.type);
+				//LOG(instruction arrival %x, ki.type);
 				TRACE();
 				switch (ki.type) {
 				case USERJOIN:
@@ -628,8 +664,8 @@ namespace n02 {
 			void stepRunning()
 			{
 				TRACE();
+				connection.step(1);
 				updateState(ACTION_RUNNING_IDLE);
-				connection.step(5);
 				TRACE();
 			}
 
@@ -792,25 +828,23 @@ namespace n02 {
 		// game load complete
 		int  N02CCNV synchronizeGame(void * data, int len)
 		{
-			if (data != 0 && len != 0) {
-
-
-
-
-			}
-			updateState(ACTION_SYNC);
-
-			while (state == LOADED)
-				stepSync();
-
-			if (state == RUNNING) {
+			if (state == LOADING) {
 				if (data != 0 && len != 0) {
 
 				}
-				return 0;
-			} else {
-				return -1;
+				updateState(ACTION_SYNC);
+
+				while (state == LOADED)
+					stepSync();
+
+				if (state == RUNNING) {
+					if (data != 0 && len != 0) {
+
+					}
+					return 0;
+				}
 			}
+			return -1;
 		}
 
 		// end game
@@ -859,7 +893,7 @@ namespace n02 {
 							data.writeUnsignedInt8(x & 0xFF);
 							send(data);
 							gameInfo.outBuffer.pop(requiredBufferLen);
-							LOG(Sent index %i, x);
+							//LOG(Sent index %i, x);
 							return;
 						}
 					}
@@ -913,8 +947,6 @@ namespace n02 {
 			} else {
 				return -1;
 			}
-			return 0;
-
 		}
 
 		// do both send and recv

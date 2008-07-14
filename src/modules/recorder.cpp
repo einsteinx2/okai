@@ -80,7 +80,7 @@ namespace n02 {
 	{ 
 		char strBuffer[256];
 		StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-		LOG(%s; %i; %i, strBuffer, len);
+		//LOG(%s; %i; %i, strBuffer, len);
 		return len;
 	}
 
@@ -96,7 +96,7 @@ namespace n02 {
 
 	static int N02CCNV  recorderDefaultAddChat (const char * username, const char * chat)
 	{
-		LOG(%s; %s, username, chat);
+		//LOG(%s; %s, username, chat);
 		return 0;
 	}
 
