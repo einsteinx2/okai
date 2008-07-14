@@ -38,6 +38,10 @@ namespace n02 {
 				RECVED_ERRONEUS=14,
 				RECVED_PING=15,
 				RECVED_LOGNSUCC=16,
+				RECVED_GAMRLEAV=17,
+				RECVED_KICKED=18,
+				RECVED_GAMEJOINED=19,
+				RECVED_GAMEMADE=20,
 				DUMMY
 			};
 
@@ -75,12 +79,20 @@ namespace n02 {
 			ClientMessaging connection;
 
 			void send(Instruction & instr) {
+				LOG(instruction send %x, instr.type);
 				connection.includeInstruction(instr);
 				if (instr.type == GAMEDATA || instr.type == GAMCDATA || state == CONNECTED) {
 					connection.sendMessage();
 				}
 			}
 
+			void resetDisconnectTimeout() {
+				if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 55000) {
+					Instruction timeout(TMOUTRST);
+					send(timeout);
+					lastTimeoutSent = GlobalTimer::getTime();
+				}
+			}
 
 			// state transformation function
 			void updateState(CoreStateInput input) {
@@ -91,27 +103,28 @@ namespace n02 {
 						if (input == ACTION_INITIALIZE) {
 							state = INITIALIZED;
 							lastTimeoutSent = 0xFFFFFFFF;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
 						}
 						break;
-
 					case INITIALIZED:
 						if (input == ACTION_TERMINATE) {
 							state = UNINITIALIZED;
+							return;
 						} else if (input == ACTION_CONNECT) {
 							state = CONNECTING;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
 						}
 						break;
 					case CONNECTING:
 						if (input == RECVED_VER) {
 							state = REJECTED; callbacks.clientLoginStatusChange("Connection failed: Protocol version mismatch.");
+							return;
 						} else if (input == RECVED_TOO) {
 							state = REJECTED; callbacks.clientLoginStatusChange("Connection failed: Server is full.");
+							return;
 						} else if (input == RECVED_ERRONEUS) {
 							state = REJECTED; callbacks.clientLoginStatusChange("Connection failed: Erroneous response");
+							return;
 						} else if (input == RECVED_HELLODOOD) {
 							state = CONNECTED; callbacks.clientLoginStatusChange("Connected, logging in");
 							connection.setState(INSTRMSGS);
@@ -125,7 +138,7 @@ namespace n02 {
 								core::send(login);
 #ifdef PING_HACK
 								Instruction pong (USERPONG);
-								for (int x = 0; x < 4; x++)						
+								for (int x = 0; x < 4; x++)
 									pong.writeSignedInt32(x);
 
 								send(pong);
@@ -134,99 +147,108 @@ namespace n02 {
 								send(pong);
 #endif
 							}
-						} else {
-							LOG(erroneous input %i[%i], state, input);
-						}
-					case DISCONNECTED:
-						if (input == ACTION_TERMINATE) {
-							state = UNINITIALIZED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
+						} else if (input == ACTION_DISCONNECT) {
+							state = DISCONNECTED;
 						}
 						break;
-
-
+					case DISCONNECTED:
 					case REJECTED:
 						if (input == ACTION_TERMINATE) {
 							state = UNINITIALIZED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
 						}
 						break;
-
-
 					case LOADING:
 						if (input == ACTION_INITIALIZE) {
 							state = INITIALIZED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
 						}
 						break;
-
-					case CONNECTED:
+					case CONNECTED: // Logging in
 						if (input == RECVED_PING) {
-
-
+							lastTimeoutSent = GlobalTimer::getTime();
+							return;
 						} else if (input == RECVED_LOGNSUCC) {
 							state = LOGGEDIN;
 							callbacks.loggedIn();
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
+						} else if (input == ACTION_IDLE) {
+							if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 500) {
+								connection.sendMessage();
+								lastTimeoutSent = GlobalTimer::getTime();
+							}
+							return;
 						}
 						break;
 					case LOGGEDIN:
 						if (input == ACTION_IDLE) {
-							if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 55000) {
-								Instruction timeout(TMOUTRST);
-								send(timeout);
-								lastTimeoutSent = GlobalTimer::getTime();
-							}
+							resetDisconnectTimeout();
+							return;
 						} else if (input == ACTION_DISCONNECT) {
 							connection.sendMessage();
 							state = DISCONNECTED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
+						} else if (input == RECVED_GAMEJOINED) {
+							callbacks.gameJoined();
+							state = INGAME;
+							flags.GAME_OWNER = 0;
+							flags.JOIN_REQUESTED = 0;
+							flags.USERID_REQUESTED = 1;
+							return;
+						} else if (input == RECVED_GAMEMADE) {
+							callbacks.gameCreated();
+							state = INGAME;
+							flags.GAME_OWNER = 1;
+							flags.CREATE_REQUESTED = 0;
+							flags.USERID_REQUESTED = 1;
+							return;
+						} else if (input == ACTION_CREATE) {
+							flags.CREATE_REQUESTED = 1;
+							return;
+						} else if (input == ACTION_JOIN) {
+							flags.JOIN_REQUESTED = 1;
+							return;
 						}
 						break;
-
 					case INGAME:
 						if (input == ACTION_IDLE) {
-							if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 55000) {
-								Instruction timeout(TMOUTRST);
-								send(timeout);
-								lastTimeoutSent = GlobalTimer::getTime();
-							}
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							resetDisconnectTimeout();
+							return;
+						} else if (input == ACTION_LEAVE) {
+							flags.LEAVE_REQUESTED = 1;
+							return;
+						} else if (input == RECVED_KICKED) {
+							state = LOGGEDIN;
+							callbacks.gameKicked();
+							callbacks.gameClosed();
+							return;
+						} else if (input == RECVED_GAMRLEAV) {
+							if (flags.LEAVE_REQUESTED != 1)
+								callbacks.gameKicked();
+							flags.LEAVE_REQUESTED = 0;
+							callbacks.gameClosed();
+							state = LOGGEDIN;
+							return;
 						}
 						break;
-
 					case LOADED:
 						if (input == ACTION_INITIALIZE) {
 							state = INITIALIZED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
+							return;
 						}
 						break;
 
 					case RUNNING:
-						if (input == ACTION_INITIALIZE) {
-							state = INITIALIZED;
-						} else {
-							LOG(erroneous input %i[%i], state, input);
-						}
 						break;
-
-						/*
-				CONNECTED=8,
-				LOGGEDIN=9,
-				INGAME=10
-				*/
-
 					default:
-						LOG(erroneous state %i[%i], state, input);
 						break;
 				};
+				TRACE();
+				LOG(erroneous state %i[%i], state, input);
+				char xxx[234];
+				wsprintfA(xxx, "erroneous state/input %i[%i]", state, input);
+				MessageBoxA(0,xxx,0,0);
 				TRACE();
 			}
 
@@ -255,7 +277,7 @@ namespace n02 {
 			}
 
 			void instructionArrivalCallback(Instruction & ki) {
-				LOG(instruction arrival %i, ki.type);
+				LOG(instruction arrival %x, ki.type);
 				TRACE();
 				switch (ki.type) {
 				case USERJOIN:
@@ -316,7 +338,7 @@ namespace n02 {
 						TRACE();
 #ifndef PING_HACK
 						Instruction pong (USERPONG);
-						for (int x = 0; x < 4; x++)						
+						for (int x = 0; x < 4; x++)
 							pong.writeSignedInt32(x);
 						send(pong);
 #endif
@@ -342,8 +364,8 @@ namespace n02 {
 							&& strcmp(ki.user, userInfo.nick)==0
 							&& strcmp(gname, userInfo.game)==0)
 						{
-							flags.GAME_OWNER = 1;
 							userInfo.gameId = id;
+							updateState(RECVED_GAMEMADE);
 						}
 						break;
 					}
@@ -363,21 +385,6 @@ namespace n02 {
 						TRACE();
 						unsigned int id = ki.readUnsignedInt32();
 						callbacks.serverGameClose(id);
-						if (id==userInfo.gameId){
-							if (flags.LEAVE_REQUESTED==1)
-								flags.LEAVE_REQUESTED = 0;
-							else {
-								//							if (game != WAITING) {
-								//								endGame();
-								//							}
-								//							callbacks.gameClosed();
-								//							gameId = 0;
-								//							if (gameOwner == true && userId != 0xFFFF) {
-								//								callbacks.gameKicked();
-								//								userId = 0;
-								//							}
-							}
-						}
 						break;
 					}
 				case GAMRJOIN:
@@ -390,10 +397,11 @@ namespace n02 {
 						char connset = ki.readSignedInt8();
 						callbacks.gamePlayerJoined(username, ping, uid, connset);
 
-						if (flags.USERID_REQUESTED==1 && userInfo.connectionSetting == connset && strcmp(userInfo.nick, username)==0) {
+						if (flags.USERID_REQUESTED==1
+							&& userInfo.connectionSetting == connset
+							&& strcmp(userInfo.nick, username)==0) {
 							userInfo.userId = uid;
 							flags.USERID_REQUESTED = 0;
-							flags.GAME_OWNER = 0;
 						}
 						if (state != INGAME) {
 							coreKick(uid);
@@ -406,15 +414,14 @@ namespace n02 {
 						unsigned short id = ki.readSignedInt16();
 						callbacks.gamePlayerLeft(ki.user, id);
 						if (id==userInfo.userId) {
-							callbacks.gameKicked();
-							callbacks.gameClosed();
+							updateState(RECVED_GAMRLEAV);
 						}
 						break;
 					}
 				case GAMRSLST:
 					{
 						TRACE();
-						callbacks.gameJoined();
+						updateState(RECVED_GAMEJOINED);
 						int numplayers = ki.readUnsignedInt32();
 						for (int x=0; x < numplayers; x++) {
 							char name[32];
@@ -426,7 +433,7 @@ namespace n02 {
 						}
 						break;
 					}
-				case GAMEDATA:
+//				case GAMEDATA:
 //					{
 //						unsigned short length = ki.readUnsignedInt16();
 //						unsigned short reqLen = 0xFFFF & (totalInputLength * connectionSetting);
@@ -484,7 +491,7 @@ namespace n02 {
 //				case GAMRSRDY:
 //					{
 //						LOG(All players are ready);
-//						runGame();						
+//						runGame();
 //					}
 //					break;
 				default:
@@ -502,7 +509,7 @@ namespace n02 {
 			{
 				TRACE();
 				flags.INSIDE_STEP = 1;
-				connection.step(5000);
+				connection.step(100);
 				TRACE();
 				if (state > RUNNING) {
 					updateState(ACTION_IDLE);
@@ -602,6 +609,7 @@ namespace n02 {
 		// join game
 		void coreJoin(const unsigned int id)
 		{
+			updateState(ACTION_JOIN);
 			userInfo.gameId = id;
 			Instruction join(GAMRJOIN);
 			join.writeUnsignedInt32(id);
@@ -610,7 +618,6 @@ namespace n02 {
 			join.writeSignedInt16(-1);
 			join.writeSignedInt8(userInfo.connectionSetting);
 			send(join);
-			updateState(ACTION_JOIN);
 		}
 
 		// create game
@@ -618,27 +625,22 @@ namespace n02 {
 		{
 			if (name != 0 && strlen(name) > 0) {
 				strcpy(userInfo.game, name);
-				flags.CREATE_REQUESTED = 1;
+				updateState(ACTION_CREATE);
 				Instruction newg(GAMEMAKE);
 				newg.writeString(name);
 				newg.writeSignedInt8(0);
 				newg.writeSignedInt32(-1);
 				send(newg);
 			}
-			updateState(ACTION_CREATE);
 		}
 
 		// leave game
 		void coreLeave()
 		{
 
-			/*if (game!=WAITING) {
-			endGame();
-			}
 			Instruction leave(GAMRLEAV);
 			leave.writeSignedInt16(-1);
-			sendInclude(&leave);
-			userId = 0xFFFF;*/
+			send(leave);
 
 			updateState(ACTION_LEAVE);
 		}

@@ -24,6 +24,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "juce02.h"
+#include "uiServerWindowLists.h"
+
 namespace n02 {
 	namespace kaillera {
 
@@ -31,6 +33,7 @@ namespace n02 {
 			int  getNumRows ();
 			void  paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected);
 			void  paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected);
+			void  cellClicked (int rowNumber, int columnId, const MouseEvent &e);
 		};
 
 		void uiStartGameCallback();
@@ -78,9 +81,7 @@ public:
 	void appendText(String & text);
 	void clearText();
 	void updateAutorunItems();
-	void updatePlayers();
-	void redrawPlayersRow(int index);
-	void handleCommandMessage(int  commandId);
+	void sendCommand(n02::kaillera::KailleraListsCommand * cmd);
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -97,6 +98,7 @@ private:
 	n02::kaillera::KailleraPlayersList kailleraPlayers;
 	int textLength;
 	n02::kaillera::KailleraGameChatInput chatInput;
+	void handleCommandMessage(int  commandId);
     //[/UserVariables]
 
     //==============================================================================

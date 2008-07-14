@@ -37,7 +37,7 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="..\..\..\release\dsa.exe"
+				Command="..\..\..\release\FakeEmu.exe"
 				WorkingDirectory="..\..\..\release"
 				CommandArguments=""
 				Attach="false"

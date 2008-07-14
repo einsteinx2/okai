@@ -39,6 +39,9 @@ SOFTWARE.
 
 using namespace std;
 
+#define INCLUDE_THREADID
+#define INSTANT_FLASH
+
 namespace n02 {
 
     Logger defaultLogger;
@@ -79,8 +82,10 @@ namespace n02 {
         if (fileHandle != 0) {
             ofstream * of = reinterpret_cast<ofstream*>(fileHandle);
             of->write(line, strlen(line));
-			of->write("\r\n", 2);
-			of->flush();
+            of->write("\r\n", 2);
+#ifdef INSTANT_FLASH
+            of->flush();
+#endif
         }
     }
 
@@ -93,13 +98,22 @@ namespace n02 {
 
     void Logger::logprintf(char * format, ...)
     {
+#ifdef INCLUDE_THREADID
         char print_buffer[1025];
-		sprintf(print_buffer, "%i: ", PosixThread::getCurrentThreadId());
+        sprintf(print_buffer, "%i: ", PosixThread::getCurrentThreadId());
         va_list args;
         va_start(args, format);
         vsprintf(print_buffer + strlen(print_buffer), format, args);
         va_end( args );
         logLine(print_buffer);
+#else
+        char print_buffer[1025];
+        va_list args;
+        va_start(args, format);
+        vsprintf(print_buffer, format, args);
+        va_end( args );
+        logLine(print_buffer);
+#endif
     }
 
     void Logger::logBuffer(void * bytes, int length, char * name)

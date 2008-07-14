@@ -28,44 +28,57 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-#include "trace.h"
-#include "Logger.h"
-#include "PosixThread.h"
+#include "common.h"
+
 namespace n02 {
 
-	typedef struct {
-		char * file;
-		char * function;
-		int line;
-		int threadID;
-	} TraceStackElement;
+#define INCLUDE_THREADID
+
+    typedef struct {
+        char * file;
+        char * function;
+        int line;
+#ifdef INCLUDE_THREADID
+        int threadID;
+#endif
+    } TraceStackElement;
 
 #define TRACE_HISTORY_LEVEL 7
 #define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
 #define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
 
-	static TraceStackElement traceStack[TRACE_STACK_LEN];
-	static unsigned int traceStackPtr = 0;
+    static TraceStackElement traceStack[TRACE_STACK_LEN];
+    static unsigned int traceStackPtr = 0;
 
-	void trace_log(){
-		for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
-			int index = (traceStackPtr-x) & TRACE_STACK_MASK;
-			LOGTRACE(%09u:%i-%s:%i:%s,
-				(traceStackPtr-x),
-				traceStack[index].threadID,
-				traceStack[index].file,
-				traceStack[index].line,
-				traceStack[index].function);
-		}
-	}
+    void trace_log(){
+        for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
+            int index = (traceStackPtr-x) & TRACE_STACK_MASK;
+#ifdef INCLUDE_THREADID
+            LOGTRACE(%09u:%i-%s:%i:%s,
+                (traceStackPtr-x),
+                traceStack[index].threadID,
+                traceStack[index].file,
+                traceStack[index].line,
+                traceStack[index].function);
+#else
+            LOGTRACE(%09u:%s:%i:%s,
+                (traceStackPtr-x),
+                traceStack[index].file,
+                traceStack[index].line,
+                traceStack[index].function);
+#endif
+        }
+    }
 
-	void _n02_trace(char * file, char * function, int line) {
-		traceStack[traceStackPtr&TRACE_STACK_MASK].file = file;
-		traceStack[traceStackPtr&TRACE_STACK_MASK].function = function;
-		traceStack[traceStackPtr&TRACE_STACK_MASK].line = line;
-		traceStack[traceStackPtr&TRACE_STACK_MASK].threadID = PosixThread::getCurrentThreadId();
-		traceStackPtr++;
-	}
+    void _n02_trace(char * file, char * function, int line) {
+        traceStack[traceStackPtr&TRACE_STACK_MASK].file = file;
+        traceStack[traceStackPtr&TRACE_STACK_MASK].function = function;
+        traceStack[traceStackPtr&TRACE_STACK_MASK].line = line;
+#ifdef INCLUDE_THREADID
+        traceStack[traceStackPtr&TRACE_STACK_MASK].threadID = PosixThread::getCurrentThreadId();
+#endif
+        traceStackPtr++;
+    }
 
 };
 

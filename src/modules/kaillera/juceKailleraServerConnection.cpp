@@ -181,14 +181,16 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 	TRACE();
 	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
 	TRACE();
-	if (last <= 3) {
-		TRACE();
-		lstUsers->updateContent();
-		lstUsers->repaint();
-	} else {
-		TRACE();
-		lstGames->updateContent();
-		lstGames->repaint();
+	if (lstUsers != 0 && lstGames != 0) {
+		if (last <= 3) {
+			TRACE();
+			lstUsers->updateContent();
+			lstUsers->repaint();
+		} else {
+			TRACE();
+			lstGames->updateContent();
+			lstGames->repaint();
+		}
 	}
 	TRACE();
 }

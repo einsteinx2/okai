@@ -65,6 +65,8 @@ juceGameSelect::juceGameSelect ()
     setSize (600, 400);
 
     //[Constructor] You can add your own custom stuff here..
+	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
+	lstGames->setOutlineThickness (1);
     //[/Constructor]
 }
 

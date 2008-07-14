@@ -20,6 +20,8 @@ namespace n02 {
 		extern int selectedDelayParam;
 		int activeGameCaps;
 		bool hosting;
+		unsigned short lastSelectedUserId;
+		bool gameWindowActive;
 
 
 		/************************************************************
@@ -30,30 +32,36 @@ namespace n02 {
 
 
 		void KailleraServerGame::OnClose() {
-			KailleraServerGame::getCurrentlyModalComponent()->exitModalState(0);
-			delete KailleraServerGame::window;
+			uiLeaveGameCallback();
 		}
 
 		// start button callback
 		void uiStartGameCallback() {
+
 		}
 
 		// leave button callback
 		void uiLeaveGameCallback() {
+			coreLeave();
 		}
 
 		// kick button callback
-
 		void uiKickGameCallback() {
+			if (lastSelectedUserId != 0xFFFF) {
+				coreKick(lastSelectedUserId);
+				lastSelectedUserId = 0xFFFF;
+			}
+		}
 
+		void uiGameJoinCallback(unsigned int id) {
+			coreJoin(id);
 		}
 
 		// game chat input callback
 
 		void KailleraGameChatInput::textEditorReturnKeyPressed (TextEditor &editor) {
 			String text = editor.getText();
-			text.append(T("\r"), 1);
-			KailleraServerGame::cmponnt->appendText(text);
+			sendChat(text.toUTF8());
 			editor.setText("");
 		}
 
@@ -64,8 +72,12 @@ namespace n02 {
 
 		SIMPLEWINDOW(KailleraServerConnection, "Connecting...", Colours::whitesmoke, DocumentWindow::allButtons, juceKailleraServerConnection, 750, 500);
 		void KailleraServerConnection::OnClose() {
-			KailleraServerConnection::getCurrentlyModalComponent()->exitModalState(0);
-			KailleraServerConnection::window->setVisible(false);
+			if (KailleraServerGame::window != 0) {
+				
+			} else  {
+				KailleraServerConnection::getCurrentlyModalComponent()->exitModalState(0);
+				KailleraServerConnection::window->setVisible(false);
+			}
 		}
 
 		/************************************************************
@@ -85,7 +97,7 @@ namespace n02 {
 		void uiNewGameCallback() {
 			char * c = getSelectedGame(KailleraServerConnection::window);
 			if (c) {
-				AlertWindow::showMessageBox(AlertWindow::InfoIcon, "Game", c);
+				coreCreate(c);
 			}
 		}
 
@@ -233,27 +245,99 @@ namespace n02 {
 		}
 		static void N02CCNV gameCreated ()
 		{
+			TRACE();
+			lastSelectedUserId = 0xFFFF;
+			hosting = true;
+			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
+
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = LISTCMD_REMALLPLAYERS;
+			KailleraServerGame::cmponnt->sendCommand(cmd);
+
+			TRACE();
 		}
 		static void N02CCNV gameClosed ()
 		{
+			TRACE();
+			if (KailleraServerGame::window != 0) {
+				KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
+				PosixThread::sleep(150); // pray that its no longer active otherwise BANG! crash >_<
+				PosixThread::yield();
+				delete KailleraServerGame::window;
+				KailleraServerGame::window = 0;
+			}
+			TRACE();
 		}
 		static void N02CCNV gameJoined ()
 		{
+			TRACE();
+			lastSelectedUserId = 0xFFFF;
+			hosting = false;
+			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
+
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = LISTCMD_REMALLPLAYERS;
+			KailleraServerGame::cmponnt->sendCommand(cmd);
+
+			TRACE();
 		}
 		static void N02CCNV gameKicked ()
 		{
+			TRACE();
+			String text(T("* You have been kicked out of the game\r"));
+			KailleraServerConnection::cmponnt->appendText(text);			
+			TRACE();
 		}
-		static void N02CCNV gamePlayerAdd (char *name, int ping, unsigned short id, char conn)
+		static void N02CCNV gamePlayerAdd (char *name, int ping, unsigned short id, char connectionSetting)
 		{
+			TRACE();
+			KailleraPlayerT * player = new KailleraPlayerT;
+			
+			player->connectionSetting = connectionSetting;
+			player->id = id;
+			strncpy(player->name, name, 31);
+			player->ping = ping;
+
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = LISTCMD_ADDPLAYER;
+			cmd->body.player = player;
+			KailleraServerGame::cmponnt->sendCommand(cmd);
+			TRACE();
 		}
+
 		static void N02CCNV gamePlayerJoined (char * username, int ping, unsigned short uid, char connset)
 		{
+			TRACE();
+			gamePlayerAdd(username, ping, uid, connset);
+			String text;
+			text << "* " << username << " joined the game\r";
+			KailleraServerGame::cmponnt->appendText(text);
+			TRACE();
 		}
-		static void N02CCNV gamePlayerLeft (char * user, unsigned short id)
+		static void N02CCNV gamePlayerLeft (char * username, unsigned short id)
 		{
+			TRACE();
+			KailleraPlayerT * player = new KailleraPlayerT;
+			
+			player->id = id;
+
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = LISTCMD_REMPLAYER;
+			cmd->body.player = player;
+			KailleraServerGame::cmponnt->sendCommand(cmd);
+
+			String text;
+			text << "* " << username << " joined the game\r";
+			KailleraServerGame::cmponnt->appendText(text);
+			TRACE();
 		}
-		static void N02CCNV gamePlayerDropped (char * user, int gdpl)
+		static void N02CCNV gamePlayerDropped (char * username, int gdpl)
 		{
+			TRACE();
+			String text;
+			text << "* " << username << " (Player " << gdpl << ") dropped\r";
+			KailleraServerGame::cmponnt->appendText(text);
+			TRACE();
 		}
 		static void N02CCNV gameStart (int, int)
 		{
@@ -293,6 +377,8 @@ namespace n02 {
 		** entry
 		*******************************/
 		void ConnectCallback() {
+
+			KailleraServerGame::window = 0;
 
 			char user[32];
 			StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(user), uiUsername);

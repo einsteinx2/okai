@@ -60,13 +60,6 @@ namespace n02 {
 
 
 
-
-
-
-
-
-
-
 	void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay) {
 		cmbRun->clear();
 		cmbDelay->clear();
@@ -102,13 +95,6 @@ namespace n02 {
 		}
 
 	}
-
-
-
-
-
-
-
 
 
 	//TODO: Set this up with a thread

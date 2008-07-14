@@ -17,48 +17,7 @@ namespace n02 {
 		** vars
 		*******************************/
 
-			/*
-			
-			
-			
-			
-			for (int x = 0; x < games.itemsCount(); x++) {
-				register KailleraGame * g = games.getItemPtr(x);
-				if (id == g->id) {
-					g->status = status;
-					g->players.printf(T("%i/%i"), players, maxplayers);
-					KailleraServerConnection::cmponnt->redrawGamesRow(x);
-				}
-			}
-			
-			
-			*/
-
-		typedef struct {
-			unsigned short id;
-			juce::String name;
-			int ping;
-			char connectionSetting;
-		} KailleraPlayer;
-
-		typedef struct {
-			unsigned short id;
-			juce::String username;
-			int ping;
-			char connectionSetting; // 1 == LAN; 6 == LOW
-			char status; // 0 = connecting? 1 = idle ; 2 = playing
-		} KailleraUser;
-
-
-		typedef struct {
-			unsigned int id;
-			juce::String name;
-			juce::String app;
-			juce::String owner;
-			char status;
-			juce::String players;
-		} KailleraGame;
-
+		extern unsigned short lastSelectedUserId;
 
 		/************************************************************
 		** 
@@ -87,7 +46,7 @@ namespace n02 {
 
 
 		// players list
-		DynamicOrderedArray<KailleraPlayer, 8> players;
+		DynamicOrderedArray<KailleraPlayerT, 8> players;
 
 		// players list drawing
 		int  KailleraPlayersList::getNumRows ()
@@ -107,7 +66,7 @@ namespace n02 {
 			TRACE();
 			g.setColour (Colours::black);
 			if (rowNumber >= 0 && rowNumber < players.itemsCount()) {
-				KailleraPlayer k = players[rowNumber];
+				KailleraPlayerT & k = players[rowNumber];
 				switch (columnId) {
 					case 1:
 						g.drawText (k.name, 2, 0, width - 4, height, Justification::centredLeft, true);
@@ -133,6 +92,14 @@ namespace n02 {
 			g.fillRect (width - 1, 0, 1, height);
 			TRACE();
 		}
+		void  KailleraPlayersList::cellClicked (int rowNumber, int columnId, const MouseEvent &e) {
+			if (rowNumber > 0 && rowNumber < players.itemsCount()) {
+				lastSelectedUserId = players.getItemPtr(rowNumber)->id;
+			} else {
+				lastSelectedUserId = 0xffff;
+			}
+		}
+		
 
 
 
@@ -192,7 +159,7 @@ namespace n02 {
 		}
 		void  KailleraUsers::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
 		{
-
+			
 		}
 
 		/************************************************************
@@ -216,7 +183,7 @@ namespace n02 {
 			g.setColour (Colours::black);
 
 			if (rowNumber >= 0 && rowNumber < games.itemsCount()) {
-				KailleraGameT k = games[rowNumber];
+				KailleraGameT & k = games[rowNumber];
 				switch (columnId) {
 					case 1:
 						g.drawText (k.name, 2, 0, width - 4, height, Justification::centredLeft, true);
@@ -244,6 +211,12 @@ namespace n02 {
 
 		void  KailleraGames::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
 		{
+			if (rowNumber >= 0 && rowNumber < games.itemsCount()) {
+				KailleraGameT & game = games[rowNumber];
+				if (game.status == 0) {
+					uiGameJoinCallback(game.id);
+				}
+			}
 		}
 
 
@@ -252,19 +225,7 @@ namespace n02 {
 				case LISTCMD_ADDGAME:
 					{
 						KailleraGameT * g = cmd->body.game;
-
-						//KailleraGame game;
-						//game.app = g->app;
-						//game.id = g->id;
-						//game.name = g->name;
-						//game.owner = g->owner;
-						//game.players = g->players;
-						//game.status = g->status;
-
-						//games.addItemPtr(&game);
-
 						games.addItemPtr(g);
-
 						delete g;
 					}
 					break;
@@ -307,13 +268,6 @@ namespace n02 {
 				case LISTCMD_ADDUSER:
 					{
 						KailleraUserT * u = cmd->body.user;
-					/*	KailleraUser user;
-						user.connectionSetting = u->connectionSetting;
-						user.id = u->id;
-						user.ping = u->ping;
-						user.status = u->status;
-						user.username = u->username;
-						users.addItemPtr(&user);*/
 						users.addItemPtr(u);
 						delete u;
 					}
@@ -333,6 +287,30 @@ namespace n02 {
 					users.clearItems();
 					break;
 
+				case LISTCMD_ADDPLAYER:
+					{
+						KailleraPlayerT * p = cmd->body.player;
+						players.addItemPtr(p);
+						delete p;
+					}
+					break;
+
+				case LISTCMD_REMPLAYER:
+					{
+						for (int x = 0; x < players.itemsCount(); x++) {
+							register KailleraPlayerT * p = players.getItemPtr(x);
+							if (cmd->body.player->id == p->id) {
+								players.removeIndex(x);
+								break;
+							}
+						}
+						delete cmd->body.player;
+					}
+					break;
+
+				case LISTCMD_REMALLPLAYERS:
+					players.clearItems();
+					break;
 			};
 			delete cmd;
 		}

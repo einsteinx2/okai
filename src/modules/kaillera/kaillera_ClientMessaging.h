@@ -157,7 +157,7 @@ namespace n02 {
 
 			inline bool searchProcessInstruction(unsigned short forSerial, unsigned char * buffer, int bufferLen, int instrsCount) {
 				TRACE();
-				LOG(fors = %i buflen = %i finstrount = %i, forSerial, bufferLen, instrsCount);
+				//LOG(fors = %i buflen = %i finstrount = %i, forSerial, bufferLen, instrsCount);
 				while (instrsCount > 0) {
 					unsigned short serial = *((unsigned short*)buffer); buffer+= 2;
 					unsigned short length = *((unsigned short*)buffer); buffer+= 2;
@@ -188,7 +188,7 @@ namespace n02 {
 				if (BsdSocket::recvFrom(BsdSocket::bigRecvBuffer, &bufLen, &lastAddress)) {
 					if (state == INSTRMSGS) {
 						TRACE();
-						LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);
+						//LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);
 						if (bufLen > 1 + 4 + 2) {
 							char instructionsCount = *bigRecvBuffer;
 							while (searchProcessInstruction(lastReceivedInstruction+1, reinterpret_cast<unsigned char*>(bigRecvBuffer+1), bufLen, instructionsCount))

@@ -229,6 +229,7 @@ void juceKailleraServerGame::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_btnKick] -- add your button handler code here..
 		n02::kaillera::uiKickGameCallback();
+		lstPlayers->deselectAllRows();
         //[/UserButtonCode_btnKick]
     }
     else if (buttonThatWasClicked == chkRecord)
@@ -280,34 +281,23 @@ void juceKailleraServerGame::updateAutorunItems() {
 	n02::kaillera::selectedDelayParam = cmbDelay->getSelectedId() - 1;
 }
 
-void juceKailleraServerGame::updatePlayers(){
-	this->postCommandMessage(COMMAND(0,0));
-}
-void juceKailleraServerGame::redrawPlayersRow(int index) {
-	if (index == -1)
-		this->postCommandMessage(COMMAND(1,0));
-	else
-		this->postCommandMessage(COMMAND(2,index));
-}
 void juceKailleraServerGame::clearText() {
 			textLength = 0;
 			txtChat->setText("", false);
 }
 void juceKailleraServerGame::handleCommandMessage(int  commandId) {
-	switch (COMMAND_X(commandId)) {
-		case 0:
-			lstPlayers->updateContent();
-			break;
-		case 1:
-			lstPlayers->repaintRow(COMMAND_Y(commandId));
-			break;
-		case 2:
-			lstPlayers->repaint();
-			break;
-		case 3:
+	TRACE();
+	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
+	TRACE();
+	if (lstPlayers != 0) {
+	lstPlayers->updateContent();
+	lstPlayers->repaint();
+	}
+	TRACE();
+}
 
-			break;
-	};
+void juceKailleraServerGame::sendCommand(n02::kaillera::KailleraListsCommand * cmd) {
+	postCommandMessage(reinterpret_cast<int>(cmd));
 }
 //[/MiscUserCode]
 

@@ -34,13 +34,13 @@ SOFTWARE.
 
 // support header for using juce inside this program
 
-#define SIMPLEWINDOW(Name, Title, Background, Buttons, Component, W, H)		\
+#define SIMPLEWINDOW(Name, Title, Background, Buttons, _Component, W, H)	\
 	class Name : public DocumentWindow {									\
 	public:																	\
 		Name()																\
 			: DocumentWindow(T(Title), Background, Buttons)					\
 		{																	\
-			cmponnt = new Component();										\
+			cmponnt = new _Component();										\
 			setContentComponent(cmponnt, true, true);						\
 		}																	\
 		~Name() {															\
@@ -54,10 +54,16 @@ SOFTWARE.
 				syncThread->notify();										\
 		}																	\
 		static Name * window;												\
-		static Component * cmponnt;											\
+		static _Component * cmponnt;										\
 		static void createAndShow() {										\
 			window = new Name();											\
 			window->centreWithSize (W, H + window->getTitleBarHeight());	\
+			window->setVisible (true);										\
+		}																	\
+		static void createAndShowChild(Component * c) {						\
+			window = new Name();											\
+			c->addChildComponent(window, -1);								\
+			window->centreAroundComponent (c, W, H + window->getTitleBarHeight());	\
 			window->setVisible (true);										\
 		}																	\
 		static void createAndShowModal() {									\
@@ -79,7 +85,7 @@ SOFTWARE.
 		static PosixThread * syncThread;									\
 	};																		\
 	Name * Name##::window;													\
-	Component * Name##::cmponnt;											\
+	_Component * Name##::cmponnt;											\
 	volatile bool Name##::running;											\
 	PosixThread * Name##::syncThread = 0
 

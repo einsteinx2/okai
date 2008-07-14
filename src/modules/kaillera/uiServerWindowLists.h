@@ -38,6 +38,9 @@ namespace n02 {
 #define LISTCMD_REMGAME 5
 #define LISTCMD_STATGAME 6
 #define LISTCMD_REMALLGAMES 7
+#define LISTCMD_ADDPLAYER 8
+#define LISTCMD_REMPLAYER 9
+#define LISTCMD_REMALLPLAYERS 10
 
 
 		typedef struct {
@@ -52,6 +55,8 @@ namespace n02 {
 
 		void processCommand(KailleraListsCommand * cmd);
 		void sendCommand(KailleraListsCommand * cmd);
+
+		void uiGameJoinCallback(unsigned int id);
 
 	};
 };
