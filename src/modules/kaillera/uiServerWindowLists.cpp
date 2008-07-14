@@ -18,6 +18,9 @@ namespace n02 {
 		*******************************/
 
 		extern unsigned short lastSelectedUserId;
+		extern char lastGame[128];
+
+		bool isGameWindowActive();
 
 		/************************************************************
 		** 
@@ -211,9 +214,10 @@ namespace n02 {
 
 		void  KailleraGames::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
 		{
-			if (rowNumber >= 0 && rowNumber < games.itemsCount()) {
+			if (!isGameWindowActive() && rowNumber >= 0 && rowNumber < games.itemsCount()) {
 				KailleraGameT & game = games[rowNumber];
 				if (game.status == 0) {
+					strcpy(lastGame, game.name);
 					uiGameJoinCallback(game.id);
 				}
 			}

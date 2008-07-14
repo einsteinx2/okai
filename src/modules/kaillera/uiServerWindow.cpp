@@ -15,13 +15,14 @@ namespace n02 {
 		extern TCHAR uiUsername[32];
 		extern TCHAR uiQuitMessage[128];
 		extern TCHAR uiLastIP[128];
+		char lastGame[128];
 		extern int uiConnectionSetting;
 		extern int selectedAutorunIndex;
 		extern int selectedDelayParam;
 		int activeGameCaps;
 		bool hosting;
 		unsigned short lastSelectedUserId;
-		bool gameWindowActive;
+		bool gameRunning;
 
 
 		/************************************************************
@@ -35,9 +36,15 @@ namespace n02 {
 			uiLeaveGameCallback();
 		}
 
+		bool isGameWindowActive() {
+			return KailleraServerGame::window != 0;
+		}
+
 		// start button callback
 		void uiStartGameCallback() {
-
+			if (hosting == true && gameRunning == false) {
+				coreStart();
+			}
 		}
 
 		// leave button callback
@@ -97,6 +104,7 @@ namespace n02 {
 		void uiNewGameCallback() {
 			char * c = getSelectedGame(KailleraServerConnection::window);
 			if (c) {
+				strcpy(lastGame, c);
 				coreCreate(c);
 			}
 		}
@@ -254,6 +262,8 @@ namespace n02 {
 			cmd->command = LISTCMD_REMALLPLAYERS;
 			KailleraServerGame::cmponnt->sendCommand(cmd);
 
+			gameRunning = false;
+
 			TRACE();
 		}
 		static void N02CCNV gameClosed ()
@@ -278,6 +288,8 @@ namespace n02 {
 			KailleraListsCommand * cmd = new KailleraListsCommand;
 			cmd->command = LISTCMD_REMALLPLAYERS;
 			KailleraServerGame::cmponnt->sendCommand(cmd);
+
+			gameRunning = false;
 
 			TRACE();
 		}
@@ -327,7 +339,7 @@ namespace n02 {
 			KailleraServerGame::cmponnt->sendCommand(cmd);
 
 			String text;
-			text << "* " << username << " joined the game\r";
+			text << "* " << username << " left the game\r";
 			KailleraServerGame::cmponnt->appendText(text);
 			TRACE();
 		}
@@ -339,13 +351,25 @@ namespace n02 {
 			KailleraServerGame::cmponnt->appendText(text);
 			TRACE();
 		}
-		static void N02CCNV gameStart (int, int)
+		static void N02CCNV gameStart (int playerNo, int numPlayers)
 		{
+			String text;
+			text << "* Game started \r";
+			KailleraServerGame::cmponnt->appendText(text);
+			modHelper.startGame(lastGame, playerNo, numPlayers);
+
+			gameRunning = true;
+
 		}
 		static void N02CCNV gameEnded ()
 		{
-		}
+			modHelper.endGame();
+			gameRunning = false;
 
+			String text;
+			text << "* Game ended \r";
+			KailleraServerGame::cmponnt->appendText(text);
+		}
 
 		static ClientCoreCallbacks callbacks = {
 			serverUserJoin,
@@ -411,14 +435,12 @@ namespace n02 {
 					}
 
 					if (coreConnect(toConnect)) {
-
 						juce::String stat;
 						stat << "Connecting to " << toConnect.toString() << "\r";
 						KailleraServerConnection::cmponnt->appendText(stat);
 
 						KailleraServerConnection::window->runModalLoop();
 					
-
 						LOG(======================================================================);
 
 						char quit[128];

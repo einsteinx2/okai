@@ -32,6 +32,8 @@ namespace n02 {
 				ACTION_END=8,
 				ACTION_SYNC=9,
 				ACTION_IDLE=10,
+				ACTION_SYNC_IDLE=23,
+				ACTION_RUNNING_IDLE=24,
 				RECVED_HELLODOOD=11,
 				RECVED_VER=12,
 				RECVED_TOO=13,
@@ -42,7 +44,9 @@ namespace n02 {
 				RECVED_KICKED=18,
 				RECVED_GAMEJOINED=19,
 				RECVED_GAMEMADE=20,
-				DUMMY
+				RECVED_BEGIN=21,
+				RECVED_ALLREADY=22,
+				DUMMY=25
 			};
 
 			volatile CoreState state = UNINITIALIZED;
@@ -70,21 +74,38 @@ namespace n02 {
 
 				unsigned short userId;
 				unsigned int gameId;
-				unsigned char playerNo;
-				unsigned char numPlayers;
 			} userInfo;
 
 			unsigned int lastTimeoutSent;
 
 			ClientMessaging connection;
 
+			struct {
+				int frame;
+				int delay;
+				int inputLength;
+				int totalInputLength;
+				unsigned char playerNo;
+				unsigned char numPlayers;
+				DataQueue outBuffer;
+				DataQueue inBuffer;
+				StaticOrderedArray<void*, 256> inCache;
+#ifndef DISABLE_OUTGOING_CACHE
+				StaticOrderedArray<void*, 256> outCache;
+#endif
+				char defaultInput[256];
+				unsigned int lastDataSentTime;
+			} gameInfo;
+
+			
 			void send(Instruction & instr) {
 				LOG(instruction send %x, instr.type);
 				connection.includeInstruction(instr);
-				if (instr.type == GAMEDATA || instr.type == GAMCDATA || state == CONNECTED) {
+				if (instr.type == GAMEDATA || instr.type == GAMCDATA || state == CONNECTED || state == LOADING || state == LOADED) {
 					connection.sendMessage();
 				}
 			}
+
 
 			void resetDisconnectTimeout() {
 				if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 55000) {
@@ -94,9 +115,33 @@ namespace n02 {
 				}
 			}
 
+
+			void resetGameplay() {
+				// caches
+#ifndef DISABLE_OUTGOING_CACHE
+				for (int x = 0; x < gameInfo.outCache.itemsCount(); x++) {
+					delete gameInfo.outCache[x];
+				}
+				gameInfo.outCache.clearItems();
+#endif
+				for (int x = 0; x < gameInfo.inCache.itemsCount(); x++) {
+					delete gameInfo.inCache[x];
+				}
+				gameInfo.inCache.clearItems();
+				// buffers
+				gameInfo.outBuffer.reset();
+				gameInfo.inBuffer.reset();
+				// misc
+				gameInfo.delay = 0;
+				gameInfo.frame = 0;
+				gameInfo.inputLength = 0;
+			}
+
+
+
 			// state transformation function
 			void updateState(CoreStateInput input) {
-				LOG(state=%i, state);
+				LOG(state=%i[%i], state, input);
 				TRACE();
 				switch (state) {
 					case UNINITIALIZED:
@@ -150,6 +195,9 @@ namespace n02 {
 							return;
 						} else if (input == ACTION_DISCONNECT) {
 							state = DISCONNECTED;
+							return;
+						} else if (input == ACTION_IDLE) {
+							return;
 						}
 						break;
 					case DISCONNECTED:
@@ -159,12 +207,7 @@ namespace n02 {
 							return;
 						}
 						break;
-					case LOADING:
-						if (input == ACTION_INITIALIZE) {
-							state = INITIALIZED;
-							return;
-						}
-						break;
+
 					case CONNECTED: // Logging in
 						if (input == RECVED_PING) {
 							lastTimeoutSent = GlobalTimer::getTime();
@@ -187,6 +230,7 @@ namespace n02 {
 							return;
 						} else if (input == ACTION_DISCONNECT) {
 							connection.sendMessage();
+							resetGameplay();
 							state = DISCONNECTED;
 							return;
 						} else if (input == RECVED_GAMEJOINED) {
@@ -230,16 +274,87 @@ namespace n02 {
 							callbacks.gameClosed();
 							state = LOGGEDIN;
 							return;
+						} else if (input == ACTION_START) {
+							Instruction begin(GAMEBEGN);
+							begin.writeSignedInt32(-1);
+							send(begin);
+							return;
+						} else if (input == RECVED_BEGIN) {
+							callbacks.gameStart(gameInfo.playerNo, gameInfo.numPlayers);
+							state = LOADING;
+							return;
+						}
+						break;
+					case LOADING:
+						if (input == ACTION_SYNC) {
+							Instruction ready(GAMRSRDY);
+							send(ready);
+							state = LOADED;
+							lastTimeoutSent = gameInfo.lastDataSentTime = GlobalTimer::getTime();
+							return;
+						} else if (input == ACTION_END) {
+							Instruction drop(GAMRDROP);
+							drop.writeSignedInt8(0);
+							send(drop);
+							callbacks.gameEnded();
+							state = INGAME;
+							return;
 						}
 						break;
 					case LOADED:
-						if (input == ACTION_INITIALIZE) {
-							state = INITIALIZED;
+						if (input == ACTION_END) {
+							Instruction drop(GAMRDROP);
+							drop.writeSignedInt8(0);
+							send(drop);
+							callbacks.gameEnded();
+							state = INGAME;
+							return;
+						} else if (input == RECVED_ALLREADY) {
+							state = RUNNING;
+							return;
+						} else if (input == ACTION_SYNC_IDLE) {
+							unsigned int time = GlobalTimer::getTime();
+
+							if (time - gameInfo.lastDataSentTime > 5000) {
+								gameInfo.lastDataSentTime = time;
+								if (time - lastTimeoutSent > 12000) {
+									Instruction drop(GAMRDROP);
+									drop.writeSignedInt8(0);
+									send(drop);
+									callbacks.gameEnded();
+									state = INGAME;
+								} else {
+									connection.sendMessage();
+								}
+							}
 							return;
 						}
 						break;
 
 					case RUNNING:
+						if (input == ACTION_END) {
+							Instruction drop(GAMRDROP);
+							drop.writeSignedInt8(0);
+							send(drop);
+							callbacks.gameEnded();
+							state = INGAME;
+							return;
+						} else if (input == ACTION_RUNNING_IDLE) {
+							unsigned int time = GlobalTimer::getTime();
+							if (gameInfo.inBuffer.length() < gameInfo.totalInputLength && (time - gameInfo.lastDataSentTime) > 100) {
+								gameInfo.lastDataSentTime = time;
+								if (time - lastTimeoutSent > 10000) {
+									Instruction drop(GAMRDROP);
+									drop.writeSignedInt8(0);
+									send(drop);
+									callbacks.gameEnded();
+									state = INGAME;
+								} else {
+									connection.sendMessage(((gameInfo.delay + 6)/userInfo.connectionSetting) + 1);
+								}
+							}
+							return;
+						}
 						break;
 					default:
 						break;
@@ -433,77 +548,90 @@ namespace n02 {
 						}
 						break;
 					}
-//				case GAMEDATA:
-//					{
-//						unsigned short length = ki.readUnsignedInt16();
-//						unsigned short reqLen = 0xFFFF & (totalInputLength * connectionSetting);
-//						void * newBuffer;
-//						if (inCache.itemsCount() == 256) {
-//							newBuffer = inCache[0];
-//							inCache.removeIndex(0);
-//						} else {
-//							newBuffer = malloc(reqLen);
-//						}
-//						inCache.addItem(newBuffer);
-//						if (length != reqLen) {
-//							int srcDividor = length / connectionSetting;
-//							memset(newBuffer, 0, reqLen);
-//							for (int x = 0; x < connectionSetting; x++) {
-//								memcpy(((char*)newBuffer)+(x * inputLength), ki.getCurrentStringPtr() + (x * srcDividor), min(srcDividor, inputLength));
-//							}
-//						} else {
-//							memcpy(newBuffer, ki.getCurrentStringPtr(), reqLen);
-//						}
-//						inBuffer.addData(newBuffer, reqLen);
-//					}
-//					break;
-//				case GAMCDATA:
-//					{
-//						unsigned char index = ki.readUnsignedInt8();
-//						if (index < inCache.itemsCount()) {
-//							inBuffer.addData(inCache[index], totalInputLength * connectionSetting);
-//						}
-//					}
-//					break;
-//				case GAMEBEGN:
-//					{
-//						LOG(Starting game);
-//
-//						unsigned short cDelay = ki.readSignedInt16();
-//						delay = (cDelay + 1) * connectionSetting;
-//						frameNo = 0;
-//						LOG(Delay is %i frames, delay-1);
-//						gamePlayerNo = ki.readSignedInt8();
-//						gameNumPlayers = ki.readSignedInt8();
-//						callbacks.gameStart(gamePlayerNo, gameNumPlayers);
-//					}
-//					break;
-//				case GAMRDROP:
-//					{
+				case GAMEDATA:
+					{
+						register unsigned short length = ki.readUnsignedInt16();
+						register unsigned short reqLen = 0xFFFF & (gameInfo.totalInputLength * userInfo.connectionSetting);
+						register void * newBuffer;
+						if (gameInfo.inCache.itemsCount() == 256) {
+							newBuffer = gameInfo.inCache[0];
+							gameInfo.inCache.removeIndex(0);
+						} else {
+							newBuffer = new char[reqLen];
+						}
+						gameInfo.inCache.addItem(newBuffer);
+						//  data size adjustments
+						if (length != reqLen) {
+							register int srcDividor = length / userInfo.connectionSetting;
+							memcpy(newBuffer, gameInfo.defaultInput, reqLen);
+							for (int x = 0; x < userInfo.connectionSetting; x++) {
+								memcpy(((char*)newBuffer)+(x * gameInfo.inputLength), ki.getCurrentStringPtr() + (x * srcDividor), min(srcDividor, gameInfo.inputLength));
+							}
+						} else {
+							memcpy(newBuffer, ki.getCurrentStringPtr(), reqLen);
+						}
+						gameInfo.inBuffer.push(newBuffer, reqLen);
+					}
+					break;
+				case GAMCDATA:
+					{
+						register unsigned char index = ki.readUnsignedInt8();
+						if (index < gameInfo.inCache.itemsCount()) {
+							gameInfo.inBuffer.push(gameInfo.inCache[index], gameInfo.totalInputLength * userInfo.connectionSetting);
+						}
+					}
+					break;
+				case GAMEBEGN:
+					{
+						resetGameplay();
+						gameInfo.delay = (ki.readSignedInt16() + 1) * userInfo.connectionSetting;
+						gameInfo.frame = 0;
+						LOG(Delay is %i frames, gameInfo.delay-1);
+						gameInfo.playerNo = ki.readSignedInt8();
+						gameInfo.numPlayers  = ki.readSignedInt8();
+						updateState(RECVED_BEGIN);
+					}
+					break;
+				case GAMRDROP:
+					{
 //						int gdpl = ki.readSignedInt8();
 //						callbacks.gamePlayerDropped(ki.user, gdpl);
 //						if (gamePlayerNo == gdpl) {
 //							stopGame();
 //							callbacks.gameEnded();
 //						}
-//					}
-//					break;
-//				case GAMRSRDY:
-//					{
-//						LOG(All players are ready);
-//						runGame();
-//					}
-//					break;
+					}
+					break;
+				case GAMRSRDY:
+					{
+						updateState(RECVED_ALLREADY);
+					}
+					break;
 				default:
 					TRACE();
 					LOG("Unhandled instruction %i", ki.type);
-//					ki->log();					
-//					break;
+					ki.log();
+					break;
 				};
 				TRACE();
 			}
 
+
+			void stepSync()
+			{
+				TRACE();
+				updateState(ACTION_SYNC_IDLE);
+				connection.step(100);
+				TRACE();
+			}
 			
+			void stepRunning()
+			{
+				TRACE();
+				updateState(ACTION_RUNNING_IDLE);
+				connection.step(5);
+				TRACE();
+			}
 
 			void step()
 			{
@@ -648,11 +776,6 @@ namespace n02 {
 		// start game
 		void coreStart()
 		{
-			/*Instruction begin(GAMEBEGN);
-			begin.writeSignedInt32(-1);
-			sendInclude(&begin);*/
-
-
 			updateState(ACTION_START);
 		}
 
@@ -667,9 +790,27 @@ namespace n02 {
 		}
 
 		// game load complete
-		int  N02CCNV synchronizeGame(void * syncData, int len)
+		int  N02CCNV synchronizeGame(void * data, int len)
 		{
-			return 0;
+			if (data != 0 && len != 0) {
+
+
+
+
+			}
+			updateState(ACTION_SYNC);
+
+			while (state == LOADED)
+				stepSync();
+
+			if (state == RUNNING) {
+				if (data != 0 && len != 0) {
+
+				}
+				return 0;
+			} else {
+				return -1;
+			}
 		}
 
 		// end game
@@ -680,21 +821,100 @@ namespace n02 {
 		}
 
 		// send asynchronous data
-		void N02CCNV sendAsyncData(const void * value, const int len, const int mode)
+		void N02CCNV sendAsyncData(const void * /*value*/, const int /*len*/, const int /*mode*/)
 		{
-
+			LOG(Asynchronous data transfer in this module is not supported yet);
 		}
 
 		// send input data
 		void N02CCNV sendSyncData(const void * value, const int len)
 		{
+			TRACE();
+			if (state == RUNNING) {
 
+				// set up default input on the first frame
+				if (gameInfo.frame ==0) {
+					gameInfo.inputLength=len;
+					gameInfo.totalInputLength = gameInfo.numPlayers * len;
+					if (client->gameplay.defaultInput != 0) {
+						for (int x = 0; x < sizeof(gameInfo.defaultInput); x+=len) {
+							memcpy(gameInfo.defaultInput + x, client->gameplay.defaultInput, min(len, (int)sizeof(gameInfo.defaultInput)-x));
+						}
+					} else {
+						for (int x = 0; x < sizeof(gameInfo.defaultInput); x+=len) {
+							memcpy(gameInfo.defaultInput + x, value, min(len, (int)sizeof(gameInfo.defaultInput)-x));
+						}
+					}
+				}
+			
+				register int totalBufferedLen = gameInfo.outBuffer.push(value, len);
+				register int requiredBufferLen = len * userInfo.connectionSetting;
+
+				if (totalBufferedLen >= requiredBufferLen) {
+					// see if it was send within last 256 data packets
+#ifndef DISABLE_OUTGOING_CACHE
+					for (int x = 0; x < gameInfo.outCache.itemsCount(); x++) {
+						if (memcmp(gameInfo.outCache[x], gameInfo.outBuffer.front(), requiredBufferLen)==0) {
+							Instruction data(GAMCDATA);
+							data.writeUnsignedInt8(x & 0xFF);
+							send(data);
+							gameInfo.outBuffer.pop(requiredBufferLen);
+							LOG(Sent index %i, x);
+							return;
+						}
+					}
+					// make sure we have space for a new packet
+					if (gameInfo.outCache.itemsCount() == 256) {
+						void * newBuffer = gameInfo.outCache[0];
+						gameInfo.outCache.removeIndex(0);
+						memcpy(newBuffer, gameInfo.outBuffer.front(), requiredBufferLen);
+						gameInfo.outCache.addItem(newBuffer);
+					} else {
+						void * newBuffer = malloc(requiredBufferLen);
+						memcpy(newBuffer, gameInfo.outBuffer.front(), requiredBufferLen);
+						gameInfo.outCache.addItem(newBuffer);
+					}
+#endif
+					// if not, send a full packet
+					Instruction data(GAMEDATA);
+					data.writeUnsignedInt16((unsigned short)requiredBufferLen);
+					data.writeBytes(gameInfo.outBuffer.front(), requiredBufferLen);
+					send(data);
+					gameInfo.outBuffer.pop(requiredBufferLen);
+				}
+			} else {
+				LOG(erroneous action);
+			}
 		}
 
 		// recv input data
-		int  N02CCNV recvSyncData(void * value, const int len)
+		int  N02CCNV recvSyncData(void * value, const int /*len*/)
 		{
+			if (state==RUNNING) {
+				if (++gameInfo.frame >= gameInfo.delay) {
+					while (gameInfo.inBuffer.length() < gameInfo.totalInputLength && state == RUNNING) {
+						stepRunning();
+					}
+
+#ifdef MASK_INITIAL_FRAMES
+					if (gameInfo.frame < 60) {
+						memcpy(value, gameInfo.defaultInput, gameInfo.totalInputLength);
+						gameInfo.inBuffer.pop(gameInfo.totalInputLength);
+						return totalInputLength;
+					}
+#endif
+					return gameInfo.inBuffer.pop(value, gameInfo.totalInputLength);
+				} else {
+#ifdef MASK_INITIAL_FRAMES
+					memcpy(value, gameInfo.defaultInput, gameInfo.totalInputLength);
+#endif
+					return 0;
+				}
+			} else {
+				return -1;
+			}
 			return 0;
+
 		}
 
 		// do both send and recv
