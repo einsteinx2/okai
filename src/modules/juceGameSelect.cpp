@@ -26,6 +26,11 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+namespace n02 {
+	namespace gamelistSel {
+		extern int selectedIndex;
+	};
+}
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -67,6 +72,10 @@ juceGameSelect::juceGameSelect ()
     //[Constructor] You can add your own custom stuff here..
 	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstGames->setOutlineThickness (1);
+	lstGames->updateContent();
+	if (n02::gamelistSel::selectedIndex >= 0)
+		lstGames->scrollToEnsureRowIsOnscreen(n02::gamelistSel::selectedIndex);
+	n02::gamelistSel::selectedIndex = -1;
     //[/Constructor]
 }
 

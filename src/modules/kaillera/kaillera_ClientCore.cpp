@@ -1,6 +1,39 @@
+/******************************************************************************
+          .d8888b.   .d8888b.  
+         d88P  Y88b d88P  Y88b 
+         888    888        888 
+88888b.  888    888      .d88P 
+888 "88b 888    888  .od888P"  
+888  888 888    888 d88P"      
+888  888 Y88b  d88P 888"       
+888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
+*******************************************************************************
+Copyright (c) Open Kaillera Team 2003-2008
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice must be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+******************************************************************************/
+
 #include "kaillera_ClientCore.h"
 #include "kaillera_ClientMessaging.h"
 
+// This flag is crucial for synchronization in some applications
+#define MASK_INITIAL_FRAMES 60
 
 namespace n02 {
 	namespace kaillera {
@@ -93,11 +126,22 @@ namespace n02 {
 #ifndef DISABLE_OUTGOING_CACHE
 				StaticOrderedArray<void*, 256> outCache;
 #endif
-				char defaultInput[256];
+				unsigned char defaultInput[256];
 				unsigned int lastDataSentTime;
+				int syncDataTransfer;
 			} gameInfo;
 
-			
+			typedef struct {
+				unsigned startOff:16; // always equals to 10
+				unsigned type: 2;
+				unsigned length: 7;
+				unsigned player: 3;
+				unsigned sequence: 3;
+				unsigned end: 1;
+			} asyncDataHeader;
+
+#define ASYNCDATA_GAMESYNC 0
+             
 			void send(Instruction & instr) {
 				//LOG(instruction send %x, instr.type);
 				connection.includeInstruction(instr);
@@ -105,7 +149,6 @@ namespace n02 {
 					connection.sendMessage();
 				}
 			}
-
 
 			void resetDisconnectTimeout() {
 				if (lastTimeoutSent != 0xFFFFFFFF && GlobalTimer::getTime() - lastTimeoutSent > 55000) {
@@ -141,10 +184,11 @@ namespace n02 {
 
 			// state transformation function
 			void updateState(CoreStateInput input) {
-				//LOG(state=%i[%i], state, input);
+				// LOG(state=%i[%i], state, input);
 				TRACE();
 				switch (state) {
 					case UNINITIALIZED:
+						TRACE();
 						if (input == ACTION_INITIALIZE) {
 							state = INITIALIZED;
 							lastTimeoutSent = 0xFFFFFFFF;
@@ -152,6 +196,7 @@ namespace n02 {
 						}
 						break;
 					case INITIALIZED:
+						TRACE();
 						if (input == ACTION_TERMINATE) {
 							state = UNINITIALIZED;
 							return;
@@ -161,6 +206,7 @@ namespace n02 {
 						}
 						break;
 					case CONNECTING:
+						TRACE();
 						if (input == RECVED_VER) {
 							state = REJECTED; callbacks.clientLoginStatusChange("Connection failed: Protocol version mismatch.");
 							return;
@@ -202,13 +248,18 @@ namespace n02 {
 						break;
 					case DISCONNECTED:
 					case REJECTED:
+						TRACE();
 						if (input == ACTION_TERMINATE) {
 							state = UNINITIALIZED;
+							return;
+						} else if (input == ACTION_IDLE) {
+							LOG(THIS ONE);
 							return;
 						}
 						break;
 
 					case CONNECTED: // Logging in
+						TRACE();
 						if (input == RECVED_PING) {
 							lastTimeoutSent = GlobalTimer::getTime();
 							return;
@@ -222,9 +273,13 @@ namespace n02 {
 								lastTimeoutSent = GlobalTimer::getTime();
 							}
 							return;
-						}
+						} else if (input == ACTION_DISCONNECT) {
+							state = DISCONNECTED;
+							return;
+						} 
 						break;
 					case LOGGEDIN:
+						TRACE();
 						if (input == ACTION_IDLE) {
 							resetDisconnectTimeout();
 							return;
@@ -256,6 +311,7 @@ namespace n02 {
 						}
 						break;
 					case INGAME:
+						TRACE();
 						if (input == ACTION_IDLE) {
 							resetDisconnectTimeout();
 							return;
@@ -286,6 +342,7 @@ namespace n02 {
 						}
 						break;
 					case LOADING:
+						TRACE();
 						if (input == ACTION_SYNC) {
 							Instruction ready(GAMRSRDY);
 							send(ready);
@@ -310,9 +367,25 @@ namespace n02 {
 						} else if (input == ACTION_LEAVE) {
 							flags.LEAVE_REQUESTED = 1;
 							return;
+						} else if (input == ACTION_SYNC_IDLE) {
+							unsigned int time = GlobalTimer::getTime();
+							if (time - gameInfo.lastDataSentTime > 5000) {
+								gameInfo.lastDataSentTime = time;
+								if (time - lastTimeoutSent > 12000) {
+									Instruction drop(GAMRDROP);
+									drop.writeSignedInt8(0);
+									send(drop);
+									callbacks.gameEnded();
+									state = INGAME;
+								} else {
+									connection.sendMessage();
+								}
+							}
+							return;
 						}
 						break;
 					case LOADED:
+						TRACE();
 						if (input == ACTION_END) {
 							Instruction drop(GAMRDROP);
 							drop.writeSignedInt8(0);
@@ -351,8 +424,8 @@ namespace n02 {
 							return;
 						}
 						break;
-
 					case RUNNING:
+						TRACE();
 						if (input == ACTION_END) {
 							Instruction drop(GAMRDROP);
 							drop.writeSignedInt8(0);
@@ -452,8 +525,44 @@ namespace n02 {
 					callbacks.partylineChat(ki.user, ki.getCurrentStringPtr());
 					break;
 				case GAMECHAT:
-					TRACE();
-					callbacks.gameChat(ki.user, ki.getCurrentStringPtr());
+					{
+						TRACE();
+						ki.log();
+						if (ki.getSpaceLeft() > 4) {
+							asyncDataHeader header;
+							ki.readBytes(&header, 4);
+							if (header.startOff == 0xffff) {
+								ki.seek(-1);
+
+								if (header.type == ASYNCDATA_GAMESYNC) {
+									LOG(game sync data arrival);
+
+									unsigned char byte;
+									unsigned char * toPtr = gameInfo.defaultInput + (header.player * gameInfo.inputLength);
+									while ((byte = ki.readUnsignedInt8()) != 0 && header.length-->0) {
+										if (byte == 0xff) {
+											byte = ki.readUnsignedInt8();
+											if (byte == 45) {
+												*toPtr = 0;
+											} else if (byte == 46) {
+												*toPtr = 10;
+											} else if (byte == 47) {
+												*toPtr = 13;
+											} else if (byte == 48) {
+												*toPtr = 0xff;
+											}
+										}
+										toPtr++;
+									}
+									gameInfo.syncDataTransfer--;
+								}
+
+								break;
+							}
+							ki.seek(-4);
+						}
+						callbacks.gameChat(ki.user, ki.getCurrentStringPtr());
+					}
 					break;
 				case MOTDLINE:
 					TRACE();
@@ -745,10 +854,13 @@ namespace n02 {
 		// disconnect
 		void coreDisconnect(const char * quitMsg)
 		{
-			Instruction leave(USERLEAV);
-			leave.writeSignedInt16(-1);
-			leave.writeString(quitMsg);
-			send(leave);
+			if (state != CONNECTING) {
+				Instruction leave(USERLEAV);
+				leave.writeSignedInt16(-1);
+				leave.writeString(quitMsg);
+				send(leave);
+			}
+
 			updateState(ACTION_DISCONNECT);
 		}
 
@@ -829,9 +941,64 @@ namespace n02 {
 		int  N02CCNV synchronizeGame(void * data, int len)
 		{
 			if (state == LOADING) {
-				if (data != 0 && len != 0) {
+				if (data != 0 && len > 0) {
+					gameInfo.syncDataTransfer = common_min(gameInfo.numPlayers, 8);
+
+					// send data
+
+					asyncDataHeader header;
+					header.startOff = 0xffff;
+					header.type = ASYNCDATA_GAMESYNC;
+					header.end = 1;
+					header.player = gameInfo.playerNo - 1;
+					header.sequence = 0;
+					header.length = 0;
+
+					Instruction cedata(GAMECHAT);
+					gameInfo.inputLength = len;
+					unsigned char * dataPtr = reinterpret_cast<unsigned char*>(data);
+					while (len-->0) {
+						if (*dataPtr == 0) {
+							gameInfo.defaultInput[header.length++] = 0xff;
+							gameInfo.defaultInput[header.length++] = 45;
+						} else if (*dataPtr == 0xff) {
+							gameInfo.defaultInput[header.length++] = 0xff;
+							gameInfo.defaultInput[header.length++] = 48;
+						} else if (*dataPtr == 10) {
+							gameInfo.defaultInput[header.length++] = 0xff;
+							gameInfo.defaultInput[header.length++] = 46;
+						} else if (*dataPtr == 13) {
+							gameInfo.defaultInput[header.length++] = 0xff;
+							gameInfo.defaultInput[header.length++] = 47;
+						} else {
+							gameInfo.defaultInput[header.length++] = *dataPtr;
+						}
+						dataPtr++;
+					}
+
+					cedata.logFilled();
+					cedata.writeBytes(&header, sizeof(header));
+					cedata.logFilled();
+					cedata.writeBytes(gameInfo.defaultInput, header.length);
+					cedata.logFilled();
+					cedata.writeSignedInt8(0);
+
+					cedata.logFilled();
+
+					send(cedata);
+
+					LOG(Waiting for game sync data);
+					
+					gameInfo.lastDataSentTime = lastTimeoutSent = GlobalTimer::getTime();
+
+					while (gameInfo.syncDataTransfer > 0 && state == LOADING) {
+						stepSync();						
+					}
+
+					LOG(xxx %i %i, gameInfo.syncDataTransfer,state);
 
 				}
+
 				updateState(ACTION_SYNC);
 
 				while (state == LOADED)
@@ -839,7 +1006,10 @@ namespace n02 {
 
 				if (state == RUNNING) {
 					if (data != 0 && len != 0) {
-
+						int l = gameInfo.inputLength * gameInfo.numPlayers;
+						gameInfo.inputLength = 0;
+						memcpy(data, gameInfo.defaultInput, l);
+						return l;
 					}
 					return 0;
 				}
@@ -880,8 +1050,17 @@ namespace n02 {
 						}
 					}
 				}
-			
+
+#ifdef MASK_INITIAL_FRAMES
+				register int totalBufferedLen;
+				if (gameInfo.frame + gameInfo.delay <= MASK_INITIAL_FRAMES) {
+					totalBufferedLen = gameInfo.outBuffer.push(gameInfo.defaultInput, len);
+				} else {
+					totalBufferedLen = gameInfo.outBuffer.push(value, len);
+				}
+#else		
 				register int totalBufferedLen = gameInfo.outBuffer.push(value, len);
+#endif
 				register int requiredBufferLen = len * userInfo.connectionSetting;
 
 				if (totalBufferedLen >= requiredBufferLen) {
@@ -931,10 +1110,10 @@ namespace n02 {
 					}
 
 #ifdef MASK_INITIAL_FRAMES
-					if (gameInfo.frame < 60) {
+					if (gameInfo.frame <= MASK_INITIAL_FRAMES) {
 						memcpy(value, gameInfo.defaultInput, gameInfo.totalInputLength);
 						gameInfo.inBuffer.pop(gameInfo.totalInputLength);
-						return totalInputLength;
+						return gameInfo.totalInputLength;
 					}
 #endif
 					return gameInfo.inBuffer.pop(value, gameInfo.totalInputLength);

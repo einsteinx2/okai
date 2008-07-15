@@ -70,8 +70,10 @@ namespace n02 {
 	static int N02CCNV  recorderDefaultAddGameSyncData (const void * value, const int len)
 	{
 		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-		LOG(%s; %i; %i, strBuffer, len);
+		if (len > 0) {
+			StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
+			LOG(%s; %i; %i, strBuffer, len);
+		}
 		return len;
 	}
 
@@ -79,11 +81,14 @@ namespace n02 {
 	static int N02CCNV  recorderDefaultAddSyncData (const void * value, const int len)
 	{ 
 		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-		//LOG(%s; %i; %i, strBuffer, len);
+#if 0
+		if (len > 0) {
+			StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
+			LOG(%s; %i; %i, strBuffer, len);
+		}
+#endif
 		return len;
 	}
-
 
 	static int N02CCNV  recorderDefaultAddAsyncData (const void * value, const int len)
 	{
@@ -106,7 +111,6 @@ namespace n02 {
 		LOG(%s; %i, username, playerNo);
 		return 0;
 	}
-
 
 	static void N02CCNV  recorderDefaultReserved(int, int)
 	{

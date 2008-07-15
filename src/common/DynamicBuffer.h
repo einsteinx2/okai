@@ -256,6 +256,12 @@ namespace n02 {
             return end - ptr;
         }
 
+		/* move pointer back and forth */
+        inline void seek(int value)
+        {
+			if (ptr + value >= begin && ptr + value <= end)
+				ptr += value;
+        }
 
     public:
 

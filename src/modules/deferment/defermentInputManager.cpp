@@ -28,58 +28,67 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+
+#include "defermentInputManager.h"
 #include "common.h"
 
 namespace n02 {
 
-#define INCLUDE_THREADID
+	namespace deferment {
 
-    typedef struct {
-        char * file;
-        char * function;
-        int line;
-#ifdef INCLUDE_THREADID
-        int threadID;
-#endif
-    } TraceStackElement;
+		extern int inputLength;
 
-#define TRACE_HISTORY_LEVEL 8
-#define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
-#define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
+		struct frameInput {
+			unsigned char bytes[256];
+		};
+		typedef frameInput frameInput;
 
-    static TraceStackElement traceStack[TRACE_STACK_LEN];
-    volatile static unsigned int traceStackPtr = 0;
+		static DynamicAllocator<frameInput, 32> allocator;
+		static DynamicOrderedArray<frameInput*> inputs;
+		static frameInput reserve;
 
-    void trace_log(){
-        for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
-            int index = (traceStackPtr-x) & TRACE_STACK_MASK;
-#ifdef INCLUDE_THREADID
-            LOGTRACE(%09u:%i-%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].threadID,
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#else
-            LOGTRACE(%09u:%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#endif
-        }
-    }
+		void inputInitialize()
+		{
+			allocator.resetAllocation();
+			inputs.clearItems();
+		}
 
-    void _n02_trace(char * file, char * function, int line) {
-		register int position = traceStackPtr&TRACE_STACK_MASK;
-		traceStackPtr++;
-        traceStack[position].file = file;
-        traceStack[position].function = function;
-        traceStack[position].line = line;
-#ifdef INCLUDE_THREADID
-        traceStack[position].threadID = PosixThread::getCurrentThreadId();
-#endif
-    }
+		void * getInput(int offset, int slot)
+		{
+			while (offset >= inputs.itemsCount()) {
+				inputs.addItem(allocator.allocate());
+			}
+			return inputs[offset]->bytes + (slot * inputLength);
+		}
 
+		void * getInput(int offset)
+		{
+			while (offset >= inputs.itemsCount()) {
+				inputs.addItem(allocator.allocate());
+			}
+			return inputs[offset]->bytes;
+		}
+
+		void * getReserveInput() {
+			return reserve.bytes;
+		}
+
+		void * getReserveInput(int slot)
+		{
+			return reserve.bytes + (slot * inputLength);
+		}
+
+		void purgeInputBase(int no)
+		{
+			while (no-->0 && inputs.itemsCount() > 0) {
+				allocator.free(inputs[0]);
+				inputs.removeIndex(0);
+			}
+		}
+
+		void inputTerminate() {
+			inputInitialize();
+		}
+
+	};
 };
-

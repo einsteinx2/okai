@@ -29,9 +29,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "BsdSocket.h"
+#include "common.h"
 #include "_common.h"
-#include "Logger.h"
 
 // TODO : Test
 namespace n02 {
@@ -91,8 +90,9 @@ namespace n02 {
     }
 
 
-    bool BsdSocket::step(int secs, int ms)
+    void BsdSocket::step(int secs, int ms)
     {
+		TRACE();
         timeval tv;
         tv.tv_sec = secs;
         tv.tv_usec = ms * 1000;
@@ -106,17 +106,18 @@ namespace n02 {
         if (select((int)(ndfs + 1), &tempFdList, 0, 0, &tv) != 0) {
             if (socketsList.itemsCount() > 0) {
                 for (int i = 0; i < socketsList.itemsCount(); i++){
+					TRACE();
                     BsdSocket * sck = socketsList[i];
                     if (FD_ISSET(sck->sock, &tempFdList)!=0){
+						TRACE();
                         sck->dataArrivalCallback();
                     } else {
 
                     }
                 }
             }
-            return true;
         }
-        return false;
+		TRACE();
     }
 
 

@@ -28,58 +28,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-#include "common.h"
+
+#pragma once
 
 namespace n02 {
 
-#define INCLUDE_THREADID
+	namespace deferment {
 
-    typedef struct {
-        char * file;
-        char * function;
-        int line;
-#ifdef INCLUDE_THREADID
-        int threadID;
-#endif
-    } TraceStackElement;
+		void inputInitialize();
+		void * getInput(int offset, int slot);
+		void * getInput(int offset);
+		void * getReserveInput();
+		void * getReserveInput(int slot);
+		void purgeInputBase(int no = 1);
+		void inputTerminate();
 
-#define TRACE_HISTORY_LEVEL 8
-#define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
-#define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
-
-    static TraceStackElement traceStack[TRACE_STACK_LEN];
-    volatile static unsigned int traceStackPtr = 0;
-
-    void trace_log(){
-        for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
-            int index = (traceStackPtr-x) & TRACE_STACK_MASK;
-#ifdef INCLUDE_THREADID
-            LOGTRACE(%09u:%i-%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].threadID,
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#else
-            LOGTRACE(%09u:%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#endif
-        }
-    }
-
-    void _n02_trace(char * file, char * function, int line) {
-		register int position = traceStackPtr&TRACE_STACK_MASK;
-		traceStackPtr++;
-        traceStack[position].file = file;
-        traceStack[position].function = function;
-        traceStack[position].line = line;
-#ifdef INCLUDE_THREADID
-        traceStack[position].threadID = PosixThread::getCurrentThreadId();
-#endif
-    }
-
+	};
 };
-

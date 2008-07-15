@@ -28,58 +28,69 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+
+#pragma once
+
 #include "common.h"
 
 namespace n02 {
 
-#define INCLUDE_THREADID
+	namespace kaillera {
 
-    typedef struct {
-        char * file;
-        char * function;
-        int line;
-#ifdef INCLUDE_THREADID
-        int threadID;
-#endif
-    } TraceStackElement;
+		typedef struct {
+			unsigned short id;
+			char name[32];
+			int ping;
+			char connectionSetting;
+		} KailleraPlayerT;
 
-#define TRACE_HISTORY_LEVEL 8
-#define TRACE_STACK_LEN	(1<<TRACE_HISTORY_LEVEL)
-#define TRACE_STACK_MASK (TRACE_STACK_LEN-1)
+		typedef struct {
+			unsigned short id;
+			char username[32];
+			int ping;
+			char connectionSetting; // 1 == LAN; 6 == LOW
+			char status; // 0 = connecting? 1 = idle ; 2 = playing
+		} KailleraUserT;
 
-    static TraceStackElement traceStack[TRACE_STACK_LEN];
-    volatile static unsigned int traceStackPtr = 0;
+		typedef struct {
+			unsigned int id;
+			char name[128];
+			char app[128];
+			char owner[32];
+			char status;
+			char players[20];
+		} KailleraGameT;
 
-    void trace_log(){
-        for (unsigned int x = 1; x <= TRACE_STACK_LEN && x <= traceStackPtr ; x++ ) {
-            int index = (traceStackPtr-x) & TRACE_STACK_MASK;
-#ifdef INCLUDE_THREADID
-            LOGTRACE(%09u:%i-%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].threadID,
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#else
-            LOGTRACE(%09u:%s:%i:%s,
-                (traceStackPtr-x),
-                traceStack[index].file,
-                traceStack[index].line,
-                traceStack[index].function);
-#endif
-        }
-    }
 
-    void _n02_trace(char * file, char * function, int line) {
-		register int position = traceStackPtr&TRACE_STACK_MASK;
-		traceStackPtr++;
-        traceStack[position].file = file;
-        traceStack[position].function = function;
-        traceStack[position].line = line;
-#ifdef INCLUDE_THREADID
-        traceStack[position].threadID = PosixThread::getCurrentThreadId();
-#endif
-    }
+#define LISTCMD_ADDUSER 1
+#define LISTCMD_REMUSER 2
+#define LISTCMD_REMALLUSERS 3
+#define LISTCMD_ADDGAME 4
+#define LISTCMD_REMGAME 5
+#define LISTCMD_STATGAME 6
+#define LISTCMD_REMALLGAMES 7
+#define LISTCMD_ADDPLAYER 8
+#define LISTCMD_REMPLAYER 9
+#define LISTCMD_REMALLPLAYERS 10
+#define LISTCMD_APPEND 50
 
+
+		typedef struct {
+			int command;
+			union  {
+				KailleraPlayerT * player;
+				KailleraGameT * game;
+				KailleraUserT * user;
+				void * ptr;
+			} body;
+		} KailleraListsCommand;
+
+
+		void processCommand(KailleraListsCommand * cmd);
+		void sendCommand(KailleraListsCommand * cmd);
+
+		void uiGameJoinCallback(unsigned int id);
+
+	};
 };
 

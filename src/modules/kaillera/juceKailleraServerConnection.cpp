@@ -182,14 +182,21 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
 	TRACE();
 	if (lstUsers != 0 && lstGames != 0) {
-		if (last <= 3) {
-			TRACE();
-			lstUsers->updateContent();
-			lstUsers->repaint();
+		if (last != LISTCMD_APPEND) {
+			if (last <= 3) {
+				TRACE();
+				lstUsers->updateContent();
+				lstUsers->repaint();
+			} else {
+				TRACE();
+				lstGames->updateContent();
+				lstGames->repaint();
+			}
 		} else {
-			TRACE();
-			lstGames->updateContent();
-			lstGames->repaint();
+			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
+			if (txtChat != 0)
+				appendText(*s);
+			delete s;
 		}
 	}
 	TRACE();

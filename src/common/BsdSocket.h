@@ -129,7 +129,7 @@ namespace n02 {
         static char bigRecvBuffer[BIG_RECV_BUFFER_SIZE];
 
     public:
-        static bool step(int secs, int ms);
+        static void step(int secs, int ms);
         static void initialize();
         static void terminate();
 

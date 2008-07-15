@@ -1,3 +1,34 @@
+/******************************************************************************
+          .d8888b.   .d8888b.  
+         d88P  Y88b d88P  Y88b 
+         888    888        888 
+88888b.  888    888      .d88P 
+888 "88b 888    888  .od888P"  
+888  888 888    888 d88P"      
+888  888 Y88b  d88P 888"       
+888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
+*******************************************************************************
+Copyright (c) Open Kaillera Team 2003-2008
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, and/or sell copies of the
+Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice must be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+******************************************************************************/
+
 #include "gameSelect.h"
 #include "juceGameSelect.h"
 #include "GamesList.h"
@@ -9,6 +40,12 @@ namespace n02 {
 	static int gamesCount;
 	static juceGameSelect * newCmp;
 
+	namespace gamelistSel {
+		int selectedIndex;
+	};
+
+	using namespace gamelistSel;
+
 	char * getSelectedGame(Component* parent) {
 		if (GamesList::getCount() > 0) {
 			selectedGameIndex = -1;
@@ -16,7 +53,7 @@ namespace n02 {
 			int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
 			delete newCmp;
 
-			if (r==0)
+			if (r==0 || selectedIndex == -1)
 				return 0;
 			else
 				return GamesList::current(&selectedGameIndex);
@@ -37,7 +74,7 @@ namespace n02 {
 		g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
 	}
 	void  GameSelectLB::listBoxItemClicked (int row, const MouseEvent &e){
-		GamesList::selectByIndex(selectedGameIndex = row);
+		GamesList::selectByIndex(selectedIndex = selectedGameIndex = row);
 
 		juce::String status;
 
@@ -50,11 +87,11 @@ namespace n02 {
 	}
 
 	void  GameSelectLB::listBoxItemDoubleClicked (int row, const MouseEvent &e){
-		selectedGameIndex = row;
+		selectedIndex = selectedGameIndex = row;
 		newCmp->closeUp();
 	}
 	void  GameSelectLB::returnKeyPressed (int lastRowSelected){
-		selectedGameIndex = lastRowSelected;
+		selectedIndex = selectedGameIndex = lastRowSelected;
 		newCmp->closeUp();
 	}
 
@@ -71,6 +108,10 @@ namespace n02 {
 			int firstSelIndex = -1;
 			for (ModuleAbstraction02 * mod = modHelper.modHandler->find(MTYPE02_RUNALG); mod != 0; mod = modHelper.modHandler->findNext(mod)) {
 				RunAlgorithmInterface02 ra; mod->getInterface(&ra);
+
+				if ((ra.attributes & RA_GENERIC)==0)
+					continue;
+
 				if ((currentGameCaps & GAME_CAPS_STATES) != 0 && (ra.attributes & RA_STATES) ==0)
 					continue;
 

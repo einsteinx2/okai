@@ -432,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\modules\internalmodules.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\modules\module.cpp"
 				>
 			</File>
@@ -486,6 +490,22 @@
 			<Filter
 				Name="deferment"
 				>
+				<File
+					RelativePath="..\..\modules\deferment\defermentInputManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\deferment\defermentInputManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\deferment\fixed.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\deferment\traditional.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="n02.kaillera"
@@ -543,23 +563,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\modules\kaillera\modKaillera.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\modules\kaillera\modKaillera.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\uiServerWindow.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\uiServerWindowLists.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\uiServerWindowLists.h"
 					>
 				</File>
 			</Filter>
