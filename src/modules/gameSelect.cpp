@@ -112,7 +112,7 @@ namespace n02 {
 				if ((ra.attributes & RA_GENERIC)==0)
 					continue;
 
-				if ((currentGameCaps & GAME_CAPS_STATES) != 0 && (ra.attributes & RA_STATES) ==0)
+				if ((currentGameCaps & GAME_CAPS_STATES) == 0 && (ra.attributes & RA_STATES) !=0)
 					continue;
 
 				if (firstSelIndex == -1)

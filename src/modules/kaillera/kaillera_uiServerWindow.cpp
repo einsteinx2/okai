@@ -288,6 +288,8 @@ namespace n02 {
 		static void N02CCNV gameCreated ()
 		{
 			TRACE();
+
+			activeGameCaps = modHelper.gameList->getCaps(lastGame);
 			lastSelectedUserId = 0xFFFF;
 			hosting = true;
 			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
@@ -314,7 +316,9 @@ namespace n02 {
 		}
 		static void N02CCNV gameJoined ()
 		{
+
 			TRACE();
+			activeGameCaps = modHelper.gameList->getCaps(lastGame);	
 			lastSelectedUserId = 0xFFFF;
 			hosting = false;
 			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
