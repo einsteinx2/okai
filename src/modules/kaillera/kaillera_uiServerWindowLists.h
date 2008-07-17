@@ -72,7 +72,9 @@ namespace n02 {
 #define LISTCMD_ADDPLAYER 8
 #define LISTCMD_REMPLAYER 9
 #define LISTCMD_REMALLPLAYERS 10
+#define LISTCMD_LISTSLIMIT 20
 #define LISTCMD_APPEND 50
+#define LISTCMD_SETTITLE 51
 
 
 		typedef struct {

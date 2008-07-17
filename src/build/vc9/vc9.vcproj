@@ -129,11 +129,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="$(InputDir)..\..\juce\bin\jucelib_static_Win32.lib"
 				OutputFile="..\..\..\release\$(ProjectName).dll"
 				ModuleDefinitionFile="$(InputDir)..\..\interface\PSENet.def"
 				GenerateDebugInformation="true"
-				OptimizeReferences="1"
+				SubSystem="2"
+				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>

@@ -23,11 +23,13 @@
 #define __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce.h"
+#include "juce02.h"
 namespace n02 {
 	namespace kaillera {
 		class ServersListListboxModel
 			: public TableListBoxModel {
+public:
+				ServersListListboxModel(){}
 				int  getNumRows ();
 				void  paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected);
 				void  paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected);

@@ -176,13 +176,13 @@ void juceKailleraServerConnection::clearText() {
 }
 void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 	//LOG(%i, commandId);
-	TRACE();
-	int last = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->command;
-	TRACE();
-	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
-	TRACE();
-	if (lstUsers != 0 && lstGames != 0) {
-		if (last != LISTCMD_APPEND) {
+	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);
+	TRACE(); int last = cmd->command;	
+
+	if (last <= LISTCMD_LISTSLIMIT) {
+		n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
+		TRACE();
+		if (lstUsers != 0 && lstGames != 0) {
 			if (last <= 3) {
 				TRACE();
 				lstUsers->updateContent();
@@ -192,13 +192,29 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 				lstGames->updateContent();
 				lstGames->repaint();
 			}
-		} else {
+		}
+	} else {
+		TRACE();
+		if (last == LISTCMD_APPEND) {
 			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
-			if (txtChat != 0)
-				appendText(*s);
+			if (this != 0 && txtChat != 0) {
+				TRACE();
+				LOG(%i, s);
+				txtChat->setHighlightedRegion(textLength, 0);
+				txtChat->insertTextAtCursor (*s);
+				textLength += s->length();
+			}
 			delete s;
+		} else if (last == LISTCMD_SETTITLE) {
+			TRACE();
+			TCHAR * s = reinterpret_cast<TCHAR*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
+			String title;
+			title << "Connected to " << s;
+			n02::kaillera::uiSetTitleCallback(title);
 		}
 	}
+	TRACE();
+	delete cmd;
 	TRACE();
 }
 

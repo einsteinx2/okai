@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_4EDE2455__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce.h"
+#include "juce02.h"
 
 namespace n02 {
 
@@ -33,6 +33,8 @@ namespace n02 {
 		void  listBoxItemClicked (int row, const MouseEvent &e);
 		void  listBoxItemDoubleClicked (int row, const MouseEvent &e);
 		void  returnKeyPressed (int lastRowSelected);
+		void selectedRowsChanged (int lastRowSelected);
+
 	};
 
 };

@@ -123,6 +123,8 @@ void juceGameSelect::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == btnOk)
     {
         //[UserButtonCode_btnOk] -- add your button handler code here..
+		if (lstGames->getNumSelectedRows() == 0) 
+			n02::gamelistSel::selectedIndex = -1;
 		getCurrentlyModalComponent()->exitModalState(1);
         //[/UserButtonCode_btnOk]
     }

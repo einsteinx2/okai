@@ -28,4 +28,66 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+#include "kaillera_ClientMessaging.h"
+
+namespace n02 {
+    namespace kaillera {
+
+        bool ClientMessaging::initialize(int localPort)
+        {
+            TRACE();
+            require(state == UNINITIALIZED);
+
+            lastIncludedInstruction = 0xFFFF;
+            lastReceivedInstruction = 0xFFFF;
+            oldInstructionsPerMessage = 2;
+            newInstructions = 0;
+
+            if (UdpSocket::initialize(localPort, 32000)) {
+                state = DATAMSGS;
+            } else {
+                close();
+            }
+
+            TRACE();
+            return state == DATAMSGS;
+        }
+
+        void  ClientMessaging::terminate()
+        {
+            TRACE();
+            require(state != UNINITIALIZED);
+            while (itemsCount() > 0) {
+                delete getItemPtr(0)->body;
+                removeIndex(0);
+            }
+
+            close();
+
+            state = UNINITIALIZED;
+            TRACE();
+        }
+
+        void  ClientMessaging::setState(ClientMessagingState newState) {
+            TRACE();
+            require(newState != UNINITIALIZED);
+
+            state = newState;
+            TRACE();
+        }
+
+        void  ClientMessaging::setAddress(const SocketAddress & addr) {
+            TRACE();
+            defaultAddress = addr;
+            TRACE();
+        }
+
+        void  ClientMessaging::sendData(const void * data, const int len) {
+            TRACE();
+            send(data, len);
+            TRACE();
+        }
+
+    };
+};
 

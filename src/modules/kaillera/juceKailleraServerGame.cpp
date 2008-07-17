@@ -132,6 +132,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
 	lstPlayers->getHeader()->addColumn("Nick", 1, 110, 30, -1, TableHeaderComponent::notSortable);
 	lstPlayers->getHeader()->addColumn("Ping", 2, 40, 30, -1, TableHeaderComponent::notSortable);
 	lstPlayers->getHeader()->addColumn("C.S.", 3, 40, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayers->getHeader()->addColumn("Delay", 4, 60, 30, -1, TableHeaderComponent::notSortable);
 	lstPlayers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstPlayers->setOutlineThickness (1);
 
@@ -286,13 +287,33 @@ void juceKailleraServerGame::clearText() {
 			txtChat->setText("", false);
 }
 void juceKailleraServerGame::handleCommandMessage(int  commandId) {
-	TRACE();
-	n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
-	TRACE();
-	if (lstPlayers != 0) {
-	lstPlayers->updateContent();
-	lstPlayers->repaint();
+	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);
+	TRACE(); int last = cmd->command;	
+
+	if (last <= LISTCMD_LISTSLIMIT) {
+		TRACE();
+		n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
+		TRACE();
+		if (lstPlayers != 0) {
+			lstPlayers->updateContent();
+			lstPlayers->repaint();
+		}
+		TRACE();
+	} else {
+		TRACE();
+		if (last == LISTCMD_APPEND) {
+			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
+			if (this != 0 && txtChat != 0) {
+				TRACE();
+				txtChat->setHighlightedRegion(textLength, 0);
+				txtChat->insertTextAtCursor (*s);
+				textLength += s->length();
+			}
+			delete s;
+		}
 	}
+	TRACE();
+	delete cmd;
 	TRACE();
 }
 

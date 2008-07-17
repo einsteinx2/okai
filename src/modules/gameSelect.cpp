@@ -56,7 +56,7 @@ namespace n02 {
 			if (r==0 || selectedIndex == -1)
 				return 0;
 			else
-				return GamesList::current(&selectedGameIndex);
+				return GamesList::current(&selectedIndex);
 		} else {
 			AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "No games in list");
 			return 0;
@@ -66,9 +66,15 @@ namespace n02 {
 	int  GameSelectLB::getNumRows () {
 		return GamesList::getCount();
 	}
+
+	void GameSelectLB::selectedRowsChanged (int lastRowSelected) {
+		selectedIndex = lastRowSelected;
+	}
+
 	void  GameSelectLB::paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected) {
-		if (rowIsSelected)
+		if (rowIsSelected) {
 			g.fillAll (Colour(0xdd,0xdd,0xff));
+		}
 		selectedGameIndex = rowNumber;
 		String text(GamesList::current(&selectedGameIndex));
 		g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);

@@ -30,6 +30,14 @@ SOFTWARE.
 ******************************************************************************/
 #pragma once
 
+#define JUCE_DLL
+
+#ifdef JUCE_DLL
+#pragma comment(lib, "..\\..\\juce\\bin\\JUCE.lib")
+#else
+#pragma comment(lib, "..\\..\\juce\\bin\\jucelib_static_Win32.lib")
+#endif
+
 #include "juce.h"
 
 // support header for using juce inside this program
@@ -94,4 +102,3 @@ SOFTWARE.
 #define COMMAND(X, Y) ((X << 24) | Y)
 #define COMMAND_X(X) ((0xFF000000&X)>>24)
 #define COMMAND_Y(X) (0xFFFFFF&X)
-

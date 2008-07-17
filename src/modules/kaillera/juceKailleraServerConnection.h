@@ -47,6 +47,7 @@ namespace n02 {
 			void  textEditorFocusLost (TextEditor &editor){}
 		};
 		void uiNewGameCallback();
+		void uiSetTitleCallback(String & text);
 	};
 };
 //[/Headers]

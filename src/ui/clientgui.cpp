@@ -53,7 +53,7 @@ namespace n02 {
 
 	/* Thread juice */
 
-	static char * argv[] = {""};
+	static char * argv[] = {"n02.dll",""};
 
 
 	void N02CCNV  interfGuiThreadEndCallback();

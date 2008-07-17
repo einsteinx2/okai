@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEABORTABLESTATUSWINDOW_JUCEABORTABLESTATUSWINDOW_DC47E865__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce.h"
+#include "juce02.h"
 namespace n02 {
 	extern bool cancelled;
 	extern volatile bool cancelableInitialized;

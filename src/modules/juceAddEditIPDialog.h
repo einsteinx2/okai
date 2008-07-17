@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_181538DB__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce.h"
+#include "juce02.h"
 //[/Headers]
 
 

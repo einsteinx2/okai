@@ -117,6 +117,7 @@ namespace n02 {
 					case 4:
 						{
 							String text(((((k.ping  * 60) / (1000 * k.connectionSetting))+2) * k.connectionSetting) -1);
+							text.append(T(" frames"), 10);
 							g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
 						}
 						break;
@@ -278,8 +279,6 @@ namespace n02 {
 						delete game;
 					}
 					break;
-
-
 				case LISTCMD_STATGAME:
 					{
 						KailleraGameT * game = cmd->body.game;
@@ -347,7 +346,6 @@ namespace n02 {
 					players.clearItems();
 					break;
 			};
-			delete cmd;
 		}
 	};
 };

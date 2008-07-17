@@ -62,6 +62,12 @@ namespace n02 {
 
 		SIMPLEWINDOW(KailleraServerGame, "Game Window", Colours::whitesmoke, DocumentWindow::closeButton, juceKailleraServerGame, 650, 250);
 
+		void sendGameCommand(int command, void * param) {
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = command;
+			cmd->body.ptr = param;
+			KailleraServerGame::cmponnt->sendCommand(cmd);
+		}
 
 		void KailleraServerGame::OnClose() {
 			uiLeaveGameCallback();
@@ -118,6 +124,17 @@ namespace n02 {
 			}
 		}
 
+		void sendCommand(int command, void * param) {
+			KailleraListsCommand * cmd = new KailleraListsCommand;
+			cmd->command = command;
+			cmd->body.ptr = param;
+			KailleraServerConnection::cmponnt->sendCommand(cmd);
+		}
+
+		void uiSetTitleCallback(String & text) {
+			KailleraServerConnection::window->setName(text);
+		}
+
 		/************************************************************
 		** chat input
 		*******************************/
@@ -157,10 +174,8 @@ namespace n02 {
 			user->connectionSetting =  connectionSetting;
 			user->status = status;
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_ADDUSER;
-			cmd->body.user = user;
-			KailleraServerConnection::cmponnt->sendCommand(cmd);
+			sendCommand(LISTCMD_ADDUSER, user);
+
 			TRACE();
 		}
 		static void N02CCNV serverGameAdd (const char * name, const unsigned int id, const char * nick, const char * app, const char * users, const char status)
@@ -175,10 +190,7 @@ namespace n02 {
 			game->status = status;
 			strncpy(game->app, app, 127);
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_ADDGAME;
-			cmd->body.game = game;
-			KailleraServerConnection::cmponnt->sendCommand(cmd);
+			sendCommand(LISTCMD_ADDGAME, game);
 
 			TRACE();
 		}
@@ -186,9 +198,11 @@ namespace n02 {
 		{
 			TRACE();
 			serverUserAdd(nick, ping, id, connectionSetting, 1);
-			juce::String notification;
-			notification << "* " << nick << " joined the partyline\r";
-			KailleraServerConnection::cmponnt->appendText(notification);
+
+			char txt[256];
+			sprintf_s(txt, 255, "* %s joined the partyline\r", nick);
+			sendCommand(LISTCMD_APPEND, new String(txt));
+
 			TRACE();
 		}
 		static void N02CCNV serverUserLeave (const char * nick, const char * /*quitMessage*/, const unsigned short id)
@@ -198,22 +212,22 @@ namespace n02 {
 			KailleraUserT * user = new KailleraUserT;
 			user->id = id;
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_REMUSER;
-			cmd->body.user = user;
-			KailleraServerConnection::cmponnt->sendCommand(cmd);
+			sendCommand(LISTCMD_REMUSER, user);
 
-			juce::String notification;
-			notification << "* " << nick << " left the partyline\r";
-			KailleraServerConnection::cmponnt->appendText(notification);
+			char txt[256];
+			sprintf_s(txt, 255, "* %s left the partyline\r", nick);
+			sendCommand(LISTCMD_APPEND, new String(txt));
+
 			TRACE();
 		}
 		static void N02CCNV partylineChat (const char * userName, const char * message)
 		{
 			TRACE();
-			juce::String chat;
-			chat << "<" << userName << "> " << message << "\r";
-			KailleraServerConnection::cmponnt->appendText(chat);
+
+			char txt[512];
+			sprintf_s(txt, 511, "<%s> %s\r", userName, message);
+			sendCommand(LISTCMD_APPEND, new String(String::fromUTF8((juce::uint8*)txt, strlen(txt)+1)));
+
 			TRACE();
 		}
 		static void N02CCNV gameChat (const char * userName, const char * message)
@@ -227,26 +241,37 @@ namespace n02 {
 		static void N02CCNV MOTD (const char * source, const char * message)
 		{
 			TRACE();
-			juce::String chat;
-			chat << " - " << message << "\r";
-			KailleraServerConnection::cmponnt->appendText(chat);
+			//juce::String chat;
+			//chat << " - " << message << "\r";
+			//KailleraServerConnection::cmponnt->appendText(chat);
+
+			char txt[256];
+			sprintf_s(txt, 255, "- %s\r", message);
+			sendCommand(LISTCMD_APPEND, new String(txt));
+
 			TRACE();
 		}
 		static void N02CCNV clientLoginStatusChange (const char * msg)
 		{
 			TRACE();
-			juce::String mesg;
-			mesg << msg << "\r";
-			KailleraServerConnection::cmponnt->appendText(mesg);
+			//juce::String mesg;
+			//mesg << msg << "\r";
+			//KailleraServerConnection::cmponnt->appendText(mesg);
+
+			char txt[256];
+			sprintf_s(txt, 255, "%s\r", msg);
+			sendCommand(LISTCMD_APPEND, new String(txt));
+
 			TRACE();
 		}
 		static void N02CCNV loggedIn ()
 		{
 			TRACE();
 			clientLoginStatusChange("Logged in");
-			juce::String title;
-			title << "Connected to " << uiLastIP;
-			KailleraServerConnection::window->setName(title);
+
+			sendCommand(LISTCMD_SETTITLE, uiLastIP);
+
+			//KailleraServerConnection::window->setName(title);
 			TRACE();
 		}
 		static void N02CCNV serverNewGame (const char * gname, const unsigned int id, const char*app, const char*owner)
@@ -258,31 +283,21 @@ namespace n02 {
 		static void N02CCNV serverGameStatusChange (unsigned int id, char status, int players, int maxplayers)
 		{
 			TRACE();
-
 			KailleraGameT * game = new KailleraGameT;
-
 			game->id = id;
 			game->status = status;
-			sprintf(game->players, "%i/%i", players, maxplayers);
+			sprintf_s(game->players, 10, "%i/%i", players, maxplayers);
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_STATGAME;
-			cmd->body.game = game;
-			KailleraServerConnection::cmponnt->sendCommand(cmd);
-
+			sendCommand(LISTCMD_STATGAME, game);
 			TRACE();
 		}
 		static void N02CCNV serverGameClose (unsigned int id)
 		{
 			TRACE();
 			KailleraGameT * game = new KailleraGameT;
-
 			game->id = id;
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_REMGAME;
-			cmd->body.game = game;
-			KailleraServerConnection::cmponnt->sendCommand(cmd);
+			sendCommand(LISTCMD_REMGAME, game);
 			TRACE();
 		}
 		static void N02CCNV gameCreated ()
@@ -294,9 +309,7 @@ namespace n02 {
 			hosting = true;
 			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_REMALLPLAYERS;
-			KailleraServerGame::cmponnt->sendCommand(cmd);
+			sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
 
 			gameRunning = false;
 
@@ -323,35 +336,28 @@ namespace n02 {
 			hosting = false;
 			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_REMALLPLAYERS;
-			KailleraServerGame::cmponnt->sendCommand(cmd);
+			sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
 
 			gameRunning = false;
-
 			TRACE();
 		}
 		static void N02CCNV gameKicked ()
 		{
 			TRACE();
-			String text(T("* You have been kicked out of the game\r"));
-			KailleraServerConnection::cmponnt->appendText(text);			
+			sendCommand(LISTCMD_APPEND, new String("* You have been kicked out of the game\r"));
 			TRACE();
 		}
 		static void N02CCNV gamePlayerAdd (char *name, int ping, unsigned short id, char connectionSetting)
 		{
 			TRACE();
 			KailleraPlayerT * player = new KailleraPlayerT;
-			
+
 			player->connectionSetting = connectionSetting;
 			player->id = id;
 			strncpy(player->name, name, 31);
 			player->ping = ping;
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_ADDPLAYER;
-			cmd->body.player = player;
-			KailleraServerGame::cmponnt->sendCommand(cmd);
+			sendGameCommand(LISTCMD_ADDPLAYER, player);
 			TRACE();
 		}
 
@@ -359,55 +365,59 @@ namespace n02 {
 		{
 			TRACE();
 			gamePlayerAdd(username, ping, uid, connset);
-			String text;
-			text << "* " << username << " joined the game\r";
-			KailleraServerGame::cmponnt->appendText(text);
+
+			if (isGameWindowActive()) {
+				char txt[256];
+				sprintf_s(txt, 255, "* %s joined the game\r", username);
+				sendGameCommand(LISTCMD_APPEND, new String(txt));
+			}
+
 			TRACE();
 		}
 		static void N02CCNV gamePlayerLeft (char * username, unsigned short id)
 		{
 			TRACE();
 			KailleraPlayerT * player = new KailleraPlayerT;
-			
 			player->id = id;
 
-			KailleraListsCommand * cmd = new KailleraListsCommand;
-			cmd->command = LISTCMD_REMPLAYER;
-			cmd->body.player = player;
-			KailleraServerGame::cmponnt->sendCommand(cmd);
+			sendGameCommand(LISTCMD_REMPLAYER, player);
 
-			String text;
-			text << "* " << username << " left the game\r";
-			KailleraServerGame::cmponnt->appendText(text);
+			if (isGameWindowActive()) {
+				char txt[256];
+				sprintf_s(txt, 255, "* %s left the game\r", username);
+				sendGameCommand(LISTCMD_APPEND, new String(txt));
+			}
+
 			TRACE();
 		}
 		static void N02CCNV gamePlayerDropped (char * username, int gdpl)
 		{
 			TRACE();
-			String text;
-			text << "* " << username << " (Player " << gdpl << ") dropped\r";
-			KailleraServerGame::cmponnt->appendText(text);
+			if (isGameWindowActive()) {
+				char txt[256];
+				sprintf_s(txt, 255, "* %s (Player %i) dropped\r", username, gdpl);
+				sendGameCommand(LISTCMD_APPEND, new String(txt));
+			}
 			TRACE();
 		}
 		static void N02CCNV gameStart (int playerNo, int numPlayers)
 		{
 			String text;
-			text << "* Game started \r";
-			KailleraServerGame::cmponnt->appendText(text);
+			if (isGameWindowActive()) {
+				sendGameCommand(LISTCMD_APPEND, new String("Game started\r"));
+			}
 			modHelper.startGame(lastGame, playerNo, numPlayers);
 
 			gameRunning = true;
-
 		}
 		static void N02CCNV gameEnded ()
 		{
 			if (gameRunning) {
 				modHelper.endGame();
 				gameRunning = false;
-
-				String text;
-				text << "* Game ended \r";
-				KailleraServerGame::cmponnt->appendText(text);
+				if (isGameWindowActive()) {
+					sendGameCommand(LISTCMD_APPEND, new String("Game ended\r"));
+				}
 			}
 		}
 
@@ -464,20 +474,18 @@ namespace n02 {
 					KailleraServerConnection::createAndShow();
 
 					{
-						KailleraListsCommand * cmd = new KailleraListsCommand;
-						cmd->command = LISTCMD_REMALLUSERS;
-						KailleraServerConnection::cmponnt->sendCommand(cmd);
+						sendCommand(LISTCMD_REMALLUSERS, 0);
 					}
 					{
-						KailleraListsCommand * cmd = new KailleraListsCommand;
-						cmd->command = LISTCMD_REMALLGAMES;
-						KailleraServerConnection::cmponnt->sendCommand(cmd);
+						sendCommand(LISTCMD_REMALLGAMES, 0);
 					}
 
 					if (coreConnect(toConnect)) {
-						juce::String stat;
-						stat << "Connecting to " << toConnect.toString() << "\r";
-						KailleraServerConnection::cmponnt->appendText(stat);
+						{
+							char stat[256];
+							sprintf_s(stat, 255, "Connecting to %s", toConnect.toString());
+							clientLoginStatusChange(stat);
+						}
 
 						KailleraServerConnection::window->runModalLoop();
 					

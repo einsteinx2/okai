@@ -184,7 +184,7 @@ namespace n02 {
 
 			// state transformation function
 			void updateState(CoreStateInput input) {
-				// LOG(state=%i[%i], state, input);
+				//LOG(state=%i[%i], state, input);
 				TRACE();
 				switch (state) {
 					case UNINITIALIZED:
