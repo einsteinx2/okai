@@ -201,7 +201,7 @@ namespace n02 {
 
 			char txt[256];
 			sprintf_s(txt, 255, "* %s joined the partyline\r", nick);
-			sendCommand(LISTCMD_APPEND, new String(txt));
+			sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
 			TRACE();
 		}
@@ -216,7 +216,7 @@ namespace n02 {
 
 			char txt[256];
 			sprintf_s(txt, 255, "* %s left the partyline\r", nick);
-			sendCommand(LISTCMD_APPEND, new String(txt));
+			sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
 			TRACE();
 		}
@@ -226,41 +226,37 @@ namespace n02 {
 
 			char txt[512];
 			sprintf_s(txt, 511, "<%s> %s\r", userName, message);
-			sendCommand(LISTCMD_APPEND, new String(String::fromUTF8((juce::uint8*)txt, strlen(txt)+1)));
+			sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
 			TRACE();
 		}
 		static void N02CCNV gameChat (const char * userName, const char * message)
 		{
 			TRACE();
-			juce::String chat;
-			chat << "<" << userName << "> " << message << "\r";
-			KailleraServerGame::cmponnt->appendText(chat);
+			
+			char txt[512];
+			sprintf_s(txt, 511, "<%s> %s\r", userName, message);
+			sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
+
 			TRACE();
 		}
 		static void N02CCNV MOTD (const char * source, const char * message)
 		{
 			TRACE();
-			//juce::String chat;
-			//chat << " - " << message << "\r";
-			//KailleraServerConnection::cmponnt->appendText(chat);
 
 			char txt[256];
 			sprintf_s(txt, 255, "- %s\r", message);
-			sendCommand(LISTCMD_APPEND, new String(txt));
+			sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
 			TRACE();
 		}
 		static void N02CCNV clientLoginStatusChange (const char * msg)
 		{
 			TRACE();
-			//juce::String mesg;
-			//mesg << msg << "\r";
-			//KailleraServerConnection::cmponnt->appendText(mesg);
 
 			char txt[256];
 			sprintf_s(txt, 255, "%s\r", msg);
-			sendCommand(LISTCMD_APPEND, new String(txt));
+			sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
 			TRACE();
 		}
@@ -369,7 +365,7 @@ namespace n02 {
 			if (isGameWindowActive()) {
 				char txt[256];
 				sprintf_s(txt, 255, "* %s joined the game\r", username);
-				sendGameCommand(LISTCMD_APPEND, new String(txt));
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 			}
 
 			TRACE();
@@ -385,7 +381,7 @@ namespace n02 {
 			if (isGameWindowActive()) {
 				char txt[256];
 				sprintf_s(txt, 255, "* %s left the game\r", username);
-				sendGameCommand(LISTCMD_APPEND, new String(txt));
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 			}
 
 			TRACE();
@@ -396,7 +392,7 @@ namespace n02 {
 			if (isGameWindowActive()) {
 				char txt[256];
 				sprintf_s(txt, 255, "* %s (Player %i) dropped\r", username, gdpl);
-				sendGameCommand(LISTCMD_APPEND, new String(txt));
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 			}
 			TRACE();
 		}
@@ -404,7 +400,7 @@ namespace n02 {
 		{
 			String text;
 			if (isGameWindowActive()) {
-				sendGameCommand(LISTCMD_APPEND, new String("Game started\r"));
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8("Game started\r")));
 			}
 			modHelper.startGame(lastGame, playerNo, numPlayers);
 
@@ -416,7 +412,7 @@ namespace n02 {
 				modHelper.endGame();
 				gameRunning = false;
 				if (isGameWindowActive()) {
-					sendGameCommand(LISTCMD_APPEND, new String("Game ended\r"));
+					sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8("Game ended\r")));
 				}
 			}
 		}

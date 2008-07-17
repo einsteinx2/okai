@@ -39,7 +39,6 @@ SOFTWARE.
 #include "gameSelect.h"
 #include "kaillera_ClientCore.h"
 
-
 namespace n02 {
 
 	namespace kaillera {
@@ -103,7 +102,7 @@ namespace n02 {
 				KailleraPlayerT & k = players[rowNumber];
 				switch (columnId) {
 					case 1:
-						g.drawText (k.name, 2, 0, width - 4, height, Justification::centredLeft, true);
+						g.drawText (FROMUTF8(k.name), 2, 0, width - 4, height, Justification::centredLeft, true);
 						break;
 					case 2:
 						{
@@ -166,7 +165,7 @@ namespace n02 {
 				KailleraUserT k = users[rowNumber];
 				switch (columnId) {
 					case 1:
-						g.drawText (k.username, 2, 0, width - 4, height, Justification::centredLeft, true);
+						g.drawText (FROMUTF8(k.username), 2, 0, width - 4, height, Justification::centredLeft, true);
 						break;
 					case 2:
 						{
@@ -227,7 +226,7 @@ namespace n02 {
 						g.drawText (k.app, 2, 0, width - 4, height, Justification::centredLeft, true);
 						break;
 					case 3:
-						g.drawText (k.owner, 2, 0, width - 4, height, Justification::centredLeft, true);
+						g.drawText (FROMUTF8(k.owner), 2, 0, width - 4, height, Justification::centredLeft, true);
 						break;
 					case 4:
 						{

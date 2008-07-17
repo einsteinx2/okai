@@ -46,6 +46,15 @@
 #endif
 
 //=============================================================================
+/** Normally, JUCE_DEBUG is set to 1 or 0 based on compiler and project settings,
+    but if you define this value, you can override this can force it to be true or
+    false.
+*/
+#ifndef JUCE_FORCE_DEBUG
+  //#define JUCE_FORCE_DEBUG 1
+#endif
+
+//=============================================================================
 /** If this flag is enabled, the the jassert and jassertfalse macros will
     always use Logger::writeToLog() to write a message when an assertion happens.
 
@@ -67,7 +76,7 @@
     (This only affects a Win32 build)
 */
 #ifndef JUCE_ASIO
-//  #define JUCE_ASIO 1
+  //#define JUCE_ASIO 1
 #endif
 
 /** Comment out this macro to disable building of ALSA device support on Linux.
@@ -78,17 +87,18 @@
 
 //=============================================================================
 /** Comment out this macro if you don't want to enable QuickTime or if you don't
-    have QuickTime installed. If it's not enabled, the QuickTimeWindow class will
-    be unavailable.
+    have the SDK installed.
 
-    On Windows, if you enable this, you'll need to make sure the Apple Quicktime.dll
-    file is found on your include path. By default the Quicktime installer will have
-    put this in the "/Program Files/QuickTime" folder. Only QuickTime version 7 or later
-    is currently supported.
+    If this flag is not enabled, the QuickTimeMovieComponent and QuickTimeAudioFormat
+    classes will be unavailable.
+
+    On Windows, if you enable this, you'll need to have the QuickTime SDK
+    installed, and its header files will need to be on your include path.
 */
 #if ! (defined (JUCE_QUICKTIME) || defined (LINUX) || (defined (_WIN32) && ! defined (_MSC_VER)))
   //#define JUCE_QUICKTIME 1
 #endif
+
 
 //=============================================================================
 /** Comment out this macro if you don't want to enable OpenGL or if you don't
@@ -96,7 +106,7 @@
     OpenGLComponent class will be unavailable.
 */
 #ifndef JUCE_OPENGL
-  //#define JUCE_OPENGL 1
+ // #define JUCE_OPENGL 1
 #endif
 
 //=============================================================================
@@ -110,7 +120,15 @@
 #endif
 
 #ifndef JUCE_USE_OGGVORBIS
-  //#define JUCE_USE_OGGVORBIS 1
+ // #define JUCE_USE_OGGVORBIS 1
+#endif
+
+//=============================================================================
+/** This flag lets you enable support for CD-burning. You might want to disable
+    it to build without the MS SDK under windows.
+*/
+#if (! defined (JUCE_USE_CDBURNER)) && ! (defined (_WIN32) && ! defined (_MSC_VER))
+  //#define JUCE_USE_CDBURNER 1
 #endif
 
 //=============================================================================
@@ -128,15 +146,25 @@
 /** Enable this under Linux to use Xinerama for multi-monitor support.
 */
 #ifndef JUCE_USE_XINERAMA
-  //#define JUCE_USE_XINERAMA 1
+ // #define JUCE_USE_XINERAMA 1
 #endif
 
 /** Enable this under Linux to use XShm for faster shared-memory rendering.
 */
 #ifndef JUCE_USE_XSHM
-  //#define JUCE_USE_XSHM 1
+ // #define JUCE_USE_XSHM 1
 #endif
 
+//=============================================================================
+/** Enabling this builds support for VST audio plugins.
+    @see VSTPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_AU
+*/
+//#define JUCE_PLUGINHOST_VST 1
+
+/** Enabling this builds support for AudioUnit audio plugins.
+    @see AudioUnitPluginFormat, AudioPluginFormat, AudioPluginFormatManager, JUCE_PLUGINHOST_VST
+*/
+//#define JUCE_PLUGINHOST_AU 1
 
 //=============================================================================
 /** Disabling this will avoid linking to any UI code. This is handy for

@@ -102,3 +102,7 @@ SOFTWARE.
 #define COMMAND(X, Y) ((X << 24) | Y)
 #define COMMAND_X(X) ((0xFF000000&X)>>24)
 #define COMMAND_Y(X) (0xFFFFFF&X)
+
+
+#define FROMUTF8(UTF8) String::fromUTF8((juce::uint8*)UTF8, strlen(UTF8)+1)
+

@@ -39,8 +39,20 @@ SOFTWARE.
 
 namespace n02 {
 
+	TCHAR primary[128];
+	TCHAR secondary[128];
+
+	CONFIG_START(juceFontConfig)
+	CONFIG_STRVAR(_T("primary"), primary, 128, _T(""))
+	CONFIG_STRVAR(_T("secondary"), secondary, 128, _T(""))
+	CONFIG_END
+
+
 	void GuiInitialize() {
 		LOG(Initializing gui);
+
+		ConfigurationManager config(juceFontConfig);
+		config.load(_T("font"));
 
 		SystemStats system;
 		
@@ -77,6 +89,13 @@ namespace n02 {
 
 	void ThreadJuice::OpenKailleraJUCEApp::initialise (const String& commandLineParameters) {
 		juceThread.juceInitialized = 1;
+
+		if (_tcslen(primary) > 2) {
+			Font::setDefaultSansSerifFontName(primary);
+		}
+		if (_tcslen(secondary) > 2) {
+			Font::setDefaultSansSerifFontName(secondary);
+		}
 	}
 	void ThreadJuice::OpenKailleraJUCEApp::shutdown() {
 		juceThread.juceInitialized = 0;

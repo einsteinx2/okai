@@ -35,6 +35,8 @@ SOFTWARE.
 // This flag is crucial for synchronization in some applications
 #define MASK_INITIAL_FRAMES 60
 
+//#define PING_HACK
+
 namespace n02 {
 	namespace kaillera {
 		namespace core {
@@ -976,14 +978,9 @@ namespace n02 {
 						dataPtr++;
 					}
 
-					cedata.logFilled();
 					cedata.writeBytes(&header, sizeof(header));
-					cedata.logFilled();
 					cedata.writeBytes(gameInfo.defaultInput, header.length);
-					cedata.logFilled();
 					cedata.writeSignedInt8(0);
-
-					cedata.logFilled();
 
 					send(cedata);
 
