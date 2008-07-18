@@ -34,15 +34,15 @@ SOFTWARE.
 
 namespace n02 {
 
-	void recorderInitialize();
+    void recorderInitialize();
 
-	void recorderTerminate();
+    void recorderTerminate();
 
-	void recorderResetCheck();
+    void recorderResetCheck();
 
-	bool N02CCNV recorderIsLoaded();
+    bool N02CCNV recorderIsLoaded();
 
-	extern RecorderInterface02 recorder;
+    extern RecorderInterface02 recorder;
 
 };
 

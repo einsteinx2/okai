@@ -32,11 +32,25 @@ SOFTWARE.
 
 #define JUCE_DLL
 
+#ifdef linux
+
+#ifndef LINUX
+#define LINUX
+#endif /* LINUX */
+
+#ifdef JUCE_DLL
+#undef JUCE_DLL
+#endif /* JUCE_DLL */
+
+#else
+
 #ifdef JUCE_DLL
 #pragma comment(lib, "..\\..\\juce\\bin\\JUCE.lib")
 #else
 #pragma comment(lib, "..\\..\\juce\\bin\\jucelib_static_Win32.lib")
 #endif
+
+#endif /* linux */
 
 #include "juce.h"
 
@@ -92,10 +106,10 @@ SOFTWARE.
 		static volatile bool running;										\
 		static PosixThread * syncThread;									\
 	};																		\
-	Name * Name##::window;													\
-	_Component * Name##::cmponnt;											\
-	volatile bool Name##::running;											\
-	PosixThread * Name##::syncThread = 0
+	Name * Name::window;													\
+	_Component * Name::cmponnt;												\
+	volatile bool Name::running;											\
+	PosixThread * Name::syncThread = 0
 
 
 

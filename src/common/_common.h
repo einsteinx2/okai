@@ -64,20 +64,20 @@ SOFTWARE.
 
 namespace n02 {
 
-	void reportAssertionError(const char * condition, const char * file, const int line, const char * function);
+    void reportAssertionError(const char * condition, const char * file, const int line, const char * function);
 
 
 #ifdef ENABLE_CHECKS
 
 #ifdef USE_ASSERT
 
-	#define require(CONDITION) assert(CONDITION)
+#define require(CONDITION) assert(CONDITION)
 
 #else
-	
+
 #define require(CONDITION) \
-	if (!(CONDITION)) \
-	reportAssertionError(#CONDITION, __FILE__, __LINE__, __FUNCTION__)
+    if (!(CONDITION)) \
+    reportAssertionError(#CONDITION, __FILE__, __LINE__, __FUNCTION__)
 
 #endif
 
@@ -87,26 +87,26 @@ namespace n02 {
 
 #endif
 
-	template <class baseType> inline baseType * commonAlloc(int length) {
-		return new baseType[length];
-	}
+    template <class baseType> inline baseType * commonAlloc(int length) {
+        return new baseType[length];
+    }
 
-	template <class baseType> inline void commonFree(baseType * allocated) {
-		require(allocated != 0);
-		delete allocated;
-	}
+    template <class baseType> inline void commonFree(baseType * allocated) {
+        require(allocated != 0);
+        delete allocated;
+    }
 
-	template <class baseType> inline baseType * commonReAlloc(baseType * allocated, int currentLength, int length) {
-		require(allocated != 0);
-		if (currentLength < length) {
-			baseType * newlyAllocated = commonAlloc<baseType>(length);
-			memcpy(newlyAllocated, allocated, currentLength * sizeof(baseType));
-			commonFree<baseType>(allocated);
-			return newlyAllocated;
-		} else {
-			return allocated;
-		}
-	}
+    template <class baseType> inline baseType * commonReAlloc(baseType * allocated, int currentLength, int length) {
+        require(allocated != 0);
+        if (currentLength < length) {
+            baseType * newlyAllocated = commonAlloc<baseType>(length);
+            memcpy(newlyAllocated, allocated, currentLength * sizeof(baseType));
+            commonFree<baseType>(allocated);
+            return newlyAllocated;
+        } else {
+            return allocated;
+        }
+    }
 
 #define common_max(a, b) ((a >= b)? a : b)
 #define common_min(a, b) ((a <= b)? a : b)

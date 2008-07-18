@@ -34,16 +34,16 @@ SOFTWARE.
 
 namespace n02 {
 
-	extern TransportModule02 transport;
+    extern TransportModule02 transport;
 
-	void transportInitialize();
-	void transportTerminate();
+    void transportInitialize();
+    void transportTerminate();
 
-	void N02CCNV transportSetActiveByName(char * name);
-	void N02CCNV transportSetActiveByIndex(int index);
+    void N02CCNV transportSetActiveByName(char * name);
+    void N02CCNV transportSetActiveByIndex(int index);
 
-	void transportResetActivation();
-	bool transportWasReActivated();
+    void transportResetActivation();
+    bool transportWasReActivated();
 
 
 };

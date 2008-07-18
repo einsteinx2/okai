@@ -70,11 +70,11 @@ namespace n02 {
         }
     }
 
-    void _n02_trace(char * file, char * function, int line) {
-		register int position = traceStackPtr&TRACE_STACK_MASK;
-		traceStackPtr++;
-        traceStack[position].file = file;
-        traceStack[position].function = function;
+    void _n02_trace(const char * file, const char * function, int line) {
+        register int position = traceStackPtr&TRACE_STACK_MASK;
+        traceStackPtr++;
+        traceStack[position].file = const_cast<char*>(file);
+        traceStack[position].function = const_cast<char*>(function);
         traceStack[position].line = line;
 #ifdef INCLUDE_THREADID
         traceStack[position].threadID = PosixThread::getCurrentThreadId();
@@ -82,4 +82,3 @@ namespace n02 {
     }
 
 };
-

@@ -36,51 +36,51 @@ SOFTWARE.
 
 namespace n02 {
 
-	struct ConfigurationItem {
-		TCHAR name[31];
-		enum {
-			INT, // &int
-			STRING, // char[len]
-			STRUCT, // &struct
-			STRLIST // DynamicOrderedArray<TCHAR*>
-		} type : 8;
-		void * pointer;
-		unsigned short length;
-		void * defaultValuePointer;
-	};
+    struct ConfigurationItem {
+        TCHAR name[31];
+        enum {
+            INT, // &int
+            STRING, // char[len]
+            STRUCT, // &struct
+            STRLIST // DynamicOrderedArray<TCHAR*>
+        } type : 8;
+        void * pointer;
+        unsigned short length;
+        void * defaultValuePointer;
+    };
 
-	typedef ConfigurationItem ConfigurationItem;
+    typedef ConfigurationItem ConfigurationItem;
 
 #define CONFIG_START(NAME) ConfigurationItem NAME[] = {
 #define CONFIG_ITEM(NAME, TYPE, PTR, LEN, DEFPTR) {NAME, ConfigurationItem::TYPE, PTR, LEN, DEFPTR},
 #define CONFIG_INTVAR(NAME, VER, DEF) CONFIG_ITEM(NAME, INT, &VER, sizeof(VER), (void*)DEF)
-#define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, DEF)
+#define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, const_cast<TCHAR*>(DEF))
 #define CONFIG_STRUCTVAR(NAME, VER) CONFIG_ITEM(NAME, STRUCT, &VER, sizeof(VER), 0)
 #define CONFIG_STRLIST(NAME, VER, LEN) CONFIG_ITEM(NAME, STRLIST, &VER, LEN, 0)
 #define CONFIG_END	{0}	};
 
-	class ConfigurationManager :
-		protected DynamicOrderedArray<ConfigurationItem>
-	{
-	public:
-		ConfigurationManager(ConfigurationItem * configTable);
-		ConfigurationManager(ConfigurationItem * configTable, int len);
-		ConfigurationManager();
-		~ConfigurationManager();
+    class ConfigurationManager :
+        protected DynamicOrderedArray<ConfigurationItem>
+    {
+    public:
+        ConfigurationManager(ConfigurationItem * configTable);
+        ConfigurationManager(ConfigurationItem * configTable, int len);
+        ConfigurationManager();
+        ~ConfigurationManager();
 
-		void saveToFile(TCHAR * fileName, TCHAR * module = _T("default"));
-		void loadFromFile(TCHAR * fileName, TCHAR * module = _T("default"));
+        void saveToFile(TCHAR * fileName, TCHAR * module = _T("default"));
+        void loadFromFile(TCHAR * fileName, TCHAR * module = _T("default"));
 
-		void save(TCHAR * modName);
-		void load(TCHAR * modName);
+        void save(TCHAR * modName);
+        void load(TCHAR * modName);
 
-		void add(ConfigurationItem*);
-		void remove(TCHAR * name);
+        void add(ConfigurationItem*);
+        void remove(TCHAR * name);
 
-		void useConfgTable(ConfigurationItem * configTable);
-		void useConfgTable(ConfigurationItem * configTable, int len);
+        void useConfgTable(ConfigurationItem * configTable);
+        void useConfgTable(ConfigurationItem * configTable, int len);
 
-	};
+    };
 
 };
 

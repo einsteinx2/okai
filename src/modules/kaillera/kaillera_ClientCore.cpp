@@ -255,7 +255,7 @@ namespace n02 {
 							state = UNINITIALIZED;
 							return;
 						} else if (input == ACTION_IDLE) {
-							LOG(THIS ONE);
+							LOGS(THIS ONE);
 							return;
 						}
 						break;
@@ -537,7 +537,7 @@ namespace n02 {
 								ki.seek(-1);
 
 								if (header.type == ASYNCDATA_GAMESYNC) {
-									LOG(game sync data arrival);
+									LOGS(game sync data arrival);
 
 									unsigned char byte;
 									unsigned char * toPtr = gameInfo.defaultInput + (header.player * gameInfo.inputLength);
@@ -712,7 +712,7 @@ namespace n02 {
 							register int srcDividor = length / userInfo.connectionSetting;
 							memcpy(newBuffer, gameInfo.defaultInput, reqLen);
 							for (int x = 0; x < userInfo.connectionSetting; x++) {
-								memcpy(((char*)newBuffer)+(x * gameInfo.inputLength), ki.getCurrentStringPtr() + (x * srcDividor), min(srcDividor, gameInfo.inputLength));
+								memcpy(((char*)newBuffer)+(x * gameInfo.inputLength), ki.getCurrentStringPtr() + (x * srcDividor), common_min(srcDividor, gameInfo.inputLength));
 							}
 						} else {
 							memcpy(newBuffer, ki.getCurrentStringPtr(), reqLen);
@@ -984,7 +984,7 @@ namespace n02 {
 
 					send(cedata);
 
-					LOG(Waiting for game sync data);
+					LOGS(Waiting for game sync data);
 					
 					gameInfo.lastDataSentTime = lastTimeoutSent = GlobalTimer::getTime();
 
@@ -1024,7 +1024,7 @@ namespace n02 {
 		// send asynchronous data
 		void N02CCNV sendAsyncData(const void * /*value*/, const int /*len*/, const int /*mode*/)
 		{
-			LOG(Asynchronous data transfer in this module is not supported yet);
+			LOGS(Asynchronous data transfer in this module is not supported yet);
 		}
 
 		// send input data
@@ -1039,11 +1039,11 @@ namespace n02 {
 					gameInfo.totalInputLength = gameInfo.numPlayers * len;
 					if (client->gameplay.defaultInput != 0) {
 						for (int x = 0; x < sizeof(gameInfo.defaultInput); x+=len) {
-							memcpy(gameInfo.defaultInput + x, client->gameplay.defaultInput, min(len, (int)sizeof(gameInfo.defaultInput)-x));
+							memcpy(gameInfo.defaultInput + x, client->gameplay.defaultInput, common_min(len, (int)sizeof(gameInfo.defaultInput)-x));
 						}
 					} else {
 						for (int x = 0; x < sizeof(gameInfo.defaultInput); x+=len) {
-							memcpy(gameInfo.defaultInput + x, value, min(len, (int)sizeof(gameInfo.defaultInput)-x));
+							memcpy(gameInfo.defaultInput + x, value, common_min(len, (int)sizeof(gameInfo.defaultInput)-x));
 						}
 					}
 				}
@@ -1080,7 +1080,7 @@ namespace n02 {
 						memcpy(newBuffer, gameInfo.outBuffer.front(), requiredBufferLen);
 						gameInfo.outCache.addItem(newBuffer);
 					} else {
-						void * newBuffer = malloc(requiredBufferLen);
+						void * newBuffer = new unsigned char[requiredBufferLen];
 						memcpy(newBuffer, gameInfo.outBuffer.front(), requiredBufferLen);
 						gameInfo.outCache.addItem(newBuffer);
 					}
@@ -1093,7 +1093,7 @@ namespace n02 {
 					gameInfo.outBuffer.pop(requiredBufferLen);
 				}
 			} else {
-				LOG(erroneous action);
+				LOGS(erroneous action);
 			}
 		}
 

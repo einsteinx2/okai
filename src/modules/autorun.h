@@ -34,14 +34,14 @@ SOFTWARE.
 
 namespace n02 {
 
-	extern n02AutorunInterface defaultAutorunInterface;
+    extern n02AutorunInterface defaultAutorunInterface;
 
-	void autorunInitialize();
-	void autorunTerminate();
+    void autorunInitialize();
+    void autorunTerminate();
 
-	bool autorunActivateByName(char * name);
-	bool autorunActivateByIndex(int index);
+    bool autorunActivateByName(char * name);
+    bool autorunActivateByIndex(int index);
 
-	extern RunAlgorithmInterface02 autorun;
+    extern RunAlgorithmInterface02 autorun;
 
 };

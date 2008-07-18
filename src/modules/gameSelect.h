@@ -36,14 +36,14 @@ SOFTWARE.
 
 namespace n02 {
 
-	char * getSelectedGame(Component*);
+    char * getSelectedGame(Component*);
 
-	void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay);
+    void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay);
 
-	void showCancelable();
-	bool updateCancelable(char * status);
-	bool isCancelableCanceled();
-	void hideCancelable();
+    void showCancelable();
+    bool updateCancelable(char * status);
+    bool isCancelableCanceled();
+    void hideCancelable();
 
 
 };

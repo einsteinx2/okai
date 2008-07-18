@@ -28,9 +28,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
-
 #include "_common.h"
 
 namespace n02 {
@@ -75,7 +73,7 @@ namespace n02 {
         ~DynamicBuffer()
         {
             if (body) {
-                free(body);
+                commonFree<unsigned char>(body);
             }
             ptr = end = begin = body = 0;
         }
@@ -170,7 +168,7 @@ namespace n02 {
             return bytes_to_remove;
         }
 
-		inline int skipString()
+        inline int skipString()
         {
             register int bytes_to_remove = common_min(static_cast<int>(strlen(reinterpret_cast<char*>(ptr)) + 1), end - ptr);
             if (bytes_to_remove > 0) {
@@ -188,8 +186,8 @@ namespace n02 {
         /* read signed 32 bit integer */
         inline int readSignedInt32()
         {
-            
-			_primitive_read_return(int);
+
+            _primitive_read_return(int);
         }
 
         /* read signed 16 bit integer */
@@ -256,11 +254,11 @@ namespace n02 {
             return end - ptr;
         }
 
-		/* move pointer back and forth */
+        /* move pointer back and forth */
         inline void seek(int value)
         {
-			if (ptr + value >= begin && ptr + value <= end)
-				ptr += value;
+            if (ptr + value >= begin && ptr + value <= end)
+                ptr += value;
         }
 
     public:
@@ -274,7 +272,7 @@ namespace n02 {
         inline void presetBuffer(const unsigned char * sourceBuffer, const int length)
         {
             if (body)
-                free(body);
+                commonFree<unsigned char>(body);
             ptr = begin = body = commonAlloc<unsigned char>(length);
             memcpy(begin, sourceBuffer, length);            
             end = begin + length;
@@ -286,7 +284,7 @@ namespace n02 {
             end = begin + length;
 
             if (body)
-                free(body);
+                commonFree<unsigned char>(body);
             body = 0;
         }
 

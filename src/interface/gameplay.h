@@ -34,9 +34,9 @@ SOFTWARE.
 
 namespace n02 {
 
-	extern n02GameplayInterface defaultGameplayInterface;
-	void gameplayInitialize();
-	void gameplayTerminate();
+    extern n02GameplayInterface defaultGameplayInterface;
+    void gameplayInitialize();
+    void gameplayTerminate();
 
 };
 

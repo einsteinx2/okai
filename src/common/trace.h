@@ -40,15 +40,13 @@ namespace n02 {
 #endif /* DISABLE_TRACE */
 #endif /* (!defined(DISABLE_TRACE) || defined(FORCE_GLOBAL_TRACE)) && !defined(DISABLE_ALL_TRACING) */
 
-	void _n02_trace(char * file, char * function, int line);
-	void trace_log();
+    void _n02_trace(const char * file, const char * function, int line);
+    void trace_log();
 
 #ifdef DO_TRACE
-#define TRACE() n02::_n02_trace(__FILE__, __FUNCTION__, __LINE__)
+#define TRACE() n02::_n02_trace(__FILE__, "", __LINE__)
 #else
 #define TRACE()
 #endif /* DO_TRACE */
 
-
 };
-

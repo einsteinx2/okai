@@ -456,7 +456,7 @@ namespace n02 {
 			char ip[128];
 			StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(ip), uiLastIP);
 
-			uiConnectionSetting = min(max(1, uiConnectionSetting), 6);
+			uiConnectionSetting = common_min(common_max(1, uiConnectionSetting), 6);
 
 			SocketAddress toConnect;
 
@@ -485,7 +485,7 @@ namespace n02 {
 
 						KailleraServerConnection::window->runModalLoop();
 					
-						LOG(======================================================================);
+						LOGS(======================================================================);
 
 						char quit[128];
 						StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(quit), uiQuitMessage);

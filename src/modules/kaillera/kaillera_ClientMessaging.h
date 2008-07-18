@@ -98,7 +98,7 @@ namespace n02 {
                 TRACE();
                 char sendBuffer[2042];
 
-                int noToSend = min(min(itemsCount(), noOfInstructions), MAX_CACHED_INSTRS);
+                int noToSend = common_min(common_min(itemsCount(), noOfInstructions), MAX_CACHED_INSTRS);
 
                 *sendBuffer = (char)noToSend;
 

@@ -36,19 +36,19 @@ namespace n02 {
     void commonInitialize(){
         BsdSocket::initialize();
         GlobalTimer::initialize();
-		StringUtils::initialize();
-		defaultLogger.initialize("n02.log", false);
-#ifdef WIN32
-		sehInitialize();
+        StringUtils::initialize();
+        defaultLogger.initialize("n02.log", false);
+#ifdef N02_WIN32
+        sehInitialize();
 #endif
     }
 
     void commonTerminate(){
-		defaultLogger.terminate();
+        defaultLogger.terminate();
         BsdSocket::terminate();
         GlobalTimer::terminate();
-#ifdef WIN32
-		sehTerminate();
+#ifdef N02_WIN32
+        sehTerminate();
 #endif
     }
 

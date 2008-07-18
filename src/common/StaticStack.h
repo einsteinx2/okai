@@ -48,6 +48,7 @@ namespace n02 {
         // push an item on the stack
         inline void push(_BaseType item)
         {
+            register int length = StaticOrderedArray<_BaseType, _TotalLen>::itemsCount();
             require(length < _TotalLen);
             addItem(item);
         }
@@ -55,6 +56,7 @@ namespace n02 {
         // push an item on the stack
         inline void pushPtr(_BaseType * itemPtr)
         {
+            register int length = StaticOrderedArray<_BaseType, _TotalLen>::itemsCount();
             require(length < _TotalLen);
             addItemPtr(itemPtr);
         }
@@ -64,8 +66,8 @@ namespace n02 {
         {
             register int index = itemsCount()-1;
             require(index >= 0);
-            register _BaseType * returnValue = getItemPtr(index);
-            removeIndex(index);
+            register _BaseType * returnValue = StaticOrderedArray<_BaseType, _TotalLen>::getItemPtr(index);
+            StaticOrderedArray<_BaseType, _TotalLen>::removeIndex(index);
             return *returnValue;
         }
 
@@ -74,8 +76,8 @@ namespace n02 {
         {
             register int index = itemsCount()-1;
             require(index >= 0);
-            *itemPtr = *getItemPtr(index);
-            removeIndex(index);
+            *itemPtr = *StaticOrderedArray<_BaseType, _TotalLen>::getItemPtr(index);
+            StaticOrderedArray<_BaseType, _TotalLen>::removeIndex(index);
         }
 
         // peeks an item on the stack at specified offset from the top
@@ -93,8 +95,9 @@ namespace n02 {
         // peeks pointer of an item on the stack at specified offset from the top
         inline _BaseType * peekPtr(int offset)
         {
+            register int length = StaticOrderedArray<_BaseType, _TotalLen>::itemsCount();
             require(offset < length && length > 0);
-            return getItemPtr(length - 1 - offset);
+            return StaticOrderedArray<_BaseType, _TotalLen>::getItemPtr(length - 1 - offset);
         }
 
         // returns the top element
@@ -118,13 +121,13 @@ namespace n02 {
         // returns stack height
         inline int itemsCount()
         {
-            return length;
+            return StaticOrderedArray<_BaseType, _TotalLen>::itemsCount();
         }
 
         // reset stack
         inline void clearItems()
         {
-            length = 0;
+            StaticOrderedArray<_BaseType, _TotalLen>::clearItems();
         }
 
     };

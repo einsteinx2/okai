@@ -33,15 +33,15 @@ SOFTWARE.
 
 namespace n02 {
 
-	namespace deferment {
+    namespace deferment {
 
-		void inputInitialize();
-		void * getInput(int offset, int slot);
-		void * getInput(int offset);
-		void * getReserveInput();
-		void * getReserveInput(int slot);
-		void purgeInputBase(int no = 1);
-		void inputTerminate();
+        void inputInitialize();
+        void * getInput(int offset, int slot);
+        void * getInput(int offset);
+        void * getReserveInput();
+        void * getReserveInput(int slot);
+        void purgeInputBase(int no = 1);
+        void inputTerminate();
 
-	};
+    };
 };

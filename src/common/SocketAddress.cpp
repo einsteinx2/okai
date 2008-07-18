@@ -37,86 +37,86 @@ SOFTWARE.
 
 namespace n02 {
 
-	SocketAddress::SocketAddress() {
-		set(LOCAL_SOCKET_ADDRESS, 0);
-	}
+    SocketAddress::SocketAddress() {
+        set(LOCAL_SOCKET_ADDRESS, 0);
+    }
 
-	SocketAddress::SocketAddress(const char* host) {
-		parse(host);
-	}
+    SocketAddress::SocketAddress(const char* host) {
+        parse(host);
+    }
 
-	SocketAddress::SocketAddress(const char* host, unsigned short port) {
-		set(host, port);
-	}
+    SocketAddress::SocketAddress(const char* host, unsigned short port) {
+        set(host, port);
+    }
 
-	bool SocketAddress::set (const char * host, const u_short port)
-	{
-		memset(&addr, 0, sizeof(addr));
-		length = sizeof(addr);
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(port);
-		addr.sin_addr.s_addr = inet_addr(host);
-		if (addr.sin_addr.s_addr == (in_addr_t)-1) {
-			hostent * h = gethostbyname(host);
-			if (h!=0) {
-				addr.sin_addr = *reinterpret_cast<struct in_addr*>(h->h_addr_list[0]);
-				return true;
-			}
-			return false;
-		}
-		return true;
-	}
+    bool SocketAddress::set (const char * host, const u_short port)
+    {
+        memset(&addr, 0, sizeof(addr));
+        length = sizeof(addr);
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(port);
+        addr.sin_addr.s_addr = inet_addr(host);
+        if (addr.sin_addr.s_addr == (in_addr_t)-1) {
+            hostent * h = gethostbyname(host);
+            if (h!=0) {
+                addr.sin_addr = *reinterpret_cast<struct in_addr*>(h->h_addr_list[0]);
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
 
-	void SocketAddress::setPort (const u_short port)
-	{
-		addr.sin_port = htons(port);
-	}
+    void SocketAddress::setPort (const u_short port)
+    {
+        addr.sin_port = htons(port);
+    }
 
-	bool SocketAddress::parse(const char * hostp)
-	{
-		int l = strlen(hostp);
-		if (l < 2048 && l > 2) {
-			char host[2048];
-			strcpy(host, hostp);
-			unsigned int port = 0;
-			for (int x = 0; x < l; x++) {
-				if (host[x]==':') {
-					host[x] = 0;
-					port = StringUtils::alphaToUint(&host[x]+1);
-					break;
-				}
-			}
-			return set(host, 0xFFFF & port);
-		}
-		return false;
-	}
+    bool SocketAddress::parse(const char * hostp)
+    {
+        int l = strlen(hostp);
+        if (l < 2048 && l > 2) {
+            char host[2048];
+            strcpy(host, hostp);
+            unsigned int port = 0;
+            for (int x = 0; x < l; x++) {
+                if (host[x]==':') {
+                    host[x] = 0;
+                    port = StringUtils::alphaToUint(&host[x]+1);
+                    break;
+                }
+            }
+            return set(host, 0xFFFF & port);
+        }
+        return false;
+    }
 
 
-	char * SocketAddress::toString()
-	{
-		static char print_space[55];
-		*print_space = 0;
-		strcpy(print_space, inet_ntoa(addr.sin_addr));
-		strcat(print_space, ":");
-		StringUtils::intToAlpha(print_space + strlen(print_space), getPort());
-		return print_space;
-	}
+    char * SocketAddress::toString()
+    {
+        static char print_space[55];
+        *print_space = 0;
+        strcpy(print_space, inet_ntoa(addr.sin_addr));
+        strcat(print_space, ":");
+        StringUtils::intToAlpha(print_space + strlen(print_space), getPort());
+        return print_space;
+    }
 
-	bool SocketAddress::isLocalIP(char * host) {
-		if (strncmp("127.", host, 4)==0||strncmp("10.", host, 3)==0||strncmp("192.168.", host, 8)==0)
-			return true;
+    bool SocketAddress::isLocalIP(char * host) {
+        if (strncmp("127.", host, 4)==0||strncmp("10.", host, 3)==0||strncmp("192.168.", host, 8)==0)
+            return true;
 
-		if (strncmp("172.", host, 4)==0){
-			int secoct = atoi(host+4);
-			if (secoct >= 16 && secoct <=31)
-				return true;
-		}
+        if (strncmp("172.", host, 4)==0){
+            int secoct =  StringUtils::alphaToInt(host+4);
+            if (secoct >= 16 && secoct <=31)
+                return true;
+        }
 
-		if (inet_addr(host) == -1)
-			return true;
-		else
-			return false;
-	}
+        if (inet_addr(host) == -1)
+            return true;
+        else
+            return false;
+    }
 
 };
 

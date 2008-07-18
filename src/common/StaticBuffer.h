@@ -156,7 +156,7 @@ namespace n02 {
             return bytes_to_remove;
         }
 
-		inline int skipString()
+        inline int skipString()
         {
             register int bytes_to_remove = common_min(static_cast<int>(strlen(reinterpret_cast<char*>(ptr)) + 1), end - ptr);
             if (bytes_to_remove > 0) {

@@ -28,7 +28,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
 
 #include "DynamicOrderedArray.h"
@@ -63,8 +62,8 @@ namespace n02 {
         {
             register int index = itemsCount()-1;
             require(index >= 0);
-            register _BaseType * returnValue = getItemPtr(index);
-            removeIndex(index);
+            register _BaseType * returnValue = DynamicOrderedArray<_BaseType, _BlockLen>::getItemPtr(index);
+            DynamicOrderedArray<_BaseType, _BlockLen>::removeIndex(index);
             return *returnValue;
         }
 
@@ -73,8 +72,8 @@ namespace n02 {
         {
             register int index = itemsCount()-1;
             require(index >= 0);
-            *itemPtr = *getItemPtr(index);
-            removeIndex(index);
+            *itemPtr = *DynamicOrderedArray<_BaseType, _BlockLen>::getItemPtr(index);
+            DynamicOrderedArray<_BaseType, _BlockLen>::removeIndex(index);
         }
 
         // peeks an item on the stack at specified offset from the top
@@ -92,8 +91,9 @@ namespace n02 {
         // peeks pointer of an item on the stack at specified offset from the top
         inline _BaseType * peekPtr(int offset)
         {
+            register int length = DynamicOrderedArray<_BaseType, _BlockLen>::itemsCount();
             require(offset < length && length > 0);
-            return getItemPtr(length - 1 - offset);
+            return DynamicOrderedArray<_BaseType, _BlockLen>::getItemPtr(length - 1 - offset);
         }
 
         // returns the top element
@@ -117,13 +117,13 @@ namespace n02 {
         // returns stack height
         inline int itemsCount()
         {
-            return length;
+            return DynamicOrderedArray<_BaseType, _BlockLen>::itemsCount();
         }
 
         // reset stack
         inline void clearItems()
         {
-            length = 0;
+            DynamicOrderedArray<_BaseType, _BlockLen>::clearItems();
         }
     };
 };

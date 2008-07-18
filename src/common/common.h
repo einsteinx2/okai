@@ -56,7 +56,7 @@ SOFTWARE.
 #include "UdpSocket.h"
 #include "trace.h"
 #include "DynamicBuffer.h"
-#ifdef WIN32
+#ifdef N02_WIN32
 #include "SEH_win32.h"
 #endif
 
@@ -66,7 +66,4 @@ namespace n02 {
     void commonTerminate();
 
 };
-
-
-
 

@@ -35,113 +35,113 @@ SOFTWARE.
 
 
 namespace n02 {
-	static int  N02CCNV gameplayCallbackGameLoad(char *, int, int, int){
-		LOG(0);
-		return 0;
-	}
-	static void N02CCNV gameplayCallbackGameEnd(){
-		LOG(0);
-	}
-	static void N02CCNV gameplayCallbackPlayerDropped(const char *, int ){
-		LOG(0);
-	}
-	static void N02CCNV gameplayCallbackAsyncData(const void * , const int ){
-		LOG(0);
-	}
-	
-	static void N02CCNV gameplayCallbackChatReceived(const char * , const char * ){
-		LOG(0);
-	}
-	static void N02CCNV gameplayFcnReserved(int, int){
-		LOG(0);
-	}
+    static int  N02CCNV gameplayCallbackGameLoad(char *, int, int, int){
+        LOGS(0);
+        return 0;
+    }
+    static void N02CCNV gameplayCallbackGameEnd(){
+        LOGS(0);
+    }
+    static void N02CCNV gameplayCallbackPlayerDropped(const char *, int ){
+        LOGS(0);
+    }
+    static void N02CCNV gameplayCallbackAsyncData(const void * , const int ){
+        LOGS(0);
+    }
 
-	static int  N02CCNV gameplaySynchronizeGame(void * syncData, int len){
-		int return_val = transport.synchronizeGame(syncData, len);
+    static void N02CCNV gameplayCallbackChatReceived(const char * , const char * ){
+        LOGS(0);
+    }
+    static void N02CCNV gameplayFcnReserved(int, int){
+        LOGS(0);
+    }
+
+    static int  N02CCNV gameplaySynchronizeGame(void * syncData, int len){
+        int return_val = transport.synchronizeGame(syncData, len);
 #if 0
-		{
-			char strBuffer[256];
-			StringUtils::bytesToStr(strBuffer, (unsigned char*)syncData, len);
-			LOG(%s; %i; ret=%i, strBuffer, len, return_val);
-		}
+        {
+            char strBuffer[256];
+            StringUtils::bytesToStr(strBuffer, (unsigned char*)syncData, len);
+            LOG(%s; %i; ret=%i, strBuffer, len, return_val);
+        }
 #endif
-		recorder.addGameSyncData(syncData, return_val);
-		return return_val;
-	}
-	static void N02CCNV gameplayEndGame(){
-		LOG(0);
-		transport.endGame();
-	}
-	static void N02CCNV gameplaySendAsyncData(const void * value, const int len, const int position) {
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-		LOG(%s; %i, strBuffer, len);
-		transport.sendAsyncData(value, len, position);	
-	}
-	static void N02CCNV gameplaySendSyncData(const void * value, const int len){
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-		LOG(%s; %i, strBuffer, len);
-		transport.sendSyncData(value, len);
-	}
-	static int  N02CCNV gameplayRecvSyncData(void * value, const int len){
-		int return_val = transport.recvSyncData(value, len);
-		recorder.addSyncData(value, return_val);
-		{
-			char strBuffer[256];
-			StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-			LOG(%s; %i; ret=%i, strBuffer, len, return_val);
-		}
+        recorder.addGameSyncData(syncData, return_val);
+        return return_val;
+    }
+    static void N02CCNV gameplayEndGame(){
+        LOGS(0);
+        transport.endGame();
+    }
+    static void N02CCNV gameplaySendAsyncData(const void * value, const int len, const int position) {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+        LOG(%s; %i, strBuffer, len);
+        transport.sendAsyncData(value, len, position);	
+    }
+    static void N02CCNV gameplaySendSyncData(const void * value, const int len){
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+        LOG(%s; %i, strBuffer, len);
+        transport.sendSyncData(value, len);
+    }
+    static int  N02CCNV gameplayRecvSyncData(void * value, const int len){
+        int return_val = transport.recvSyncData(value, len);
+        recorder.addSyncData(value, return_val);
+        {
+            char strBuffer[256];
+            StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+            LOG(%s; %i; ret=%i, strBuffer, len, return_val);
+        }
 
-		return return_val;
-	}
-	static int  N02CCNV gameplaySyncData(void * value, const int len){
-		int return_val = transport.syncData(value, len);
-		recorder.addSyncData(value, return_val);
+        return return_val;
+    }
+    static int  N02CCNV gameplaySyncData(void * value, const int len){
+        int return_val = transport.syncData(value, len);
+        recorder.addSyncData(value, return_val);
 #if 0
-		{
-			char strBuffer[256];
-			StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-			LOG(%s; %i; ret=%i, strBuffer, len, return_val);
-		}
+        {
+            char strBuffer[256];
+            StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+            LOG(%s; %i; ret=%i, strBuffer, len, return_val);
+        }
 #endif
-		return return_val;
-	}
-	static int N02CCNV gameplaySyncDataCheck () {
-		LOG(0);
-		return transport.syncDataCheck(0);
-	}
-	static void N02CCNV gameplaySendChat (char * message){
-		LOG(%s, message);
-		transport.sendChat(message);
-	}
+        return return_val;
+    }
+    static int N02CCNV gameplaySyncDataCheck () {
+        LOGS(0);
+        return transport.syncDataCheck(0);
+    }
+    static void N02CCNV gameplaySendChat (char * message){
+        LOG(%s, message);
+        transport.sendChat(message);
+    }
 
-	n02GameplayInterface defaultGameplayInterface = {
-		gameplaySynchronizeGame,
-		gameplayEndGame,
-		gameplaySendAsyncData,
-		gameplaySendSyncData,
-		gameplayRecvSyncData,
-		gameplaySyncData,
-		gameplaySyncDataCheck,
-		gameplaySendChat,
-		gameplayFcnReserved,
-		gameplayFcnReserved,
-		gameplayFcnReserved,
-		gameplayFcnReserved,
-		0,
-		gameplayCallbackGameLoad,
-		gameplayCallbackGameEnd,
-		gameplayCallbackPlayerDropped,
-		gameplayCallbackAsyncData,
-		gameplayCallbackChatReceived,
-		gameplayFcnReserved,
-		gameplayFcnReserved,
-		gameplayFcnReserved
-	};
+    n02GameplayInterface defaultGameplayInterface = {
+        gameplaySynchronizeGame,
+        gameplayEndGame,
+        gameplaySendAsyncData,
+        gameplaySendSyncData,
+        gameplayRecvSyncData,
+        gameplaySyncData,
+        gameplaySyncDataCheck,
+        gameplaySendChat,
+        gameplayFcnReserved,
+        gameplayFcnReserved,
+        gameplayFcnReserved,
+        gameplayFcnReserved,
+        0,
+        gameplayCallbackGameLoad,
+        gameplayCallbackGameEnd,
+        gameplayCallbackPlayerDropped,
+        gameplayCallbackAsyncData,
+        gameplayCallbackChatReceived,
+        gameplayFcnReserved,
+        gameplayFcnReserved,
+        gameplayFcnReserved
+    };
 
-	void gameplayInitialize(){}
-	void gameplayTerminate(){}
+    void gameplayInitialize(){}
+    void gameplayTerminate(){}
 
 };
 

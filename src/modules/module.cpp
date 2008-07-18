@@ -40,113 +40,113 @@ SOFTWARE.
 
 namespace n02 {
 
-	DynamicArray<ModuleAbstraction02> modules;
+    DynamicArray<ModuleAbstraction02> modules;
 
 #define MODULE(X) extern ModuleAbstraction02 X;
-	N02_INTERNAL_MODULES
+    N02_INTERNAL_MODULES
 #undef MODULE
 
-		extern n02ClientInterface * client;
+        extern n02ClientInterface * client;
 
-static int gameListIndex = 0;
-static char * N02CCNV gameListStart() {
-	return GamesList::start(&gameListIndex);
-}
-static char * N02CCNV gameListNext() {
-	return GamesList::next(&gameListIndex);
-}
-static char * N02CCNV gameListFind(const char * game) {
-	return GamesList::find(game);
-}
-static int N02CCNV gameListGetCaps(const char * game) {
-	if (GamesList::select(game)) {
-		return GamesList::selectedCaps();
-	}
-	return 0;
-}
-static int N02CCNV gameListGetPlayers(const char * game){
-	if (GamesList::select(game)) {
-		return GamesList::selectedMaxPlayers();
-	}
-	return 0;
-}
-static void   N02CCNV gameListReserved(int, int){}
+    static int gameListIndex = 0;
+    static char * N02CCNV gameListStart() {
+        return GamesList::start(&gameListIndex);
+    }
+    static char * N02CCNV gameListNext() {
+        return GamesList::next(&gameListIndex);
+    }
+    static char * N02CCNV gameListFind(const char * game) {
+        return GamesList::find(game);
+    }
+    static int N02CCNV gameListGetCaps(const char * game) {
+        if (GamesList::select(game)) {
+            return GamesList::selectedCaps();
+        }
+        return 0;
+    }
+    static int N02CCNV gameListGetPlayers(const char * game){
+        if (GamesList::select(game)) {
+            return GamesList::selectedMaxPlayers();
+        }
+        return 0;
+    }
+    static void   N02CCNV gameListReserved(int, int){}
 
-static GameListInterface02 gameListInterface = {
-	gameListStart,
-	gameListNext,
-	gameListFind,
-	gameListGetCaps,
-	gameListGetPlayers,
-	gameListReserved,
-	gameListReserved,
-	gameListReserved
-};
+    static GameListInterface02 gameListInterface = {
+        gameListStart,
+        gameListNext,
+        gameListFind,
+        gameListGetCaps,
+        gameListGetPlayers,
+        gameListReserved,
+        gameListReserved,
+        gameListReserved
+    };
 
-STDMODULE(modGameList, "gamelist", "gamelist", gameListInterface, 0, 0, MOD02_STATUS_WORKING, "Module for working with game list");
+    STDMODULE(modGameList, "gamelist", "gamelist", gameListInterface, 0, 0, MOD02_STATUS_WORKING, "Module for working with game list");
 
-	static ModuleAbstraction02 * N02CCNV modulesHandlerGetByName(const char * name){
-		LOG (%s, name);
-		if (name && strlen(name) > 0 && modules.itemsCount() > 0) {
-			for (int x = 0; x < modules.itemsCount();  x++) {
-				if (strcmp(modules[x].name, name)==0) {
-					return &modules[x];
-				}
-			}
-		}
-		return 0;
-	}
-	static ModuleAbstraction02 * N02CCNV modulesHandlerGetByIndex(const int index){
-		LOG (%i/%i, index, modules.itemsCount());
-		if (index >= 0 && index < modules.itemsCount()) {
-			return &modules[index];
-		}
-		return 0;
-	}
-	static int N02CCNV modulesHandlerAdd(ModuleAbstraction02 * mod) {
-		if (mod && client &&
-			(mod->appAttributes & client->app.attributes) == mod->appAttributes &&
-			(mod->appAttributesC & ~client->app.attributes) == mod->appAttributesC )
-		{
-			LOG(Registering %s of type %s, mod->name, mod->type);
-			mod->index = modules.itemsCount();
-			modules.addItem(*mod);
-			return 0;
-		}
-		return 1;
-	}
-	ModuleAbstraction02 * N02CCNV modulesHandlerFind(char * type){
-		if (type && strlen(type) > 0 && modules.itemsCount() > 0) {
-			LOG(%s, type);
-			for (int x = 0; x < modules.itemsCount();  x++) {
-				if (strcmp(modules[x].type, type)==0) {
-					return &modules[x];
-				}
-			}
-		}
-		return 0;
-	}
-	ModuleAbstraction02 * N02CCNV modulesHandlerFindNext(ModuleAbstraction02 * current){
-		if (current && current->type && strlen(current->type) > 0 && modules.itemsCount() > current->index + 1) {
-			LOG(%s, current->type);
-			for (int x = current->index + 1; x < modules.itemsCount();  x++) {
-				if (strcmp(modules[x].type, current->type)==0) {
-					return &modules[x];
-				}
-			}
-		}
-		return 0;
-	}
+    static ModuleAbstraction02 * N02CCNV modulesHandlerGetByName(const char * name){
+        LOG (%s, name);
+        if (name && strlen(name) > 0 && modules.itemsCount() > 0) {
+            for (int x = 0; x < modules.itemsCount();  x++) {
+                if (strcmp(modules[x].name, name)==0) {
+                    return &modules[x];
+                }
+            }
+        }
+        return 0;
+    }
+    static ModuleAbstraction02 * N02CCNV modulesHandlerGetByIndex(const int index){
+        LOG (%i/%i, index, modules.itemsCount());
+        if (index >= 0 && index < modules.itemsCount()) {
+            return &modules[index];
+        }
+        return 0;
+    }
+    static int N02CCNV modulesHandlerAdd(ModuleAbstraction02 * mod) {
+        if (mod && client &&
+            (mod->appAttributes & client->app.attributes) == mod->appAttributes &&
+            (mod->appAttributesC & ~client->app.attributes) == mod->appAttributesC )
+        {
+            LOG(Registering %s of type %s, mod->name, mod->type);
+            mod->index = modules.itemsCount();
+            modules.addItem(*mod);
+            return 0;
+        }
+        return 1;
+    }
+    ModuleAbstraction02 * N02CCNV modulesHandlerFind(char * type){
+        if (type && strlen(type) > 0 && modules.itemsCount() > 0) {
+            LOG(%s, type);
+            for (int x = 0; x < modules.itemsCount();  x++) {
+                if (strcmp(modules[x].type, type)==0) {
+                    return &modules[x];
+                }
+            }
+        }
+        return 0;
+    }
+    ModuleAbstraction02 * N02CCNV modulesHandlerFindNext(ModuleAbstraction02 * current){
+        if (current && current->type && strlen(current->type) > 0 && modules.itemsCount() > current->index + 1) {
+            LOG(%s, current->type);
+            for (int x = current->index + 1; x < modules.itemsCount();  x++) {
+                if (strcmp(modules[x].type, current->type)==0) {
+                    return &modules[x];
+                }
+            }
+        }
+        return 0;
+    }
 
-	ModulesHandler02 modulesHandler = {
-		modulesHandlerGetByName,
-		modulesHandlerGetByIndex,
-		modulesHandlerAdd,
-		modulesHandlerFind,
-		modulesHandlerFindNext
-	};
+    ModulesHandler02 modulesHandler = {
+        modulesHandlerGetByName,
+        modulesHandlerGetByIndex,
+        modulesHandlerAdd,
+        modulesHandlerFind,
+        modulesHandlerFindNext
+    };
 
-	STDMODULE(modModulesHandler, "modhandller", "modhandller", modulesHandler, 0, 0, MOD02_STATUS_WORKING, "Module for registering and searching for registered modules");
+    STDMODULE(modModulesHandler, "modhandller", "modhandller", modulesHandler, 0, 0, MOD02_STATUS_WORKING, "Module for registering and searching for registered modules");
 
 };
 //
@@ -160,29 +160,29 @@ STDMODULE(modGameList, "gamelist", "gamelist", gameListInterface, 0, 0, MOD02_ST
 #include "recorder.h"
 namespace n02 {
 
-	void N02CCNV interfStartGame (const char * gameP, const int playerNoP, const int numPlayersP);
-	void N02CCNV interfEndGame ();
-	void N02CCNV interfChatReceived (const char *nick, const char *text);
-	void N02CCNV interfPlayerDropped (const char *nick, const int playernb);
-	void N02CCNV interfAsyncData (const void * data, const int size);
-	void * N02CCNV interfGetExtendedInterface (const n02ClientInterface * clientInterface, const int type);
+    void N02CCNV interfStartGame (const char * gameP, const int playerNoP, const int numPlayersP);
+    void N02CCNV interfEndGame ();
+    void N02CCNV interfChatReceived (const char *nick, const char *text);
+    void N02CCNV interfPlayerDropped (const char *nick, const int playernb);
+    void N02CCNV interfAsyncData (const void * data, const int size);
+    void * N02CCNV interfGetExtendedInterface (const n02ClientInterface * clientInterface, const int type);
 
-	ExternalModuleHelper02 modHelper = {
-		0,
-		&modulesHandler,
-		&gameListInterface,
-		interfStartGame,
-		interfEndGame,
-		interfChatReceived,
-		interfPlayerDropped,
-		interfAsyncData,
-		interfGetExtendedInterface,
-		recorderIsLoaded,
-		transportSetActiveByName,
-		transportSetActiveByIndex
-	};
+    ExternalModuleHelper02 modHelper = {
+        0,
+        &modulesHandler,
+        &gameListInterface,
+        interfStartGame,
+        interfEndGame,
+        interfChatReceived,
+        interfPlayerDropped,
+        interfAsyncData,
+        interfGetExtendedInterface,
+        recorderIsLoaded,
+        transportSetActiveByName,
+        transportSetActiveByIndex
+    };
 
-	STDMODULE(modExternalHelper, MTYPE02_DEVINTERFACE, MTYPE02_DEVINTERFACE, modHelper, 0, 0, MOD02_STATUS_WORKING, "Helper module for accessing necessary internal functions for external modules development.");
+    STDMODULE(modExternalHelper, MTYPE02_DEVINTERFACE, MTYPE02_DEVINTERFACE, modHelper, 0, 0, MOD02_STATUS_WORKING, "Helper module for accessing necessary internal functions for external modules development.");
 
 };
 
@@ -194,173 +194,173 @@ namespace n02 {
 #endif
 
 namespace n02 {
-	#ifdef N02_WIN32
+#ifdef N02_WIN32
 
-	typedef struct {
-		HMODULE handle;
-		TCHAR fileName[1024];
-	} ExternalLibrary02;
-
-
-
-	
-	class ExternalModulesHandler:
-		public DynamicArray<ExternalLibrary02>
-	{
-
-		typedef void (N02CCNV * ModuleInit02FCNT)(ExternalModuleHelper02 * modHelper);
+    typedef struct {
+        HMODULE handle;
+        TCHAR fileName[1024];
+    } ExternalLibrary02;
 
 
-	public:
-
-		void loadExternalLibrary(TCHAR * fileName)
-		{
-			LOG(Loading %s, fileName);
-
-			HMODULE hDll = LoadLibrary(fileName);
-
-			if (hDll != NULL) {
-
-				ModuleInit02FCNT modInitialize = (ModuleInit02FCNT)GetProcAddress(hDll, "_moduleInit02@4");
-
-				if (modInitialize != NULL) {
-
-					modInitialize(&modHelper);
-
-					ExternalLibrary02 ex;
-					_tcscpy(ex.fileName, fileName);
-					ex.handle = hDll;
-
-					addItem(ex);
-
-				} else {
-
-					LOG(Entry point locating failed);
-					FreeLibrary(hDll);
-
-				}				
-			} else {
-
-				LOG(Load failed; error = %i, GetLastError());
-
-			}
-		}
-
-		TCHAR * fileext(TCHAR * fn){
-			fn += _tcslen(fn);
-			int extc = 0;
-			while (*fn != '.' && ++extc < 6)
-				fn--;
-			return fn;
-		}
-
-		void checkFilenName(TCHAR * fileName, TCHAR * dirName) {
-			if (_tcsstr(fileName, _T("02e.dll")) && _tcsstr(fileext(fileName), _T(".dll"))) {
-				TCHAR cfilename[2000];
-				unsigned char cfilenameAnsi[2000];
-				memset(cfilename, 0, sizeof(cfilename));
-				_tcsncpy(cfilename, dirName, _tcslen(dirName)-1);
-				_tcscat(cfilename, fileName);
-				StringUtils::TCHARToUTF8(cfilenameAnsi, cfilename);
-				LOG(Search found %s, cfilenameAnsi);
-				loadExternalLibrary(cfilename);
-			}
-		}
-
-		void searchDirectory(TCHAR * directory){
-
-			unsigned char directoryAnsi[2000];
-			StringUtils::TCHARToUTF8(directoryAnsi, directory);
-			LOG(Searching %s, directoryAnsi);
-
-			TCHAR currentDir[2048];
-			GetCurrentDirectory(2048, currentDir);
-
-			WIN32_FIND_DATA FindFileData;
-			HANDLE hFind = INVALID_HANDLE_VALUE;
-
-			TCHAR DirSpec[2055];
-			_tcsncpy(DirSpec, directory, _tcslen(directory)+1);
-			SetCurrentDirectory(DirSpec);
-			_tcsncat (DirSpec, _T("\\*"), 3);
 
 
-			hFind = FindFirstFile(DirSpec, &FindFileData);
+    class ExternalModulesHandler:
+        public DynamicArray<ExternalLibrary02>
+    {
 
-			if (hFind != INVALID_HANDLE_VALUE) {
-				if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
-					checkFilenName(FindFileData.cFileName, DirSpec);
-				}
-				while (FindNextFile(hFind, &FindFileData) != 0) {
-					if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
-						checkFilenName(FindFileData.cFileName, DirSpec);
-					}
-				}
-				FindClose(hFind);
-			} else {
-				LOG(Invalid directory);
-			}
-			SetCurrentDirectory(currentDir);
-		}
-
-		void unloadExternalLibraries(){
-			if (itemsCount()) {
-				for (int x = 0; x < itemsCount(); x++) {
-					LOG(Unloading external module lib: %s, items[x].fileName);
-					FreeLibrary(items[x].handle);
-				}
-			}
-			clearItems();
-		}
-
-		void search() {
-
-			LOG(Searching for okai modules);
-
-			TCHAR currentDir[2048];
-
-			GetSystemDirectory(currentDir, 2048);
-			searchDirectory(currentDir);
-
-			GetCurrentDirectory(2048, currentDir);
-			searchDirectory(currentDir);
-
-			_tcscat(currentDir, _T("\\modules"));
-			searchDirectory(currentDir);
-
-			GetCurrentDirectory(2048, currentDir);
-			_tcscat(currentDir, _T("\\n02"));
-			searchDirectory(currentDir);
-		}
+        typedef void (N02CCNV * ModuleInit02FCNT)(ExternalModuleHelper02 * modHelper);
 
 
-	} externalModules;
+    public:
+
+        void loadExternalLibrary(TCHAR * fileName)
+        {
+            LOG(Loading %s, fileName);
+
+            HMODULE hDll = LoadLibrary(fileName);
+
+            if (hDll != NULL) {
+
+                ModuleInit02FCNT modInitialize = (ModuleInit02FCNT)GetProcAddress(hDll, "_moduleInit02@4");
+
+                if (modInitialize != NULL) {
+
+                    modInitialize(&modHelper);
+
+                    ExternalLibrary02 ex;
+                    _tcscpy(ex.fileName, fileName);
+                    ex.handle = hDll;
+
+                    addItem(ex);
+
+                } else {
+
+                    LOG(Entry point locating failed);
+                    FreeLibrary(hDll);
+
+                }				
+            } else {
+
+                LOG(Load failed; error = %i, GetLastError());
+
+            }
+        }
+
+        TCHAR * fileext(TCHAR * fn){
+            fn += _tcslen(fn);
+            int extc = 0;
+            while (*fn != '.' && ++extc < 6)
+                fn--;
+            return fn;
+        }
+
+        void checkFilenName(TCHAR * fileName, TCHAR * dirName) {
+            if (_tcsstr(fileName, _T("02e.dll")) && _tcsstr(fileext(fileName), _T(".dll"))) {
+                TCHAR cfilename[2000];
+                unsigned char cfilenameAnsi[2000];
+                memset(cfilename, 0, sizeof(cfilename));
+                _tcsncpy(cfilename, dirName, _tcslen(dirName)-1);
+                _tcscat(cfilename, fileName);
+                StringUtils::TCHARToUTF8(cfilenameAnsi, cfilename);
+                LOG(Search found %s, cfilenameAnsi);
+                loadExternalLibrary(cfilename);
+            }
+        }
+
+        void searchDirectory(TCHAR * directory){
+
+            unsigned char directoryAnsi[2000];
+            StringUtils::TCHARToUTF8(directoryAnsi, directory);
+            LOG(Searching %s, directoryAnsi);
+
+            TCHAR currentDir[2048];
+            GetCurrentDirectory(2048, currentDir);
+
+            WIN32_FIND_DATA FindFileData;
+            HANDLE hFind = INVALID_HANDLE_VALUE;
+
+            TCHAR DirSpec[2055];
+            _tcsncpy(DirSpec, directory, _tcslen(directory)+1);
+            SetCurrentDirectory(DirSpec);
+            _tcsncat (DirSpec, _T("\\*"), 3);
 
 
-	#endif
+            hFind = FindFirstFile(DirSpec, &FindFileData);
 
-	void modulesInitialize(){
-		LOG(Initializing modules);
-		modHelper.client = client;
-		modules.clearItems();
+            if (hFind != INVALID_HANDLE_VALUE) {
+                if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
+                    checkFilenName(FindFileData.cFileName, DirSpec);
+                }
+                while (FindNextFile(hFind, &FindFileData) != 0) {
+                    if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
+                        checkFilenName(FindFileData.cFileName, DirSpec);
+                    }
+                }
+                FindClose(hFind);
+            } else {
+                LOG(Invalid directory);
+            }
+            SetCurrentDirectory(currentDir);
+        }
+
+        void unloadExternalLibraries(){
+            if (itemsCount()) {
+                for (int x = 0; x < itemsCount(); x++) {
+                    LOG(Unloading external module lib: %s, items[x].fileName);
+                    FreeLibrary(items[x].handle);
+                }
+            }
+            clearItems();
+        }
+
+        void search() {
+
+            LOG(Searching for okai modules);
+
+            TCHAR currentDir[2048];
+
+            GetSystemDirectory(currentDir, 2048);
+            searchDirectory(currentDir);
+
+            GetCurrentDirectory(2048, currentDir);
+            searchDirectory(currentDir);
+
+            _tcscat(currentDir, _T("\\modules"));
+            searchDirectory(currentDir);
+
+            GetCurrentDirectory(2048, currentDir);
+            _tcscat(currentDir, _T("\\n02"));
+            searchDirectory(currentDir);
+        }
+
+
+    } externalModules;
+
+
+#endif
+
+    void modulesInitialize(){
+        LOGS(Initializing modules);
+        modHelper.client = client;
+        modules.clearItems();
 
 #define MODULE(X) modHelper.modHandler->add(&X);
-		N02_INTERNAL_MODULES
+        N02_INTERNAL_MODULES
 #undef MODULE
 
 #ifdef N02_WIN32
-		externalModules.search();
+            externalModules.search();
 #endif
 
-	}
+    }
 
-	void modulesTerminate(){
-		LOG(Cleaning up modules);
-		modules.clearItems();
+    void modulesTerminate(){
+        LOGS(Cleaning up modules);
+        modules.clearItems();
 #ifdef N02_WIN32
-		externalModules.unloadExternalLibraries();
+        externalModules.unloadExternalLibraries();
 #endif
-	}
+    }
 };
 
 

@@ -193,7 +193,7 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 	}
 
 	// connection setting
-	uiConnectionSetting = max(min(uiConnectionSetting, 6), 1);
+	uiConnectionSetting = common_max(common_min(uiConnectionSetting, 6), 1);
 	cmbConnection->setSelectedId(uiConnectionSetting);
 
 	txtIP->setText(uiLastIP);
@@ -482,7 +482,7 @@ void juceKailleraServerSelect::saveConfig() {
 	txtIP->getText().copyToBuffer(uiLastIP, 128);
 	txtNick->getText().copyToBuffer(uiUsername, 32);
 #else
-	txtIP->getText().copyToUTF8(uiLastIP);
+	txtIP->getText().copyToUTF8(reinterpret_cast<juce::uint8*>(uiLastIP));
 	txtNick->getText().copyToBuffer(uiUsername, 32);
 #endif
 }

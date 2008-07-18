@@ -28,64 +28,85 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
 #pragma once
+
+#ifdef N02_WIN32
 
 #include <winsock.h>
 
 #define socklen_t int
 
+#else
+
+#include <sys/select.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <errno.h>
+
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define TIMEVAL timeval
+#define closesocket ::close
+#define SOCKET_ERROR -1
+
+#endif
+
 #define LOCAL_SOCKET_ADDRESS "0.0.0.0"
 
 namespace n02 {
 
-	class SocketAddress
-	{
+    class SocketAddress
+    {
 
-	protected:
+    protected:
 
-		socklen_t length;
-		sockaddr_in addr;
+        socklen_t length;
+        sockaddr_in addr;
 
-	public:
+    public:
 
-		SocketAddress();
-		SocketAddress(const char* host);
-		SocketAddress(const char* host, unsigned short port);
+        SocketAddress();
+        SocketAddress(const char* host);
+        SocketAddress(const char* host, unsigned short port);
 
-		bool set (const char * host, const u_short port);
-		void setPort (const u_short port);
-		bool parse(const char * hostp);
+        bool set (const char * host, const u_short port);
+        void setPort (const u_short port);
+        bool parse(const char * hostp);
 
-		inline bool isEqual(SocketAddress * dst)
-		{
-			return (dst->addr.sin_port ==addr.sin_port && dst->addr.sin_addr.s_addr == addr.sin_addr.s_addr);
-		}
+        inline bool isEqual(SocketAddress * dst)
+        {
+            return (dst->addr.sin_port ==addr.sin_port && dst->addr.sin_addr.s_addr == addr.sin_addr.s_addr);
+        }
 
-		sockaddr* getAddrPtr()
-		{
-			return (sockaddr*)&addr;
-		}
+        sockaddr* getAddrPtr()
+        {
+            return (sockaddr*)&addr;
+        }
 
-		socklen_t getSize()
-		{
-			return sizeof(addr);
-		}
+        socklen_t getSize()
+        {
+            return sizeof(addr);
+        }
 
-		socklen_t * getSizePtr()
-		{
-			length = getSize();
-			return &length;
-		}
+        socklen_t * getSizePtr()
+        {
+            length = getSize();
+            return &length;
+        }
 
-		int getPort()
-		{
-			return ntohs(addr.sin_port);
-		}
+        int getPort()
+        {
+            return ntohs(addr.sin_port);
+        }
 
-		char * toString();
+        char * toString();
 
-		static bool isLocalIP(char * ip);
+        static bool isLocalIP(char * ip);
 
-	};
+    };
 };

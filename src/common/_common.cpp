@@ -34,10 +34,10 @@ SOFTWARE.
 
 namespace n02 {
 
-	void reportAssertionError(const char * condition, const char * file, const int line, const char * function) {
+    void reportAssertionError(const char * condition, const char * file, const int line, const char * function) {
 
-		LOGBASIC("Assertion failure: %s @ %s:%i:%s", condition, file, line, function);
+        LOGBASIC("Assertion failure: %s @ %s:%i:%s", condition, file, line, function);
 
-	}
+    }
 
 };

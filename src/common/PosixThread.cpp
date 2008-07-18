@@ -32,21 +32,16 @@ SOFTWARE.
 #include "PosixThread.h"
 
 namespace n02 {
-
-	void* nPThreaadCCNV posix_thread_proc (PosixThread* thread)
-	{
-		thread->running = true;
-
-		thread->run();
-
-		thread->running = false;
-		return 0;
-	}
-
-
+    void* nPThreaadCCNV posix_thread_proc (PosixThread* thread)
+    {
+        thread->running = true;
+        thread->run();
+        thread->running = false;
+        return 0;
+    }
 };
 
-#ifndef linux
+#ifdef N02_WIN32
 
 /* Windows implementation */
 
@@ -58,87 +53,184 @@ namespace n02 {
 
 namespace n02 {
 
-	PosixThread::PosixThread(bool captureCurrent)
-	{
-		waitable = handle = 0;
-		running = false;
-		priority = PTHREAD_PRIORITY_NORMAL;
+    PosixThread::PosixThread(bool captureCurrent)
+    {
+        waitable = handle = 0;
+        running = false;
+        priority = PTHREAD_PRIORITY_NORMAL;
 
-		if (captureCurrent) {
-			handle = GetCurrentThread();
-			priority = GetThreadPriority((HANDLE)handle);
-		}
-	}
+        if (captureCurrent) {
+            handle = GetCurrentThread();
+            priority = GetThreadPriority((HANDLE)handle);
+        }
+    }
 
-	PosixThread::~PosixThread()
-	{
-	
-	}
+    PosixThread::~PosixThread()
+    {
+
+    }
 
 
-	int PosixThread::start()
-	{
-		handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)posix_thread_proc, this, 0, 0);
-		if (handle) {
-			return 0;
-		} else {
-			return GetLastError(); 
-		}
-	}
+    int PosixThread::start()
+    {
+        handle = CreateThread(0, 0, (LPTHREAD_START_ROUTINE)posix_thread_proc, this, 0, 0);
+        if (handle) {
+            return 0;
+        } else {
+            return GetLastError(); 
+        }
+    }
 
-	int PosixThread::stop()
-	{
-		DWORD exiT;
-		GetExitCodeThread((HANDLE)handle, &exiT);
-		return (TerminateThread((HANDLE)handle, exiT)!=0)? 0: GetLastError();
-	}
+    int PosixThread::stop()
+    {
+        DWORD exiT;
+        GetExitCodeThread((HANDLE)handle, &exiT);
+        running = false;
+        waitable = 0;
+        return (TerminateThread((HANDLE)handle, exiT)!=0)? 0: GetLastError();
+    }
 
-	bool PosixThread::isRunning()
-	{
-		return running;
-	}
+    bool PosixThread::isRunning()
+    {
+        return running;
+    }
 
-	bool PosixThread::isWaiting()
-	{
-		return waitable != 0;
-	}
+    bool PosixThread::isWaiting()
+    {
+        return waitable != 0;
+    }
 
-	int PosixThread::prioritize(int prio)
-	{
-		SetThreadPriority((HANDLE)handle, priority=prio);
-		return prio;
-	}
+    int PosixThread::prioritize(int prio)
+    {
+        SetThreadPriority((HANDLE)handle, priority=prio);
+        return prio;
+    }
 
-	bool PosixThread::wait(int timeout)
-	{
-		waitable = CreateEvent(0, FALSE, FALSE, 0);
-		int ret = WaitForSingleObject ((HANDLE)waitable, timeout);
-		CloseHandle((HANDLE)waitable);
-		return ret==0;
-	}
+    bool PosixThread::wait(int timeout)
+    {
+        waitable = CreateEvent(0, FALSE, FALSE, 0);
+        int ret = WaitForSingleObject ((HANDLE)waitable, timeout);
+        CloseHandle((HANDLE)waitable);
+        waitable = 0;
+        return ret==0;
+    }
 
-	void PosixThread::notify()
-	{
-		if (waitable)
-			SetEvent((HANDLE)waitable);
-	}
+    void PosixThread::notify()
+    {
+        if (waitable)
+            SetEvent((HANDLE)waitable);
+    }
 
-	void PosixThread::yield()
-	{
-		SwitchToThread();
-	}
+    void PosixThread::yield()
+    {
+        SwitchToThread();
+    }
 
-	void PosixThread::sleep(int ms)
-	{
-		Sleep(ms);
-	}
+    void PosixThread::sleep(int ms)
+    {
+        Sleep(ms);
+    }
 
-	int PosixThread::getCurrentThreadId() {
-		return GetCurrentThreadId();
-	}
+    int PosixThread::getCurrentThreadId() {
+        return GetCurrentThreadId();
+    }
+
+};
+
+#else
+
+#include <signal.h>
+#include <pthread.h>
+#include <unistd.h>
+#include "juce02.h"
+
+
+namespace n02 {
+
+    PosixThread::PosixThread(bool captureCurrent)
+    {
+        waitable = handle = 0;
+        running = false;
+        priority = PTHREAD_PRIORITY_NORMAL;
+
+        if (captureCurrent) {
+            handle = reinterpret_cast<void*>(pthread_self());
+            //priority = GetThreadPriority((HANDLE)handle);
+        }
+    }
+
+    PosixThread::~PosixThread()
+    {
+
+    }
+
+
+    int PosixThread::start()
+    {
+        pthread_t handlee;
+        if (pthread_create (&handlee, 0, reinterpret_cast<void* (*)(void*)>(posix_thread_proc), this)) {
+            pthread_detach (handlee);
+            handle = reinterpret_cast<void*>(handlee);
+            return 0;
+        } else {
+            return -1; 
+        }
+    }
+
+    int PosixThread::stop()
+    {
+        pthread_cancel ((pthread_t)handle);
+        running = false;
+        return 0;
+    }
+
+    bool PosixThread::isRunning()
+    {
+        return running;
+    }
+
+    bool PosixThread::isWaiting()
+    {
+        return waitable != 0;
+    }
+
+    int PosixThread::prioritize(int prio)
+    {
+        //SetThreadPriority((HANDLE)handle, priority=prio);
+        return prio;
+    }
+    //TODO: replace the juce code with posix stuff before server implementation.
+    //Server package cant be linked to anything but pthread and rt
+    bool PosixThread::wait(int timeout)
+    {
+        WaitableEvent * waiter = new WaitableEvent;
+        waitable = waiter;
+        bool ret = waiter->wait(timeout);
+        delete waiter;
+        waitable = 0;
+        return ret;
+    }
+
+    void PosixThread::notify()
+    {
+        if (waitable)
+            ((WaitableEvent*)(waitable))->signal();
+    }
+
+    void PosixThread::yield()
+    {
+        pthread_yield();
+    }
+
+    void PosixThread::sleep(int ms)
+    {
+        usleep(ms * 1000);
+    }
+
+    int PosixThread::getCurrentThreadId() {
+        return static_cast<int>(pthread_self());
+    }
 
 };
 
 #endif
-
-

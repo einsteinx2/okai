@@ -39,131 +39,131 @@ SOFTWARE.
 
 namespace n02 {
 
-	// IDEA: Add multiple recorder suport?
+    // IDEA: Add multiple recorder suport?
 
-	extern ExternalModuleHelper02 modHelper;
+    extern ExternalModuleHelper02 modHelper;
 
-	static int N02CCNV  recorderDefaultStart (const char * gameName, const int playerNo, const int totalPlayers, const char * comments)
-	{
-		LOG(%s; %i/%i; %s, gameName, playerNo, totalPlayers, comments? comments:"");
-		return 0;
-	}
-
-
-	static void N02CCNV  recorderDefaultStop ()
-	{
-		LOG(0);
-	}
-
-	int N02CCNV  recorderDefaultAddMetadata (const char * dataName, const char * data)
-	{
-		LOG(META %s=%s, dataName? dataName:"", data? data:"");
-		return 0;
-	}
-
-	static int N02CCNV  recorderDefaultAddComment (const char * comment)
-	{
-		LOG(%s, comment? comment:"");
-		return 0;
-	}
-
-	static int N02CCNV  recorderDefaultAddGameSyncData (const void * value, const int len)
-	{
-		char strBuffer[256];
-		if (len > 0) {
-			StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-			LOG(%s; %i; %i, strBuffer, len);
-		}
-		return len;
-	}
+    static int N02CCNV  recorderDefaultStart (const char * gameName, const int playerNo, const int totalPlayers, const char * comments)
+    {
+        LOG(%s; %i/%i; %s, gameName, playerNo, totalPlayers, comments? comments:"");
+        return 0;
+    }
 
 
-	static int N02CCNV  recorderDefaultAddSyncData (const void * value, const int len)
-	{ 
-		char strBuffer[256];
+    static void N02CCNV  recorderDefaultStop ()
+    {
+        LOGS(0);
+    }
+
+    int N02CCNV  recorderDefaultAddMetadata (const char * dataName, const char * data)
+    {
+        LOG(META %s=%s, dataName? dataName:"", data? data:"");
+        return 0;
+    }
+
+    static int N02CCNV  recorderDefaultAddComment (const char * comment)
+    {
+        LOG(%s, comment? comment:"");
+        return 0;
+    }
+
+    static int N02CCNV  recorderDefaultAddGameSyncData (const void * value, const int len)
+    {
+        char strBuffer[256];
+        if (len > 0) {
+            StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
+            LOG(%s; %i; %i, strBuffer, len);
+        }
+        return len;
+    }
+
+
+    static int N02CCNV  recorderDefaultAddSyncData (const void * value, const int len)
+    { 
+        char strBuffer[256];
 #if 0
-		if (len > 0) {
-			StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-			LOG(%s; %i; %i, strBuffer, len);
-		}
+        if (len > 0) {
+            StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
+            LOG(%s; %i; %i, strBuffer, len);
+        }
 #endif
-		return len;
-	}
+        return len;
+    }
 
-	static int N02CCNV  recorderDefaultAddAsyncData (const void * value, const int len)
-	{
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
-		LOG(%s; %i; %i, strBuffer, len);
-		return len;
-	}
-
-
-	static int N02CCNV  recorderDefaultAddChat (const char * username, const char * chat)
-	{
-		//LOG(%s; %s, username, chat);
-		return 0;
-	}
+    static int N02CCNV  recorderDefaultAddAsyncData (const void * value, const int len)
+    {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
+        LOG(%s; %i; %i, strBuffer, len);
+        return len;
+    }
 
 
-	static int N02CCNV  recorderDefaultAddDrop (const char * username, int playerNo)
-	{
-		LOG(%s; %i, username, playerNo);
-		return 0;
-	}
+    static int N02CCNV  recorderDefaultAddChat (const char * username, const char * chat)
+    {
+        //LOG(%s; %s, username, chat);
+        return 0;
+    }
 
-	static void N02CCNV  recorderDefaultReserved(int, int)
-	{
-		LOG(0);
-	}
 
-	static RecorderInterface02 defaultRecorder = {
-		recorderDefaultStart,
-		recorderDefaultStop,
-		recorderDefaultAddMetadata,
-		recorderDefaultAddComment,
-		recorderDefaultAddGameSyncData,
-		recorderDefaultAddSyncData,
-		recorderDefaultAddAsyncData,
-		recorderDefaultAddChat,
-		recorderDefaultAddDrop,
-		recorderDefaultReserved,
-		recorderDefaultReserved,
-		recorderDefaultReserved,
-		recorderDefaultReserved
-	};
+    static int N02CCNV  recorderDefaultAddDrop (const char * username, int playerNo)
+    {
+        LOG(%s; %i, username, playerNo);
+        return 0;
+    }
 
-	RecorderInterface02 recorder;
+    static void N02CCNV  recorderDefaultReserved(int, int)
+    {
+        LOGS(0);
+    }
 
-	void recorderReset(){
-		recorder = defaultRecorder;
-	}
+    static RecorderInterface02 defaultRecorder = {
+        recorderDefaultStart,
+        recorderDefaultStop,
+        recorderDefaultAddMetadata,
+        recorderDefaultAddComment,
+        recorderDefaultAddGameSyncData,
+        recorderDefaultAddSyncData,
+        recorderDefaultAddAsyncData,
+        recorderDefaultAddChat,
+        recorderDefaultAddDrop,
+        recorderDefaultReserved,
+        recorderDefaultReserved,
+        recorderDefaultReserved,
+        recorderDefaultReserved
+    };
 
-	void recorderResetCheck() {
-		ModuleAbstraction02 * mab;
+    RecorderInterface02 recorder;
 
-		recorderReset();
+    void recorderReset(){
+        recorder = defaultRecorder;
+    }
 
-		if ((mab = modHelper.modHandler->find(MTYPE02_RECORDER)) != 0) {
-			mab->getInterface(&recorder);
-		}
-	}
+    void recorderResetCheck() {
+        ModuleAbstraction02 * mab;
 
-	void recorderInitialize(){
-		 recorderResetCheck();
-	}
-	void recorderTerminate(){
-		recorderReset();
-	}	
+        recorderReset();
 
-	bool N02CCNV recorderIsLoaded() {
-		ModuleAbstraction02 * mab;
-		recorderReset();
-		if ((mab = modHelper.modHandler->find(MTYPE02_RECORDER))!=0) {
-			mab->getInterface(&recorder);
-			return true;
-		}
-		return false;
-	}
+        if ((mab = modHelper.modHandler->find(MTYPE02_RECORDER)) != 0) {
+            mab->getInterface(&recorder);
+        }
+    }
+
+    void recorderInitialize(){
+        recorderResetCheck();
+    }
+    void recorderTerminate(){
+        recorderReset();
+    }	
+
+    bool N02CCNV recorderIsLoaded() {
+        ModuleAbstraction02 * mab;
+        recorderReset();
+        if ((mab = modHelper.modHandler->find(MTYPE02_RECORDER))!=0) {
+            mab->getInterface(&recorder);
+            return true;
+        }
+        return false;
+    }
 
 };

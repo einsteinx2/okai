@@ -34,60 +34,60 @@ SOFTWARE.
 
 namespace n02 {
 
-	SIMPLEWINDOW(License, "License Window", Colours::whitesmoke, DocumentWindow::closeButton, juceLicenseComponent, 600, 320);
+    SIMPLEWINDOW(License, "License Window", Colours::whitesmoke, DocumentWindow::closeButton, juceLicenseComponent, 600, 320);
 
-	static int licenseNotAccepted;
+    static int licenseNotAccepted;
 
-	void LicenseDeclined() {
-		JUCEApplication::quit();
-		licenseNotAccepted = 1;
-	}
-	void LicenseAccepted() {
-		licenseNotAccepted = 0;
-		JUCEApplication::quit();
-	}
+    void LicenseDeclined() {
+        JUCEApplication::quit();
+        licenseNotAccepted = 1;
+    }
+    void LicenseAccepted() {
+        licenseNotAccepted = 0;
+        JUCEApplication::quit();
+    }
 
-	void License::OnClose(){
-		 LicenseDeclined();
-	}
+    void License::OnClose(){
+        LicenseDeclined();
+    }
 
-	class OpenKailleraLicenseApp: public JUCEApplication {
-	public:
-		void initialise (const String& commandLineParameters) {
-			License::createAndShow();
-		}
+    class OpenKailleraLicenseApp: public JUCEApplication {
+    public:
+        void initialise (const String& commandLineParameters) {
+            License::createAndShow();
+        }
 
-		void shutdown() {
+        void shutdown() {
+            delete License::window;
+        }
 
-		}
+        const String getApplicationName() {
+            return T("okai license");
+        }
+    };
 
-		const String getApplicationName() {
-			return T("okai license");
-		}
-	};
-	
 
-	CONFIG_START(licenseConfig)
-	CONFIG_INTVAR(_T("accepted"), licenseNotAccepted, 1)
-	CONFIG_END
+    CONFIG_START(licenseConfig)
+        CONFIG_INTVAR(_T("accepted"), licenseNotAccepted, 1)
+        CONFIG_END
 
-	char *argv[] = {"", ""};
+        char *argv[] = {"", ""};
 
-	int GuiShowLicenseDialog() {
+    int GuiShowLicenseDialog() {
 
-		LOG(License dialog);
+        LOGS(License dialog);
 
-		ConfigurationManager config(licenseConfig);
-		config.load(_T("license"));
+        ConfigurationManager config(licenseConfig);
+        config.load(_T("license"));
 
-		if (licenseNotAccepted) {
-			JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
-		}
+        if (licenseNotAccepted) {
+            JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
+        }
 
-		config.save(_T("license"));
+        config.save(_T("license"));
 
-		return licenseNotAccepted;
-	}
+        return licenseNotAccepted;
+    }
 
 };
 

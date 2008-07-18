@@ -40,7 +40,7 @@ namespace n02 {
 #define GCAPS_STATES		8
 
     class GamesList {
-	public:
+    public:
         // Initialization
         static void initialize();
         static void terminate();
@@ -53,13 +53,13 @@ namespace n02 {
         // Iteration
         static char * start(int * index);
         static char * next(int * curIndex);
-		static char * current(int * curIndex);
+        static char * current(int * curIndex);
         static char * find(const char * game);
         static bool select(const char * game);
-		static bool selectByIndex(const int index);
+        static bool selectByIndex(const int index);
         static int selectedMaxPlayers();
         static int selectedCaps();
-		static int getCount();
+        static int getCount();
 
     };
 

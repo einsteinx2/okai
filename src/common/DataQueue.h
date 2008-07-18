@@ -42,68 +42,68 @@ namespace n02 {
 
     protected:
 
-		/* pointer to write cursor */
+        /* pointer to write cursor */
         unsigned char *	ptr;
-		/* pointer to begining of the buffer */
+        /* pointer to begining of the buffer */
         unsigned char *	begin;
-		/* pointer to the end of the buffer */
+        /* pointer to the end of the buffer */
         unsigned char *	end;
 
     public:
 
-		/* constructor */
+        /* constructor */
         DataQueue ()
         {
             begin = end = ptr = 0;
         }
 
-		/* constructor */
+        /* constructor */
         DataQueue(void * presetBuffer, int presetBufferLen)
         {
-			require(presetBuffer != 0 && presetBufferLen > 0);
+            require(presetBuffer != 0 && presetBufferLen > 0);
             begin = commonAlloc<unsigned char>(presetBufferLen);
             ptr = end = begin + presetBufferLen;
             memcpy(begin, presetBuffer, presetBufferLen);
         }
 
-		/* constructor */
+        /* constructor */
         DataQueue(int initialAllocation)
         {
             ptr = begin = commonAlloc<unsigned char>(initialAllocation);
             end = begin + initialAllocation;
         }
 
-		/* distructor */
+        /* distructor */
         ~DataQueue()
         {
             if (begin) {
-                free(begin);
+                commonFree<unsigned char>(begin);
             }
             begin = end = ptr = 0;
         }
 
     public:
 
-		/* return front */
+        /* return front */
         inline void * front()
-		{
+        {
             return reinterpret_cast<void*>(begin);
         }
 
-		/* enqueue some data */
+        /* enqueue some data */
         int push(const void * data, int dataLen)
         {
             require (dataLen > 0 && data != 0);
-			ensureSized(dataLen);
-			memcpy(ptr, data, dataLen);
-			ptr += dataLen;
+            ensureSized(dataLen);
+            memcpy(ptr, data, dataLen);
+            ptr += dataLen;
             return ptr - begin;
         }
 
-		/* peek at the data */
-		int peek (void * data, int dataLen)
+        /* peek at the data */
+        int peek (void * data, int dataLen)
         {
-			require (dataLen > 0 && data != 0);
+            require (dataLen > 0 && data != 0);
             int min_copy_length;
             if ((min_copy_length = common_min (dataLen, ptr - begin)) > 0) {
                 memcpy(data, begin, min_copy_length);
@@ -113,7 +113,7 @@ namespace n02 {
         }
 
         /* blank data removal */
-		void pop (int lenToRemove)
+        void pop (int lenToRemove)
         {
             lenToRemove = common_min (lenToRemove, ptr - begin);
 
@@ -123,7 +123,7 @@ namespace n02 {
             }			
         }
 
-		/* data removal */
+        /* data removal */
         int pop (void * dataBuffer, int dataBufferLen)
         {
             int min_copy_length;
@@ -136,13 +136,13 @@ namespace n02 {
             return 0;
         }
 
-		/* reset pointer */
+        /* reset pointer */
         void reset()
         {
             ptr = begin;
         }
 
-		/* return queued length */
+        /* return queued length */
         int length() {
             return ptr - begin;
         }

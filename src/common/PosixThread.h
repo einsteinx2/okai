@@ -30,7 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 
 
-#ifndef linux
+#ifdef N02_WIN32
 #define nPThreaadCCNV __stdcall
 #else
 #define nPThreaadCCNV
@@ -89,7 +89,7 @@ namespace n02 {
         /* sleep for a while */
         static void sleep(int ms);
 
-		static int getCurrentThreadId();
+        static int getCurrentThreadId();
 
     private:
 
@@ -99,7 +99,7 @@ namespace n02 {
     };
 };
 
-#ifndef linux
+//#ifndef N02_WIN32
 
 #define PTHREAD_PRIORITY_CRITICAL	15
 #define PTHREAD_PRIORITY_HIGH		2
@@ -107,5 +107,5 @@ namespace n02 {
 #define PTHREAD_PRIORITY_LOW		(-2)
 #define PTHREAD_PRIORITY_IDLE		(-15)
 
-#endif
+//#endif
 

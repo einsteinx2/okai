@@ -34,9 +34,9 @@ SOFTWARE.
 
 namespace n02 {
 
-	void GuiInitialize();
-	void GuiCleanup();
-	int GuiStartSync();
-	int GuiShowLicenseDialog();
-	
+    void GuiInitialize();
+    void GuiCleanup();
+    int GuiStartSync();
+    int GuiShowLicenseDialog();
+
 };

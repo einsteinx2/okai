@@ -46,7 +46,7 @@ namespace n02 {
         virtual void terminate();
         virtual void logLine(char * line);
 
-        void logcprintf(char * format, void**args);
+        /*void logcprintf(char * format, void**args);*/
         void logprintf(char * format, ...);
         void logBuffer(void * bytes, int length, char * name);
 
@@ -68,22 +68,39 @@ namespace n02 {
 
 #ifdef DONT_LOG
 #define LOG(X, ...)
+#define LOGS(X)
 #define LOGTRACE(X, ...)
-
 #define LOGBUFFER(X, Y)
-
 #undef DONT_LOG
 #else
-#define LOG(X, ...)\
+
+#ifdef _MSC_VER
+
+#define LOG(X, ...) \
     defaultLogger.logprintf(__FUNCTION__ ## "(" #X ")" , __VA_ARGS__)
-
-#define LOGBASIC(X, ...)\
+#define LOGS(X) \
+    defaultLogger.logLine(#X)
+#define LOGBASIC(X, ...) \
     defaultLogger.logprintf(X, __VA_ARGS__)
-
-#define LOGTRACE(X, ...)\
+#define LOGTRACE(X, ...) \
     defaultLogger.logprintf(#X, __VA_ARGS__)
-
 #define LOGBUFFER(N, X, Y) defaultLogger.logBuffer((void*)X, (int)Y, N)
+
+#else
+
+
+#define LOG(X, ...) \
+    defaultLogger.logprintf("(" #X ")" , __VA_ARGS__)
+#define LOGS(X) \
+    defaultLogger.logLine(#X)
+#define LOGBASIC(X, ...) \
+    defaultLogger.logprintf(X, __VA_ARGS__)
+#define LOGTRACE(X, ...) \
+    defaultLogger.logprintf(#X, __VA_ARGS__)
+#define LOGBUFFER(N, X, Y) defaultLogger.logBuffer((void*)X, (int)Y, N)
+
+#endif
+
 #endif
 
 };

@@ -32,220 +32,220 @@ SOFTWARE.
 #include "common.h"
 
 namespace n02 {
-	static void N02CCNV defaultTransportInitialize()
-	{
-		LOG(0);
-	}
-	static void N02CCNV defaultTransportTerminate()
-	{
-		LOG(0);
-	}
-	static void N02CCNV defaultTransportActivete()
-	{
-		LOG(0);
-	}
-	static void N02CCNV defaultTransportActiveteGUI()
-	{
-		LOG(0);
+    static void N02CCNV defaultTransportInitialize()
+    {
+        LOGS(0);
+    }
+    static void N02CCNV defaultTransportTerminate()
+    {
+        LOGS(0);
+    }
+    static void N02CCNV defaultTransportActivete()
+    {
+        LOGS(0);
+    }
+    static void N02CCNV defaultTransportActiveteGUI()
+    {
+        LOGS(0);
 
-	}
-	static int N02CCNV defaultTransportIdleStep()
-	{
-		LOG(0);
-		return false;
-	}
-	static int  N02CCNV defaultTransportSynchronizeGame(void * syncData, int len)
-	{
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)syncData, len);
-		LOG(%s; %i, strBuffer, len);
-		return 0;
-	}
-	static void N02CCNV defaultTransportEndGame()
-	{
-		LOG(0);
-	}
-	static void N02CCNV defaultTransportSendAsyncData(const void * value, const int len, const int mode)
-	{
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-		LOG(%s; %i; %i, strBuffer, len, mode);
-	}
-	static void N02CCNV defaultTransportSendSyncData(const void * value, const int len)
-	{
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-		LOG(%s; %i, strBuffer, len);
-	}
-	static int  N02CCNV defaultTransportRecvSyncData(void * value, const int len)
-	{
-		LOG(%x; %i, value, len);
-		return 0;
-	}
-	static int  N02CCNV defaultTransportSyncData(void * value, const int len)
-	{
-		char strBuffer[256];
-		StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
-		LOG(%s; %i, strBuffer, len);
-		return 0;
-	}
-	static int  N02CCNV defaultTransportSyncDataCheck(int)
-	{
-		LOG(0);
-		return 0;
-	}
-	static void N02CCNV defaultTransportSendChat(const char * message)
-	{
-		LOG(%s, message);
-	}
-	static int  N02CCNV defaultTransportGetSelectedAutorunAlgorithm()
-	{
-		LOG(0);
-		return 0;
-	}
-	static int  N02CCNV defaultTransportGetSelectedAutorunSmoothing()
-	{
-		LOG(0);
-		return 0;
-	}
-	static int N02CCNV defaultTransportIsRecordingEnabled()
-	{
-		LOG(0);
-		return true;
-	}
+    }
+    static int N02CCNV defaultTransportIdleStep()
+    {
+        LOGS(0);
+        return false;
+    }
+    static int  N02CCNV defaultTransportSynchronizeGame(void * syncData, int len)
+    {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)syncData, len);
+        LOG(%s; %i, strBuffer, len);
+        return 0;
+    }
+    static void N02CCNV defaultTransportEndGame()
+    {
+        LOGS(0);
+    }
+    static void N02CCNV defaultTransportSendAsyncData(const void * value, const int len, const int mode)
+    {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+        LOG(%s; %i; %i, strBuffer, len, mode);
+    }
+    static void N02CCNV defaultTransportSendSyncData(const void * value, const int len)
+    {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+        LOG(%s; %i, strBuffer, len);
+    }
+    static int  N02CCNV defaultTransportRecvSyncData(void * value, const int len)
+    {
+        LOG(%x; %i, value, len);
+        return 0;
+    }
+    static int  N02CCNV defaultTransportSyncData(void * value, const int len)
+    {
+        char strBuffer[256];
+        StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
+        LOG(%s; %i, strBuffer, len);
+        return 0;
+    }
+    static int  N02CCNV defaultTransportSyncDataCheck(int)
+    {
+        LOGS(0);
+        return 0;
+    }
+    static void N02CCNV defaultTransportSendChat(const char * message)
+    {
+        LOG(%s, message);
+    }
+    static int  N02CCNV defaultTransportGetSelectedAutorunAlgorithm()
+    {
+        LOGS(0);
+        return 0;
+    }
+    static int  N02CCNV defaultTransportGetSelectedAutorunSmoothing()
+    {
+        LOGS(0);
+        return 0;
+    }
+    static int N02CCNV defaultTransportIsRecordingEnabled()
+    {
+        LOGS(0);
+        return true;
+    }
 
-	static int N02CCNV defaultTransportGetGameplayType() {
-		return GAME_TYPE_GAMEPLAY;
-	}
+    static int N02CCNV defaultTransportGetGameplayType() {
+        return GAME_TYPE_GAMEPLAY;
+    }
 
-	static void N02CCNV  defaultTransportReserved(int, int)
-	{
-		LOG(0);
-	}
+    static void N02CCNV  defaultTransportReserved(int, int)
+    {
+        LOGS(0);
+    }
 
-	static TransportModule02 defaultTransport = {
-		defaultTransportInitialize,
-		defaultTransportTerminate,
-		defaultTransportActivete,
-		defaultTransportIdleStep,
-		defaultTransportSynchronizeGame,
-		defaultTransportEndGame,
-		defaultTransportSendAsyncData,
-		defaultTransportSendSyncData,
-		defaultTransportRecvSyncData,
-		defaultTransportSyncData,
-		defaultTransportSyncDataCheck,
-		defaultTransportSendChat,
-		defaultTransportActiveteGUI,
-		defaultTransportGetSelectedAutorunAlgorithm,
-		defaultTransportGetSelectedAutorunSmoothing,
-		defaultTransportIsRecordingEnabled,
-		defaultTransportGetGameplayType,
-		defaultTransportReserved,
-		defaultTransportReserved,
-		defaultTransportReserved
-	};
+    static TransportModule02 defaultTransport = {
+        defaultTransportInitialize,
+        defaultTransportTerminate,
+        defaultTransportActivete,
+        defaultTransportIdleStep,
+        defaultTransportSynchronizeGame,
+        defaultTransportEndGame,
+        defaultTransportSendAsyncData,
+        defaultTransportSendSyncData,
+        defaultTransportRecvSyncData,
+        defaultTransportSyncData,
+        defaultTransportSyncDataCheck,
+        defaultTransportSendChat,
+        defaultTransportActiveteGUI,
+        defaultTransportGetSelectedAutorunAlgorithm,
+        defaultTransportGetSelectedAutorunSmoothing,
+        defaultTransportIsRecordingEnabled,
+        defaultTransportGetGameplayType,
+        defaultTransportReserved,
+        defaultTransportReserved,
+        defaultTransportReserved
+    };
 
-	TransportModule02 transport;
+    TransportModule02 transport;
 
-	static char activeModName[32];
-	static TCHAR activeModNameT[32];
+    static char activeModName[32];
+    static TCHAR activeModNameT[32];
 
-	CONFIG_START(transportConfig)
-		CONFIG_STRVAR(_T("active"), activeModNameT, 32, _T(""))
-		CONFIG_END
+    CONFIG_START(transportConfig)
+        CONFIG_STRVAR(_T("active"), activeModNameT, 32, _T(""))
+        CONFIG_END
 
-	void transportReset() {
-		transport = defaultTransport;
-	}
+        void transportReset() {
+            transport = defaultTransport;
+    }
 
-	static void transportActivate(ModuleAbstraction02 * mod);
+    static void transportActivate(ModuleAbstraction02 * mod);
 
-	void transportInitialize()
-	{
-		transportReset();
+    void transportInitialize()
+    {
+        transportReset();
 
-		char active[128];
-		ConfigurationManager config(transportConfig);
-		config.load(_T("transport"));
-		StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(active), activeModNameT);
+        char active[128];
+        ConfigurationManager config(transportConfig);
+        config.load(_T("transport"));
+        StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(active), activeModNameT);
 
-		if (strlen(active) > 0
-			&& strlen(active) < 16
-			&& modHelper.modHandler->getByName(active) != 0
-			&& strcmp(modHelper.modHandler->getByName(active)->type, MTYPE02_TRANSPORT)==0) {
-				transportSetActiveByName(active);
-		} else {
-			transportActivate(modHelper.modHandler->find(MTYPE02_TRANSPORT));
-		}	
-	}
+        if (strlen(active) > 0
+            && strlen(active) < 16
+            && modHelper.modHandler->getByName(active) != 0
+            && strcmp(modHelper.modHandler->getByName(active)->type, MTYPE02_TRANSPORT)==0) {
+                transportSetActiveByName(active);
+        } else {
+            transportActivate(modHelper.modHandler->find(MTYPE02_TRANSPORT));
+        }	
+    }
 
-	void transportTerminate()
-	{
-		StringUtils::UTF8ToTCHAR(activeModNameT, reinterpret_cast<unsigned char*>(activeModName), 32);
-		ConfigurationManager config(transportConfig);
-		config.save(_T("transport"));
-	}
+    void transportTerminate()
+    {
+        StringUtils::UTF8ToTCHAR(activeModNameT, reinterpret_cast<unsigned char*>(activeModName), 32);
+        ConfigurationManager config(transportConfig);
+        config.save(_T("transport"));
+    }
 
-	static bool recentlyActivated;
+    static bool recentlyActivated;
 
-	static void transportActivate(ModuleAbstraction02 * mod)
-	{
-		if (mod != 0) {
-			if (strcmp(mod->type, MTYPE02_TRANSPORT)==0) {
-				if (mod->getInterface(&transport)==0) {
-					recentlyActivated = true;
-					strcpy(activeModName, mod->name);
-				} else {
-					LOG(Failed to retrive the module interface structure);
-				}
-			} else {
-				LOG(Invalid type of module specified %s, mod->type);
-			}
-		} else {
-			LOG(Could not find specified transport module index);
-		}
-	}
+    static void transportActivate(ModuleAbstraction02 * mod)
+    {
+        if (mod != 0) {
+            if (strcmp(mod->type, MTYPE02_TRANSPORT)==0) {
+                if (mod->getInterface(&transport)==0) {
+                    recentlyActivated = true;
+                    strcpy(activeModName, mod->name);
+                } else {
+                    LOGS(Failed to retrive the module interface structure);
+                }
+            } else {
+                LOG(Invalid type of module specified %s, mod->type);
+            }
+        } else {
+            LOGS(Could not find specified transport module index);
+        }
+    }
 
-	void N02CCNV transportSetActiveByName(char * name) {
-		LOG(%s, name);
-		if (name != 0 && strlen(name) > 0) {
-			if (strcmp(name, "dummy"))
-				transportActivate(modHelper.modHandler->getByName(name));
-			else
-				transportReset();
-		} else {
-			LOG(Invalid module name specified);
-		}
-	}
+    void N02CCNV transportSetActiveByName(char * name) {
+        LOG(%s, name);
+        if (name != 0 && strlen(name) > 0) {
+            if (strcmp(name, "dummy"))
+                transportActivate(modHelper.modHandler->getByName(name));
+            else
+                transportReset();
+        } else {
+            LOGS(Invalid module name specified);
+        }
+    }
 
-	void N02CCNV transportSetActiveByIndex(int index) {
-		LOG(%i, index);
-		if (index >= 0) {
-			transportActivate(modHelper.modHandler->getByIndex(index));
-		} else {
-			LOG(Invalid module index specified);
-		}
-	}
+    void N02CCNV transportSetActiveByIndex(int index) {
+        LOG(%i, index);
+        if (index >= 0) {
+            transportActivate(modHelper.modHandler->getByIndex(index));
+        } else {
+            LOG(Invalid module index specified);
+        }
+    }
 
-	void transportResetActivation() {
-		recentlyActivated = false;
-	}
-	bool transportWasReActivated() {
-		return recentlyActivated;
-	}
+    void transportResetActivation() {
+        recentlyActivated = false;
+    }
+    bool transportWasReActivated() {
+        return recentlyActivated;
+    }
 
-	//void N02CCNV callbackActiveModuleChange() {
-	//		// Make things faster
-	//		//n02->gameplay.synchronizeGame = activeMod.synchronizeGame;
-	//		n02->gameplay.endGame = activeMod.endGame;
-	//		n02->gameplay.sendAsyncData = activeMod.sendAsyncData;
-	//		n02->gameplay.sendSyncData = activeMod.sendSyncData;	
-	//		n02->gameplay.recvSyncData = activeMod.recvSyncData;
-	//		//n02->gameplay.syncData = activeMod.syncData;
-	//		n02->gameplay.syncDataCheck = activeMod.syncDataCheck;
-	//		n02->gameplay.sendChat = activeMod.sendChat;
-	//	}
+    //void N02CCNV callbackActiveModuleChange() {
+    //		// Make things faster
+    //		//n02->gameplay.synchronizeGame = activeMod.synchronizeGame;
+    //		n02->gameplay.endGame = activeMod.endGame;
+    //		n02->gameplay.sendAsyncData = activeMod.sendAsyncData;
+    //		n02->gameplay.sendSyncData = activeMod.sendSyncData;	
+    //		n02->gameplay.recvSyncData = activeMod.recvSyncData;
+    //		//n02->gameplay.syncData = activeMod.syncData;
+    //		n02->gameplay.syncDataCheck = activeMod.syncDataCheck;
+    //		n02->gameplay.sendChat = activeMod.sendChat;
+    //	}
 
 };
 

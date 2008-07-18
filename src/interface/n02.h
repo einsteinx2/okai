@@ -32,30 +32,41 @@ SOFTWARE.
 #ifndef N02_H
 #define N02_H
 
+#if !defined(N02_WIN32) && !defined(N02_LINUX) && !defined(N02_MAC)
+#define N02_WIN32
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef N02_WIN32
 #define N02CCNV __stdcall
+#else
+#define N02CCNV
+#endif
+
 #define N02_API_VERSION 3
 
-	/*****************************************************
-	README
-	***************************
-	Things may prove to be not obvious if someone jumped straight into coding
-	so to make things more obvious, I thought I should write this. The API more
-	or less consists of data structure types with function pointers. You will
-	need to declare variables with those data types in your own code space and
-	you can perform only operations on them:
-	reset - Fill in the values of function pointers with proper functions
-	     and dummy callbacks and initialize its other variables
-	Once the interface has been filled with appropriate values for its function
-	pointers, the rest will comes from there.
-	On an additional note: Do not use this API in combination with other supported
-	interfaces such as kaillera or PSENet or multiple instances of the same
-	interface. The internals of the client is highly modular and any attempts at
-	those may cause the client to not function perperly
-	*************/
+/*****************************************************
+README
+***************************
+Things may prove to be not obvious if someone jumped straight into coding
+so to make things more obvious, I thought I should write this. The API more
+or less consists of data structure types with function pointers. You will
+need to declare variables with those data types in your own code space and
+you can perform only operations on them:
+reset - Fill in the values of function pointers with proper functions
+     and dummy callbacks and initialize its other variables
+Once the interface has been filled with appropriate values for its function
+pointers, the rest will comes from there.
+On an additional note: Do not use this API in combination with other supported
+interfaces such as kaillera or PSENet or multiple instances of the same
+interface. The internals of the client is highly modular and any attempts at
+those may cause the client to not function perperly
+For static compilation, define N02_STATIC and use the function suffixed with S
+make sure N02_LINUX or N02_MAC is defined for non-windows platform linkage
+*************/
 
 	///////////////////////////////////////////////////////////////////////////
 	// Basic interfaces
@@ -225,25 +236,35 @@ extern "C" {
 
 	/* dll/ reset function */
 
+#ifdef N02_WIN32
+
 #ifdef N02_EXPORTS
 
-	__declspec(dllexport) int __stdcall n02ResetInterface(void * Interface, int type);
+	__declspec(dllexport) int N02CCNV n02ResetInterface(void * Interface, int type);
 	__declspec(dllexport) int __cdecl n02ResetInterfaceC(void * Interface, int type);
 
 #else
 
 #ifndef N02_STATIC
 
-	__declspec(dllimport) int __stdcall n02ResetInterface(void * Interface, int type);
+	__declspec(dllimport) int N02CCNV n02ResetInterface(void * Interface, int type);
 	__declspec(dllimport) int __cdecl n02ResetInterfaceC(void * Interface, int type);
 
 	typedef int (__cdecl * n02ResetInterfaceCT)(void *, int);
 
 #else
 
-	int __stdcall n02ResetInterfaceS(void * Interface, int type);
+	int N02CCNV n02ResetInterfaceS(void * Interface, int type);
 
 #endif 
+
+#endif
+
+#else
+
+	int N02CCNV n02ResetInterface(void * Interface, int type);
+	int n02ResetInterfaceC(void * Interface, int type);
+	int N02CCNV n02ResetInterfaceS(void * Interface, int type);
 
 #endif
 

@@ -33,147 +33,147 @@ SOFTWARE.
 
 namespace n02 {
 
-	RunAlgorithmInterface02 autorun;
-	extern ExternalModuleHelper02 modHelper;
+    RunAlgorithmInterface02 autorun;
+    extern ExternalModuleHelper02 modHelper;
 
-	static void N02CCNV  callbackSaveState		(const int slotNo)
-	{
-		LOG(%i, slotNo);
-	}
-	static void N02CCNV  callbackLoadState		(const int slotNo)
-	{
-		LOG(%i, slotNo);
-	}
-	static void N02CCNV  callbackPurgeStates	(int count)
-	{
-		LOG(%i, count);
-	}
-	static void N02CCNV  callbackSetPlayerInput(const void *, const int player)
-	{
-		LOG(%i, player);
-	}
-	static int  N02CCNV  callbackGetPlayerInput(void *) {
-		LOG(0);
-		return 0;
-	}
-	static void N02CCNV  callbackRunFrame		(int type, int finalFrame)
-	{
-		LOG(%i;%i, type, finalFrame);
-	}
-	static int  N02CCNV  callbackRetriveState	(void **, int slotNo)
-	{
-		LOG(%i, slotNo);
-		return -1;
-	}
-	static void N02CCNV  callbackForceState	(void *, int , int slotNo)
-	{
-		LOG(%i, slotNo);
-	}
+    static void N02CCNV  callbackSaveState		(const int slotNo)
+    {
+        LOG(%i, slotNo);
+    }
+    static void N02CCNV  callbackLoadState		(const int slotNo)
+    {
+        LOG(%i, slotNo);
+    }
+    static void N02CCNV  callbackPurgeStates	(int count)
+    {
+        LOG(%i, count);
+    }
+    static void N02CCNV  callbackSetPlayerInput(const void *, const int player)
+    {
+        LOG(%i, player);
+    }
+    static int  N02CCNV  callbackGetPlayerInput(void *) {
+        LOGS(0);
+        return 0;
+    }
+    static void N02CCNV  callbackRunFrame		(int type, int finalFrame)
+    {
+        LOG(%i;%i, type, finalFrame);
+    }
+    static int  N02CCNV  callbackRetriveState	(void **, int slotNo)
+    {
+        LOG(%i, slotNo);
+        return -1;
+    }
+    static void N02CCNV  callbackForceState	(void *, int , int slotNo)
+    {
+        LOG(%i, slotNo);
+    }
 
-	static void N02CCNV  runFrameAuto			(int drawFrame) {
-		//LOG(%i, drawFrame);
-		autorun.run(drawFrame);
-	}
-	static void N02CCNV  reserved				(int, int) {
-		LOG(0);
-	}
+    static void N02CCNV  runFrameAuto			(int drawFrame) {
+        //LOG(%i, drawFrame);
+        autorun.run(drawFrame);
+    }
+    static void N02CCNV  reserved				(int, int) {
+        LOGS(0);
+    }
 
-	n02AutorunInterface defaultAutorunInterface = {
-		runFrameAuto,
-		reserved,
-		reserved,
-		reserved,
-		callbackSaveState,
-		callbackLoadState,
-		callbackPurgeStates,
-		callbackSetPlayerInput,
-		callbackGetPlayerInput,
-		callbackRunFrame,
-		callbackRetriveState,
-		callbackForceState,
-		reserved,
-		reserved,
-		reserved,
-		reserved
-	};
+    n02AutorunInterface defaultAutorunInterface = {
+        runFrameAuto,
+        reserved,
+        reserved,
+        reserved,
+        callbackSaveState,
+        callbackLoadState,
+        callbackPurgeStates,
+        callbackSetPlayerInput,
+        callbackGetPlayerInput,
+        callbackRunFrame,
+        callbackRetriveState,
+        callbackForceState,
+        reserved,
+        reserved,
+        reserved,
+        reserved
+    };
 
-	void N02CCNV defaultRunAlgInitialize(int playerNo, int numPlayers, int inputLagDefermentSmoothing)
-	{
-		LOG(%i; %i; %i, playerNo, numPlayers, inputLagDefermentSmoothing);
-	}
-	int N02CCNV defaultRunAlgGetGameplayType()
-	{
-		return RA_GT_GAMEPLAY;
-	}
-	void N02CCNV defaultRunAlgTerminate()
-	{
-		LOG(0);
-	}
-	void N02CCNV defaultRunAlgRun(int drawFrame)
-	{
-		LOG(%i, drawFrame);
-	}
+    void N02CCNV defaultRunAlgInitialize(int playerNo, int numPlayers, int inputLagDefermentSmoothing)
+    {
+        LOG(%i; %i; %i, playerNo, numPlayers, inputLagDefermentSmoothing);
+    }
+    int N02CCNV defaultRunAlgGetGameplayType()
+    {
+        return RA_GT_GAMEPLAY;
+    }
+    void N02CCNV defaultRunAlgTerminate()
+    {
+        LOGS(0);
+    }
+    void N02CCNV defaultRunAlgRun(int drawFrame)
+    {
+        LOG(%i, drawFrame);
+    }
 
-	RunAlgorithmInterface02 defaultRunAlg = {
-		RA_TRAD | RA_STATES | RA_GENERIC,
-		defaultRunAlgInitialize,
-		defaultRunAlgGetGameplayType,
-		defaultRunAlgTerminate,
-		defaultRunAlgRun
-	};
+    RunAlgorithmInterface02 defaultRunAlg = {
+        RA_TRAD | RA_STATES | RA_GENERIC,
+        defaultRunAlgInitialize,
+        defaultRunAlgGetGameplayType,
+        defaultRunAlgTerminate,
+        defaultRunAlgRun
+    };
 
 
 
-	void autorunInitialize()
-	{
-		autorun = defaultRunAlg;
-	}
+    void autorunInitialize()
+    {
+        autorun = defaultRunAlg;
+    }
 
-	void autorunTerminate()
-	{
-	}
+    void autorunTerminate()
+    {
+    }
 
-	//TODO: Debug this code
+    //TODO: Debug this code
 
-	static bool autorunActivate(ModuleAbstraction02 * mod)
-	{
-		if (mod != 0) {
-			if (strcmp(mod->type, MTYPE02_RUNALG)==0) {
-				if (mod->getInterface(&autorun)==0) {
-					LOG(Interface retrival successful);
-					return true;
-				} else {
-					LOG(Failed to retrive the module interface structure);
-				}
-			} else {
-				LOG(Invalid type of module specified %s, mod->type);
-			}
-		} else {
-			LOG(Could not find specified autorun module index);
-		}
-		return false;
-	}
+    static bool autorunActivate(ModuleAbstraction02 * mod)
+    {
+        if (mod != 0) {
+            if (strcmp(mod->type, MTYPE02_RUNALG)==0) {
+                if (mod->getInterface(&autorun)==0) {
+                    LOGS(Interface retrival successful);
+                    return true;
+                } else {
+                    LOGS(Failed to retrive the module interface structure);
+                }
+            } else {
+                LOG(Invalid type of module specified %s, mod->type);
+            }
+        } else {
+            LOGS(Could not find specified autorun module index);
+        }
+        return false;
+    }
 
-	bool autorunActivateByName(char * name)
-	{
-		LOG(%s, name);
-		if (name != 0 && strlen(name) > 0) {
-			return autorunActivate(modHelper.modHandler->getByName(name));
-		} else {
-			LOG(Invalid autorun module name specified);
-			return false;
-		}
-	}
+    bool autorunActivateByName(char * name)
+    {
+        LOG(%s, name);
+        if (name != 0 && strlen(name) > 0) {
+            return autorunActivate(modHelper.modHandler->getByName(name));
+        } else {
+            LOGS(Invalid autorun module name specified);
+            return false;
+        }
+    }
 
-	bool autorunActivateByIndex(int index)
-	{
-		LOG(%i, index);
-		if (index >= 0) {
-			return autorunActivate(modHelper.modHandler->getByIndex(index));
-		} else {
-			LOG(Invalid autorun module index specified);
-			return false;
-		}
-	}
+    bool autorunActivateByIndex(int index)
+    {
+        LOG(%i, index);
+        if (index >= 0) {
+            return autorunActivate(modHelper.modHandler->getByIndex(index));
+        } else {
+            LOGS(Invalid autorun module index specified);
+            return false;
+        }
+    }
 
 };

@@ -35,73 +35,73 @@ SOFTWARE.
 #include "recorder.h"
 
 namespace n02 {
-	namespace deferment {
+    namespace deferment {
 
-		// basic variables needed across all modules
-		int delay;
-		int delayParam;
-		int frame;
-		int playerIndex;
-		int numPlayers;
-		int inputLength;
+        // basic variables needed across all modules
+        int delay;
+        int delayParam;
+        int frame;
+        int playerIndex;
+        int numPlayers;
+        int inputLength;
 
-		n02AutorunInterface * autorun = 0;
+        n02AutorunInterface * autorun = 0;
 
-		static void N02CCNV initialize(int playerNo, int numPlayersP, int delayParamP)
-		{
-			playerIndex = playerNo - 1;
-			numPlayers = numPlayersP;
-			delayParam = delayParamP;
-			delay = frame = 0;
+        static void N02CCNV initialize(int playerNo, int numPlayersP, int delayParamP)
+        {
+            playerIndex = playerNo - 1;
+            numPlayers = numPlayersP;
+            delayParam = delayParamP;
+            delay = frame = 0;
 
-			autorun = reinterpret_cast<n02AutorunInterface*>(modHelper.getExtendedInterface(client, INTERFACE_AUTORUN));
+            autorun = reinterpret_cast<n02AutorunInterface*>(modHelper.getExtendedInterface(client, INTERFACE_AUTORUN));
 
-		}
+        }
 
-		static int  N02CCNV getGameplayType()
-		{
-			return RA_GT_GAMEPLAY;
-		}
-		static void N02CCNV terminate() {
+        static int  N02CCNV getGameplayType()
+        {
+            return RA_GT_GAMEPLAY;
+        }
+        static void N02CCNV terminate() {
 
-		}
+        }
 
 
-		static void N02CCNV run(int drawFrame) {
-			frame++;
-			unsigned char buffer[256];
-			TRACE(); inputLength = autorun->callbackGetPlayerInput(buffer);
-			int r = transport.syncData(buffer, inputLength);
-			if (r > 0) {
-				recorder.addSyncData(buffer, numPlayers * inputLength);
-				for (int x =0; x < numPlayers; x++) {
-					TRACE(); autorun->callbackSetPlayerInput(buffer + (x * inputLength), x);
-				}
-				TRACE(); autorun->callbackRunFrame(drawFrame? GAME_RUNFRAME_DRAW: GAME_RUNFRAME_NODRAW, 1);
-			} else if (r ==0) {
-				delay++;
-				recorder.addSyncData(buffer, r);
-				for (int x =0; x < numPlayers; x++) {
-					TRACE(); autorun->callbackSetPlayerInput(buffer + (x * inputLength), x);
-				}
-				TRACE(); autorun->callbackRunFrame(drawFrame? GAME_RUNFRAME_DRAW: GAME_RUNFRAME_NODRAW, 1);
-			} else {
-				TRACE(); modHelper.endGame();
-			}
-			TRACE();
-		}
-	};
+        static void N02CCNV run(int drawFrame) {
+            frame++;
+            unsigned char buffer[256];
+            TRACE(); inputLength = autorun->callbackGetPlayerInput(buffer);
+            int r = transport.syncData(buffer, inputLength);
+            if (r > 0) {
+                recorder.addSyncData(buffer, numPlayers * inputLength);
+                for (int x =0; x < numPlayers; x++) {
+                    TRACE(); autorun->callbackSetPlayerInput(buffer + (x * inputLength), x);
+                }
+                TRACE(); autorun->callbackRunFrame(drawFrame? GAME_RUNFRAME_DRAW: GAME_RUNFRAME_NODRAW, 1);
+            } else if (r ==0) {
+                delay++;
+                recorder.addSyncData(buffer, r);
+                for (int x =0; x < numPlayers; x++) {
+                    TRACE(); autorun->callbackSetPlayerInput(buffer + (x * inputLength), x);
+                }
+                TRACE(); autorun->callbackRunFrame(drawFrame? GAME_RUNFRAME_DRAW: GAME_RUNFRAME_NODRAW, 1);
+            } else {
+                TRACE(); modHelper.endGame();
+            }
+            TRACE();
+        }
+    };
 
-	using namespace deferment;
+    using namespace deferment;
 
-	static RunAlgorithmInterface02 raTradDelay = {
-		RA_GENERIC,
-		initialize,
-		getGameplayType,
-		terminate,
-		run
-	};
+    static RunAlgorithmInterface02 raTradDelay = {
+        RA_GENERIC,
+        initialize,
+        getGameplayType,
+        terminate,
+        run
+    };
 
-	STDMODULE(modTradDelay, "traditional", MTYPE02_RUNALG, raTradDelay, APP_ATTRIBUTES_AUTORUN, 0, MOD02_STATUS_WORKING, "Traditional run module");
+    STDMODULE(modTradDelay, "traditional", MTYPE02_RUNALG, raTradDelay, APP_ATTRIBUTES_AUTORUN, 0, MOD02_STATUS_WORKING, "Traditional run module");
 
 };

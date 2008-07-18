@@ -85,28 +85,28 @@ TransportModule02 NAME = {					\
 	reserved								\
 }
 
-#define STDTRANSPORTDEFNNMS(NAME, NAMESPACE)			\
-TransportModule02 NAME = {								\
-	NAMESPACE##::initialize,							\
-	NAMESPACE##::terminate,								\
-	NAMESPACE##::activete,								\
-	NAMESPACE##::step,									\
-	NAMESPACE##::synchronizeGame,						\
-	NAMESPACE##::endGame,								\
-	NAMESPACE##::sendAsyncData,							\
-	NAMESPACE##::sendSyncData,							\
-	NAMESPACE##::recvSyncData,							\
-	NAMESPACE##::syncData,								\
-	NAMESPACE##::syncDataCheck,							\
-	NAMESPACE##::sendChat,								\
-	NAMESPACE##::activeteGui,							\
-	NAMESPACE##::getSelectedAutorunIndex,				\
-	NAMESPACE##::getSelectedAutorunDelay,				\
-	NAMESPACE##::isRecordingEnabled,					\
-	NAMESPACE##::getGameplayType,						\
-	NAMESPACE##::reserved,								\
-	NAMESPACE##::reserved,								\
-	NAMESPACE##::reserved								\
+#define STDTRANSPORTDEFNNMS(NAME, NAMESPACE)		\
+TransportModule02 NAME = {							\
+	NAMESPACE::initialize,							\
+	NAMESPACE::terminate,							\
+	NAMESPACE::activete,							\
+	NAMESPACE::step,								\
+	NAMESPACE::synchronizeGame,						\
+	NAMESPACE::endGame,								\
+	NAMESPACE::sendAsyncData,						\
+	NAMESPACE::sendSyncData,						\
+	NAMESPACE::recvSyncData,						\
+	NAMESPACE::syncData,							\
+	NAMESPACE::syncDataCheck,						\
+	NAMESPACE::sendChat,							\
+	NAMESPACE::activeteGui,							\
+	NAMESPACE::getSelectedAutorunIndex,				\
+	NAMESPACE::getSelectedAutorunDelay,				\
+	NAMESPACE::isRecordingEnabled,					\
+	NAMESPACE::getGameplayType,						\
+	NAMESPACE::reserved,							\
+	NAMESPACE::reserved,							\
+	NAMESPACE::reserved								\
 }
 
 

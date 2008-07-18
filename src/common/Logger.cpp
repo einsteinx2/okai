@@ -89,12 +89,12 @@ namespace n02 {
         }
     }
 
-    void Logger::logcprintf(char * format, void**args)
-    {
-        char print_buffer[1025];
-        StringUtils::cprintf(print_buffer, format, args);
-        logLine(print_buffer);
-    }
+    //void Logger::logcprintf(char * format, void**args)
+    //{
+    //    char print_buffer[1025];
+    //    StringUtils::cprintf(print_buffer, format, args);
+    //    logLine(print_buffer);
+    //}
 
     void Logger::logprintf(char * format, ...)
     {

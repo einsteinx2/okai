@@ -45,16 +45,20 @@ namespace n02 {
 
     inline void bsdOsdInitialize()
     {
+#ifdef N02_WIN32
         WSAData ws;
 
         if (WSAStartup(0x0202, &ws)!=0) {
-            LOG(Winsock 2.2 initialization failed);
+            LOGS(Winsock 2.2 initialization failed);
         }
+#endif
     }
 
     inline void bsdOsdTerminate()
     {
+#ifdef N02_WIN32
         WSACleanup();
+#endif
     }
 
 
@@ -74,7 +78,7 @@ namespace n02 {
         sock = (SOCKET)SOCKET_ERROR;
         if (socketsList.itemsCount() > 0){
             for (int x = 0; x < socketsList.itemsCount(); x++) {
-				require(socketsList[x] != this);
+                require(socketsList[x] != this);
             }
         }
         socketsList.addItem(this);
@@ -92,7 +96,7 @@ namespace n02 {
 
     void BsdSocket::step(int secs, int ms)
     {
-		TRACE();
+        TRACE();
         timeval tv;
         tv.tv_sec = secs;
         tv.tv_usec = ms * 1000;
@@ -106,10 +110,10 @@ namespace n02 {
         if (select((int)(ndfs + 1), &tempFdList, 0, 0, &tv) != 0) {
             if (socketsList.itemsCount() > 0) {
                 for (int i = 0; i < socketsList.itemsCount(); i++){
-					TRACE();
+                    TRACE();
                     BsdSocket * sck = socketsList[i];
                     if (FD_ISSET(sck->sock, &tempFdList)!=0){
-						TRACE();
+                        TRACE();
                         sck->dataArrivalCallback();
                     } else {
 
@@ -117,7 +121,7 @@ namespace n02 {
                 }
             }
         }
-		TRACE();
+        TRACE();
     }
 
 
@@ -136,7 +140,7 @@ namespace n02 {
                 calcNdfs();
                 return true;
             } else {
-				LOG(Socket bind failed port = %i; protocol = %i; type = %i, paramPort, protocol, type);
+                LOG(Socket bind failed port = %i; protocol = %i; type = %i, paramPort, protocol, type);
                 return false;
             }
         } else {

@@ -35,18 +35,18 @@ SOFTWARE.
 
 namespace n02 {
 
-	/* 
-	finds an item insde a list class via comparing items one by one
-	returns -1 if not found, the index of the item otherwise
-	*/
-	template<class ItemClass>
-	inline int DynamicArray_find(DynamicArray<ItemClass> & list, ItemClass item) {
-		for (int x = 0; x < list.itemsCount(); x++) {
-			if (list.getItem(x) == item)
-				return x;
-		}
-		return -1;
-	}
+    /* 
+    finds an item insde a list class via comparing items one by one
+    returns -1 if not found, the index of the item otherwise
+    */
+    template<class ItemClass>
+    inline int DynamicArray_find(DynamicArray<ItemClass> & list, ItemClass item) {
+        for (int x = 0; x < list.itemsCount(); x++) {
+            if (list.getItem(x) == item)
+                return x;
+        }
+        return -1;
+    }
 
 };
 

@@ -34,61 +34,61 @@ SOFTWARE.
 
 namespace n02 {
 
-	namespace deferment {
+    namespace deferment {
 
-		extern int inputLength;
+        extern int inputLength;
 
-		struct frameInput {
-			unsigned char bytes[256];
-		};
-		typedef frameInput frameInput;
+        struct frameInput {
+            unsigned char bytes[256];
+        };
+        typedef frameInput frameInput;
 
-		static DynamicAllocator<frameInput, 32> allocator;
-		static DynamicOrderedArray<frameInput*> inputs;
-		static frameInput reserve;
+        static DynamicAllocator<frameInput, 32> allocator;
+        static DynamicOrderedArray<frameInput*> inputs;
+        static frameInput reserve;
 
-		void inputInitialize()
-		{
-			allocator.resetAllocation();
-			inputs.clearItems();
-		}
+        void inputInitialize()
+        {
+            allocator.resetAllocation();
+            inputs.clearItems();
+        }
 
-		void * getInput(int offset, int slot)
-		{
-			while (offset >= inputs.itemsCount()) {
-				inputs.addItem(allocator.allocate());
-			}
-			return inputs[offset]->bytes + (slot * inputLength);
-		}
+        void * getInput(int offset, int slot)
+        {
+            while (offset >= inputs.itemsCount()) {
+                inputs.addItem(allocator.allocate());
+            }
+            return inputs[offset]->bytes + (slot * inputLength);
+        }
 
-		void * getInput(int offset)
-		{
-			while (offset >= inputs.itemsCount()) {
-				inputs.addItem(allocator.allocate());
-			}
-			return inputs[offset]->bytes;
-		}
+        void * getInput(int offset)
+        {
+            while (offset >= inputs.itemsCount()) {
+                inputs.addItem(allocator.allocate());
+            }
+            return inputs[offset]->bytes;
+        }
 
-		void * getReserveInput() {
-			return reserve.bytes;
-		}
+        void * getReserveInput() {
+            return reserve.bytes;
+        }
 
-		void * getReserveInput(int slot)
-		{
-			return reserve.bytes + (slot * inputLength);
-		}
+        void * getReserveInput(int slot)
+        {
+            return reserve.bytes + (slot * inputLength);
+        }
 
-		void purgeInputBase(int no)
-		{
-			while (no-->0 && inputs.itemsCount() > 0) {
-				allocator.free(inputs[0]);
-				inputs.removeIndex(0);
-			}
-		}
+        void purgeInputBase(int no)
+        {
+            while (no-->0 && inputs.itemsCount() > 0) {
+                allocator.free(inputs[0]);
+                inputs.removeIndex(0);
+            }
+        }
 
-		void inputTerminate() {
-			inputInitialize();
-		}
+        void inputTerminate() {
+            inputInitialize();
+        }
 
-	};
+    };
 };
