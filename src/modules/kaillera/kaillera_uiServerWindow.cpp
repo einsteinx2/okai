@@ -101,15 +101,6 @@ namespace n02 {
 			coreJoin(id);
 		}
 
-		// game chat input callback
-
-		void KailleraGameChatInput::textEditorReturnKeyPressed (TextEditor &editor) {
-			String text = editor.getText();
-			sendChat(text.toUTF8());
-			editor.setText("");
-		}
-
-
 		/************************************************************
 		** Server connection window
 		*******************************/
@@ -441,6 +432,22 @@ namespace n02 {
 			gameStart,
 			gameEnded
 		};
+
+
+
+		// game chat input callback
+
+		void KailleraGameChatInput::textEditorReturnKeyPressed (TextEditor &editor) {
+			String text = editor.getText();
+			if (text.equalsIgnoreCase(T("/close"))) {
+				coreLeave();
+				gameClosed();
+				return;
+			} else {
+				sendChat(text.toUTF8());
+			}
+			editor.setText("");
+		}
 
 
 		/************************************************************

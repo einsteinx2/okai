@@ -109,6 +109,15 @@ namespace n02 {
         static int TCHARToUTF8 (unsigned char * buffer, const TCHAR * text);
         static int UTF8ToTCHAR (TCHAR * dest, const unsigned char * buffer, int bufferSizeBytes);
 
+		// base 64 encoding
+		// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890+/
+		// well...base64 is 8 bit -> 6 bit encoding so string buffer length should be
+		// max buffer len for encoding = 1024
+		// returns len of new buffer null terminated = (len * 8 / 6) + 2
+		static int base64encode(char * destination, const void * sourceBuffer, const int len);
+		// returns len of new buffer null terminated = (strlen(source) * 6 / 8) + 1
+		static int base64decode(void * destination, const char * source);
+
         //
         static void initialize();
 

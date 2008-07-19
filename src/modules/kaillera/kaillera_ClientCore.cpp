@@ -529,39 +529,26 @@ namespace n02 {
 				case GAMECHAT:
 					{
 						TRACE();
-						ki.log();
 						if (ki.getSpaceLeft() > 4) {
-							asyncDataHeader header;
-							ki.readBytes(&header, 4);
-							if (header.startOff == 0xffff) {
-								ki.seek(-1);
+							if (ki.readUnsignedInt16() == 0xffff) {
+								char buffer[1024];
+								ki.readString(buffer, 1024);
+								LOG("Received %s", buffer);
+								unsigned char decodedBuffer[256];
+								int len = StringUtils::base64decode(decodedBuffer, buffer);
+								unsigned char type = (decodedBuffer[0] & 0xf0) >> 4;
+								unsigned char playerIndex = decodedBuffer[0] & 0x0f;
 
-								if (header.type == ASYNCDATA_GAMESYNC) {
+								if (type == ASYNCDATA_GAMESYNC) {
 									LOGS(game sync data arrival);
 
-									unsigned char byte;
-									unsigned char * toPtr = gameInfo.defaultInput + (header.player * gameInfo.inputLength);
-									while ((byte = ki.readUnsignedInt8()) != 0 && header.length-->0) {
-										if (byte == 0xff) {
-											byte = ki.readUnsignedInt8();
-											if (byte == 45) {
-												*toPtr = 0;
-											} else if (byte == 46) {
-												*toPtr = 10;
-											} else if (byte == 47) {
-												*toPtr = 13;
-											} else if (byte == 48) {
-												*toPtr = 0xff;
-											}
-										}
-										toPtr++;
-									}
+									memcpy(gameInfo.defaultInput + (playerIndex * gameInfo.inputLength), decodedBuffer + 1, len -1);
 									gameInfo.syncDataTransfer--;
 								}
 
 								break;
 							}
-							ki.seek(-4);
+							ki.seek(-2);
 						}
 						callbacks.gameChat(ki.user, ki.getCurrentStringPtr());
 					}
@@ -945,55 +932,37 @@ namespace n02 {
 			if (state == LOADING) {
 				if (data != 0 && len > 0) {
 					gameInfo.syncDataTransfer = common_min(gameInfo.numPlayers, 8);
+					if (gameInfo.playerNo <= 8) {
+						// send data
 
-					// send data
+						gameInfo.inputLength = len;
 
-					asyncDataHeader header;
-					header.startOff = 0xffff;
-					header.type = ASYNCDATA_GAMESYNC;
-					header.end = 1;
-					header.player = gameInfo.playerNo - 1;
-					header.sequence = 0;
-					header.length = 0;
+						Instruction cedata(GAMECHAT);
+						cedata.writeSignedInt16(-1); // starting sequence
 
-					Instruction cedata(GAMECHAT);
-					gameInfo.inputLength = len;
-					unsigned char * dataPtr = reinterpret_cast<unsigned char*>(data);
-					while (len-->0) {
-						if (*dataPtr == 0) {
-							gameInfo.defaultInput[header.length++] = 0xff;
-							gameInfo.defaultInput[header.length++] = 45;
-						} else if (*dataPtr == 0xff) {
-							gameInfo.defaultInput[header.length++] = 0xff;
-							gameInfo.defaultInput[header.length++] = 48;
-						} else if (*dataPtr == 10) {
-							gameInfo.defaultInput[header.length++] = 0xff;
-							gameInfo.defaultInput[header.length++] = 46;
-						} else if (*dataPtr == 13) {
-							gameInfo.defaultInput[header.length++] = 0xff;
-							gameInfo.defaultInput[header.length++] = 47;
-						} else {
-							gameInfo.defaultInput[header.length++] = *dataPtr;
+						// encode rest
+						unsigned char buffer[256];
+						buffer[0] = (ASYNCDATA_GAMESYNC << 4) | (gameInfo.playerNo - 1);
+						memcpy(buffer+1, data, len);
+						char encBuffer[1024];
+						StringUtils::base64encode(encBuffer, data, len + 1);
+
+						cedata.writeString(encBuffer);
+						send(cedata);
+
+						LOGS(Waiting for game sync data);
+
+						gameInfo.lastDataSentTime = lastTimeoutSent = GlobalTimer::getTime();
+
+						while (gameInfo.syncDataTransfer > 0 && state == LOADING) {
+							stepSync();						
 						}
-						dataPtr++;
+
+						LOG(sync %i %i, gameInfo.syncDataTransfer,state);
+
+						LOG("Sending %s", encBuffer);
+
 					}
-
-					cedata.writeBytes(&header, sizeof(header));
-					cedata.writeBytes(gameInfo.defaultInput, header.length);
-					cedata.writeSignedInt8(0);
-
-					send(cedata);
-
-					LOGS(Waiting for game sync data);
-					
-					gameInfo.lastDataSentTime = lastTimeoutSent = GlobalTimer::getTime();
-
-					while (gameInfo.syncDataTransfer > 0 && state == LOADING) {
-						stepSync();						
-					}
-
-					LOG(xxx %i %i, gameInfo.syncDataTransfer,state);
-
 				}
 
 				updateState(ACTION_SYNC);

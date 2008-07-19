@@ -175,10 +175,8 @@ void juceKailleraServerConnection::clearText() {
 	txtChat->setText("", false);
 }
 void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
-	//LOG(%i, commandId);
 	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);
-	TRACE(); int last = cmd->command;	
-
+	TRACE(); int last = cmd->command;
 	if (last <= LISTCMD_LISTSLIMIT) {
 		n02::kaillera::processCommand(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId));
 		TRACE();
@@ -199,7 +197,6 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
 			if (this != 0 && txtChat != 0) {
 				TRACE();
-				LOG(%i, s);
 				txtChat->setHighlightedRegion(textLength, 0);
 				txtChat->insertTextAtCursor (*s);
 				textLength += s->length();

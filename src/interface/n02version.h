@@ -36,10 +36,10 @@ SOFTWARE.
 #define N02_VERSION_MAJOR 0
 #define N02_VERSION_MINOR 15
 #define N02_VERSION_STR "0.15"
-#define N02_VERSION_REVISION 24
+#define N02_VERSION_REVISION 28
 #define N02_VERSION_ADDTXT "wip"
 
-#define N02_DESCRIPTION "Open Kaillera client: n02 v0.15 wip revision 24 http://okai.sf.net"
+#define N02_DESCRIPTION "Open Kaillera client: n02 v0.15 wip revision 28 http://okai.sf.net"
 
 #endif
 

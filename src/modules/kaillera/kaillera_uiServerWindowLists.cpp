@@ -247,7 +247,7 @@ namespace n02 {
 		{
 			if (!isGameWindowActive() && rowNumber >= 0 && rowNumber < games.itemsCount()) {
 				KailleraGameT & game = games[rowNumber];
-				if (game.status == 0) {
+				if (game.status == 0 && strncmp(client->app.name, game.app, strlen(client->app.name))==0) {
 					strcpy(lastGame, game.name);
 					uiGameJoinCallback(game.id);
 				}

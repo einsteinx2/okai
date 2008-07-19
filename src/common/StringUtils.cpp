@@ -30,6 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "StringUtils.h"
+#include "common.h"
 #include <string.h>
 
 namespace n02 {
@@ -47,6 +48,9 @@ namespace n02 {
     static char b2ptable[256];
 
     static char tempBuffer[128];
+
+    static char b64encode[64];
+    static char b64decode[256];
 
 
     static inline void char_to_hex_(char * strbuffer, unsigned char byte) {
@@ -66,9 +70,8 @@ namespace n02 {
 
     void StringUtils::initialize() {
 
+        // char to hex table
         memset(c2htable, 0, sizeof(c2htable));
-        memset(b2ptable, 0, sizeof(b2ptable));
-
 
         c2htable['0'] = 0;
         c2htable['1'] = 1;
@@ -87,6 +90,9 @@ namespace n02 {
         c2htable['e'] = c2htable['E'] = 14;
         c2htable['f'] = c2htable['F'] = 15;
 
+        //bytes to printable table
+        memset(b2ptable, 0, sizeof(b2ptable));
+
         for (int x = 0; x < 256; x++) {
             b2ptable[x] = '.';
         }
@@ -94,6 +100,55 @@ namespace n02 {
         for (char x = ' '; x <= '~'; x++) {
             b2ptable[x] = x;
         }
+
+        { // base 64 encoding and decoding table
+            int i = 0;
+
+            memset(b64encode, 0, sizeof(b64encode));
+            memset(b64decode, 0, sizeof(b64encode));
+
+            for (char x = 'A'; x <= 'Z'; x++) {
+                b64encode[i] = x;
+                b64decode[x] = i & 0xff;
+                i++;
+            }
+            for (char x = 'a'; x <= 'z'; x++) {
+                b64encode[i] = x;
+                b64decode[x] = i & 0xff;
+                i++;
+            }
+            for (char x = '0'; x <= '9'; x++) {
+                b64encode[i] = x;
+                b64decode[x] = i & 0xff;
+                i++;
+            }
+            b64encode[i] = '+';
+            b64decode['+'] = i & 0xff;
+            i++;
+            b64encode[i] = '/';
+            b64decode['/'] = i & 0xff;
+            i++;
+        }
+
+
+
+        //for (int p = 1; p < 6; p++) {
+
+        //	char buffer[257];
+        //	for(int x = 0; x < 256; x++)
+        //		buffer[x] = 0xff;
+
+        //	LOGBUFFER("x", buffer, p);
+        //	char buf[(16 * 8 / 3) + 2];
+        //	StringUtils::base64encode(buf, buffer, p);
+        //	memset(buffer, 0, sizeof(buffer));
+        //	LOG(%s=%i, buf, strlen(buf));
+        //	int l = StringUtils::base64decode(buffer, buf);
+        //	LOGBUFFER("T(x)", buffer, l);
+
+        //}
+
+
 
     }
 
@@ -591,6 +646,93 @@ namespace n02 {
 
 #undef ARGNO
 #endif
+
+};
+
+namespace n02 {
+    int StringUtils::base64encode(char * destination, const void * sourceBuffer, const int len)
+    {
+        unsigned char encBuffer[1025];
+        memset(encBuffer, 0, sizeof(encBuffer));
+        memcpy(encBuffer, sourceBuffer, len);
+
+        int totalConvertedLen = (len * 4 / 3) + ((len % 3 == 0) ? 0 : 1);
+        unsigned char * c = encBuffer;
+        unsigned char current = *c; c++;
+
+        unsigned char byte = 0;
+        for (int x = 0; x < len; x++) {
+            switch (x % 3) {
+                case 0:
+                    byte = (current & 0xfc) >> 2;
+                    *destination = b64encode[byte];
+                    destination++;
+                    LOG(%i %i %x, x, x%3, byte);
+                    byte = (current & 3) << 4;
+                    break;
+                case 1:
+                    byte |= ((current & 0xf0) >> 4);
+                    *destination = b64encode[byte];
+                    destination++;
+                    LOG(%i %i %x, x, x%3, byte);
+                    byte = (current & 0x0f) << 2;
+                    break;
+                case 2:
+                    byte |= ((current & 0xc0) >> 6);
+                    *destination = b64encode[byte];
+                    destination++;
+                    LOG(%i %i %x, x, x%3, byte);
+                    byte = current & 0x3f;
+                    *destination = b64encode[byte];
+                    destination++;
+                    LOG(%i %i %x, x, x%3, byte);
+                    byte = 0;
+                    break;
+            };
+            current = *c; c++;
+        }
+        if (byte != 0) {
+            *destination = b64encode[byte];
+            destination++;
+        }
+        *destination = 0;
+        return totalConvertedLen;
+    }
+    // returns len of new buffer null terminated = (strlen(source) * 6 / 8) + 1
+    int StringUtils::base64decode(void * destination, const char * source)
+    {
+        unsigned char * dst = reinterpret_cast<unsigned char*>(destination);
+        unsigned char * c = reinterpret_cast<unsigned char*>(const_cast<char*>(source));
+        int len = strlen(source);
+        require (len > 1);
+        len = (len * 3 / 4);
+        unsigned char current = b64decode[*c]; c++;
+        unsigned char next = b64decode[*c];
+
+        for (int x = 0; x < len; x++) {
+            switch (x % 3) {
+                case 0:
+                    *dst = (current << 2) | ((next & 0x30) >> 4);
+                    break;
+                case 1:
+                    *dst = ((current&0x0f) << 4) | ((next & 0x3c) >> 2);
+                    break;
+                case 2:
+                    *dst = ((current&0x03) << 6) | next;
+                    current = next; 
+                    next = b64decode[*c]; c++;
+                    break;
+            };
+            current = next; 
+            next = b64decode[*c]; c++;
+            dst++;
+        }
+        return len;
+    }
+};
+
+
+namespace n02 {
 
     /*
     The following code was taken from Julian Storer's JUCE so (c) him

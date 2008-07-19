@@ -33,7 +33,7 @@ Kaillera (c) 2001 Christophe Thibault
 Be sure to exclude and remove this part and other kaillera related parts from
 your builds if it ever conflicts with kaillera's interests
 ******************************************************************************/
-
+#define N02_STATIC
 #include "n02.h"
 #define KAILLERA_DLL
 #include "kailleraclient.h"
