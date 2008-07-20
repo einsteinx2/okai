@@ -78,17 +78,17 @@ namespace n02 {
         void setPort (const u_short port);
         bool parse(const char * hostp);
 
-        inline bool isEqual(SocketAddress * dst)
+        inline bool isEqual(SocketAddress * dst) const
         {
             return (dst->addr.sin_port ==addr.sin_port && dst->addr.sin_addr.s_addr == addr.sin_addr.s_addr);
         }
 
-        sockaddr* getAddrPtr()
+        sockaddr* getAddrPtr() const
         {
             return (sockaddr*)&addr;
         }
 
-        socklen_t getSize()
+        socklen_t getSize() const
         {
             return sizeof(addr);
         }
@@ -99,12 +99,12 @@ namespace n02 {
             return &length;
         }
 
-        int getPort()
+        int getPort() const
         {
             return ntohs(addr.sin_port);
         }
 
-        char * toString();
+        char * toString() const;
 
         static bool isLocalIP(char * ip);
 

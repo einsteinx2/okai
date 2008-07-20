@@ -71,6 +71,7 @@ namespace n02 {
 #define LOGS(X)
 #define LOGTRACE(X, ...)
 #define LOGBUFFER(X, Y)
+#define LOGBASICS(X)
 #undef DONT_LOG
 #else
 
@@ -78,12 +79,19 @@ namespace n02 {
 
 #define LOG(X, ...) \
     defaultLogger.logprintf(__FUNCTION__ ## "(" #X ")" , __VA_ARGS__)
+
 #define LOGS(X) \
     defaultLogger.logLine(#X)
+
 #define LOGBASIC(X, ...) \
     defaultLogger.logprintf(X, __VA_ARGS__)
+
+#define LOGBASICS(X) \
+	defaultLogger.logLine(X)
+
 #define LOGTRACE(X, ...) \
     defaultLogger.logprintf(#X, __VA_ARGS__)
+
 #define LOGBUFFER(N, X, Y) defaultLogger.logBuffer((void*)X, (int)Y, N)
 
 #else
@@ -91,12 +99,19 @@ namespace n02 {
 
 #define LOG(X, ...) \
     defaultLogger.logprintf("(" #X ")" , __VA_ARGS__)
+
 #define LOGS(X) \
     defaultLogger.logLine(#X)
+
 #define LOGBASIC(X, ...) \
     defaultLogger.logprintf(X, __VA_ARGS__)
+
+#define LOGBASICS(X) \
+    defaultLogger.logLine(X)
+
 #define LOGTRACE(X, ...) \
     defaultLogger.logprintf(#X, __VA_ARGS__)
+
 #define LOGBUFFER(N, X, Y) defaultLogger.logBuffer((void*)X, (int)Y, N)
 
 #endif

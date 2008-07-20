@@ -68,7 +68,7 @@ namespace n02 {
 
 
     CONFIG_START(licenseConfig)
-        CONFIG_INTVAR(_T("accepted"), licenseNotAccepted, 1)
+        CONFIG_INTVAR("accepted", licenseNotAccepted, 1)
         CONFIG_END
 
         char *argv[] = {"", ""};
@@ -78,13 +78,13 @@ namespace n02 {
         LOGS(License dialog);
 
         ConfigurationManager config(licenseConfig);
-        config.load(_T("license"));
+        config.load("license");
 
         if (licenseNotAccepted) {
             JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
         }
 
-        config.save(_T("license"));
+        config.save("license");
 
         return licenseNotAccepted;
     }

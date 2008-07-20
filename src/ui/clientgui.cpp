@@ -39,29 +39,29 @@ SOFTWARE.
 
 namespace n02 {
 
-    TCHAR primary[128];
-    TCHAR secondary[128];
+    char primary[128];
+    char secondary[128];
 
     CONFIG_START(juceFontConfig)
-        CONFIG_STRVAR(_T("primary"), primary, 128, _T(""))
-        CONFIG_STRVAR(_T("secondary"), secondary, 128, _T(""))
-        CONFIG_END
+    CONFIG_STRVAR("primary", primary, 128, "")
+    CONFIG_STRVAR("secondary", secondary, 128, "")
+    CONFIG_END
 
 
-        void GuiInitialize() {
-            LOGS(Initializing gui);
+	void GuiInitialize() {
+		LOGS(Initializing gui);
 
-            ConfigurationManager config(juceFontConfig);
-            config.load(_T("font"));
+		ConfigurationManager config(juceFontConfig);
+		config.load("font");
 
-            SystemStats system;
+		SystemStats system;
 
-            LOG(Juce version %s, system.getJUCEVersion().toUTF8());
+		LOG(Juce version %s, system.getJUCEVersion().toUTF8());
 
-            String stat;
-            stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
-            LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
-    }
+		String stat;
+		stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
+		LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
+	}
 
     /* Thread juice */
 
@@ -90,10 +90,10 @@ namespace n02 {
     void ThreadJuice::OpenKailleraJUCEApp::initialise (const String& commandLineParameters) {
         juceThread.juceInitialized = 1;
 
-        if (_tcslen(primary) > 2) {
+        if (strlen(primary) > 2) {
             Font::setDefaultSansSerifFontName(primary);
         }
-        if (_tcslen(secondary) > 2) {
+        if (strlen(secondary) > 2) {
             Font::setDefaultSansSerifFontName(secondary);
         }
     }

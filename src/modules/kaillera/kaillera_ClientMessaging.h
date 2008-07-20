@@ -168,7 +168,7 @@ namespace n02 {
 
                 int bufLen = BIG_RECV_BUFFER_SIZE;
 
-                if (BsdSocket::recvFrom(BsdSocket::bigRecvBuffer, &bufLen, &lastAddress)) {
+                if (BsdSocket::recvFrom(BsdSocket::bigRecvBuffer, bufLen, lastAddress)) {
                     if (state == INSTRMSGS) {
                         TRACE();
                         //LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);

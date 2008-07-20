@@ -29,11 +29,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "SocketAddress.h"
-#include "StringUtils.h"
+#include "common.h"
 
+#ifdef N02_WIN32
 #define in_addr_t int
 #pragma comment(lib, "ws2_32.lib")
+#endif
 
 namespace n02 {
 
@@ -92,7 +93,7 @@ namespace n02 {
     }
 
 
-    char * SocketAddress::toString()
+    char * SocketAddress::toString() const
     {
         static char print_space[55];
         *print_space = 0;

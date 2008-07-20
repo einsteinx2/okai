@@ -31,8 +31,8 @@
 namespace n02 {
 	namespace addedit {
 		extern int returnValue;
-		extern TCHAR name[128];
-		extern TCHAR ip[128];
+		extern char name[128];
+        extern char ip[128];
 	};
 };
 using namespace n02::addedit;
@@ -99,8 +99,8 @@ juceAddEditIPDialog::juceAddEditIPDialog ()
 	if (returnValue==1) {
 		btnAdd->setButtonText(T("Edit"));
 
-		txtIP->setText(ip);
-		txtName->setText(name);
+		txtIP->setText(FROMUTF8(ip));
+		txtName->setText(FROMUTF8(name));
 	}
     //[/UserPreSize]
 
@@ -159,21 +159,12 @@ void juceAddEditIPDialog::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_btnAdd] -- add your button handler code here..
 		if (txtIP->getText().length() > 0) {
-#ifdef UNICODE
-			txtIP->getText().copyToBuffer(ip, 128);
-			txtName->getText().copyToBuffer(name, 128);
-			if (_tcslen(name) ==0)
-				_tcscpy(name, ip);
 
-#else
-			_tcsncpy(ip, txtIP->getText().toUTF8(), 128);
-			_tcsncpy(name, txtName->getText().toUTF8(), 128);
+			strncpy(ip, txtIP->getText().toUTF8(), 127);
+			strncpy(name, txtName->getText().toUTF8(), 127);
 
-			if (_tcslen(name) ==0)
-				_tcscpy(name, ip);
-
-#endif
-			
+			if (strlen(name) ==0)
+				strcpy(name, ip);
 
 			getCurrentlyModalComponent()->exitModalState(returnValue = 1);
 		}

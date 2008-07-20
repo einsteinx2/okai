@@ -1,13 +1,8 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
-888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
-*******************************************************************************
+O                                                           8d8b. Yb  dP Yb dP 
+O                                                           8P Y8  YbdP   `8.  
+Open Kaillera: Kaillera Server                              8   8   dP   dP Yb 
+*******************************************************************dP**********
 Copyright (c) Open Kaillera Team 2003-2008
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -29,33 +24,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "common.h"
-
-namespace n02 {
-
-    void commonInitialize(){
-        BsdSocket::initialize();
-        GlobalTimer::initialize();
-        StringUtils::initialize();
-
-		char app[128];
-		strcpy(app, n02GetName());
-		strcat(app, ".log");
-        defaultLogger.initialize(app, false);
-
-#ifdef N02_WIN32
-        sehInitialize();
-#endif
-    }
-
-    void commonTerminate(){
-        defaultLogger.terminate();
-        BsdSocket::terminate();
-        GlobalTimer::terminate();
-#ifdef N02_WIN32
-        sehTerminate();
-#endif
-    }
-
-};
+#include "nyx_User.h"
 

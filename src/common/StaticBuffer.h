@@ -212,31 +212,31 @@ namespace n02 {
     public:
 
         /* return current pointer as a string */
-        inline char * getCurrentStringPtr()
+        inline char * getCurrentStringPtr() const
         {
             return reinterpret_cast<char*>(ptr);
         }
 
         /* return current pointer as void* */
-        inline void * getCurrentBinaryPtr()
+        inline void * getCurrentBinaryPtr() const
         {
             return reinterpret_cast<void*>(ptr);
         }
 
         /* get the amount of space traversed/ filled */
-        inline int getFilledSize()
+        inline int getFilledSize() const
         {
             return ptr - begin;
         }
 
         /* get the total size of the buffer */
-        inline int getTotalSize()
+        inline int getTotalSize() const
         {
             return end - begin;
         }
 
         /* get the amount of space left/ can be filled */
-        inline int getSpaceLeft()
+        inline int getSpaceLeft() const
         {
             return end - ptr;
         }

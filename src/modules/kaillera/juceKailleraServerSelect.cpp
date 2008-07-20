@@ -38,9 +38,9 @@ namespace n02 {
 		void uiAddServer();
 		void uiEditServer(int);
 		void uiDeleteServer(int);
-		extern TCHAR uiUsername[32];
-		extern TCHAR uiQuitMessage[128];
-		extern TCHAR uiLastIP[128];
+		extern char uiUsername[32];
+		extern char uiQuitMessage[128];
+		extern char uiLastIP[128];
 		extern int uiConnectionSetting;
 	};
 };
@@ -196,8 +196,8 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 	uiConnectionSetting = common_max(common_min(uiConnectionSetting, 6), 1);
 	cmbConnection->setSelectedId(uiConnectionSetting);
 
-	txtIP->setText(uiLastIP);
-	txtNick->setText(uiUsername);
+	txtIP->setText(FROMUTF8(uiLastIP));
+	txtNick->setText(FROMUTF8(uiUsername));
 
 	// List
 	lstServers->getHeader()->addColumn("Server", 1, 482/2, 30, -1, TableHeaderComponent::notSortable);
@@ -478,13 +478,8 @@ void juceKailleraServerSelect::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void juceKailleraServerSelect::saveConfig() {
-#ifdef UNICODE
-	txtIP->getText().copyToBuffer(uiLastIP, 128);
-	txtNick->getText().copyToBuffer(uiUsername, 32);
-#else
-	txtIP->getText().copyToUTF8(reinterpret_cast<juce::uint8*>(uiLastIP));
-	txtNick->getText().copyToBuffer(uiUsername, 32);
-#endif
+	strncpy(uiLastIP, txtIP->getText().toUTF8(), 127);
+	strncpy(uiUsername, txtNick->getText().toUTF8(), 31);
 }
 void juceKailleraServerSelect::updateIP(String & ip) {
 	txtIP->setText(ip, true);
@@ -494,6 +489,7 @@ void juceKailleraServerSelect::updateLV() {
 }
 void juceKailleraServerSelect::updateServers(){
 	lstServers->updateContent();
+	lstServers->repaint();
 }
 void juceKailleraServerSelect::redrawServersRow(int index) {
 	lstServers->repaintRow(index);

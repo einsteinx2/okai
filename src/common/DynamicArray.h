@@ -127,14 +127,14 @@ namespace n02 {
         }
 
         /* get the value of an item pointed by index */
-        inline _BaseType getItem(int index)
+        inline _BaseType getItem(int index) const
         {
             require(index >=0 && index < length);
             return items[index];
         }
 
         /* set the pointere of an item pointed by index */
-        inline _BaseType * getItemPtr(int index)
+        inline _BaseType * getItemPtr(int index) const
         {
             require(index >=0 && index < length);
             return &items[index];
@@ -157,7 +157,7 @@ namespace n02 {
         }
 
         /* get size */
-        inline int itemsCount()
+        inline int itemsCount() const
         {
             return length;
         }

@@ -37,13 +37,13 @@ SOFTWARE.
 namespace n02 {
 
     struct ConfigurationItem {
-        TCHAR name[31];
+        char name[31];
         enum {
             INT, // &int
             STRING, // char[len]
             STRUCT, // &struct
-            STRLIST // DynamicOrderedArray<TCHAR*>
-        } type : 8;
+            STRLIST // DynamicOrderedArray<char*>
+        } type;
         void * pointer;
         unsigned short length;
         void * defaultValuePointer;
@@ -54,7 +54,7 @@ namespace n02 {
 #define CONFIG_START(NAME) ConfigurationItem NAME[] = {
 #define CONFIG_ITEM(NAME, TYPE, PTR, LEN, DEFPTR) {NAME, ConfigurationItem::TYPE, PTR, LEN, DEFPTR},
 #define CONFIG_INTVAR(NAME, VER, DEF) CONFIG_ITEM(NAME, INT, &VER, sizeof(VER), (void*)DEF)
-#define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, const_cast<TCHAR*>(DEF))
+#define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, const_cast<char*>(DEF))
 #define CONFIG_STRUCTVAR(NAME, VER) CONFIG_ITEM(NAME, STRUCT, &VER, sizeof(VER), 0)
 #define CONFIG_STRLIST(NAME, VER, LEN) CONFIG_ITEM(NAME, STRLIST, &VER, LEN, 0)
 #define CONFIG_END	{0}	};
@@ -63,24 +63,22 @@ namespace n02 {
         protected DynamicOrderedArray<ConfigurationItem>
     {
     public:
-        ConfigurationManager(ConfigurationItem * configTable);
-        ConfigurationManager(ConfigurationItem * configTable, int len);
+        ConfigurationManager(const ConfigurationItem * configTable);
+        ConfigurationManager(const ConfigurationItem * configTable, const int len);
         ConfigurationManager();
         ~ConfigurationManager();
 
-        void saveToFile(TCHAR * fileName, TCHAR * module = _T("default"));
-        void loadFromFile(TCHAR * fileName, TCHAR * module = _T("default"));
+        void saveToFile(const char * fileName, const char * module = "default");
+        void loadFromFile(const char * fileName, const char * module = "default");
 
-        void save(TCHAR * modName);
-        void load(TCHAR * modName);
+        void save(const char * modName);
+        void load(const char * modName);
 
-        void add(ConfigurationItem*);
-        void remove(TCHAR * name);
+        void add(const ConfigurationItem*);
+        void remove(const char * name);
 
-        void useConfgTable(ConfigurationItem * configTable);
-        void useConfgTable(ConfigurationItem * configTable, int len);
-
+        void useConfgTable(const ConfigurationItem * configTable);
+        void useConfgTable(const ConfigurationItem * configTable, const int len);
     };
-
 };
 

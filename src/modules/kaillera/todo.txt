@@ -1,0 +1,20 @@
+Ok Will get back to this later when I have enough things piled up
+TODO:
+01 - review current stuff
+02 - implementation of pinging, 01
+03 - master servers list refresher (UI was designed ages ago), 02
+04 - sorting for users list and games list, 01
+05 - optimizations for str <-> juce::Str stuff and utf8-juce::str conversion during paint time, 01
+06 - complete support for asynchronous data transfer via gamechat, 01
+07 - implementation of syncDataCheck, 01
+current revision = 28
+08 - 
+09 - 
+10 - 
+11 - 
+12 - 
+13 - 
+14 - 
+15 - rereview, test and fix stuff
+
+

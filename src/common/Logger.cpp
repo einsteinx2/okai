@@ -79,6 +79,7 @@ namespace n02 {
     void Logger::logLine(char * line)
     {
         printf(line);
+		printf("\r\n");
         if (fileHandle != 0) {
             ofstream * of = reinterpret_cast<ofstream*>(fileHandle);
             of->write(line, strlen(line));

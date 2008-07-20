@@ -31,7 +31,7 @@ SOFTWARE.
 
 #pragma once
 
-#ifndef linux
+#ifdef N02_WIN32
 #include <windows.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm.lib")
@@ -41,7 +41,7 @@ SOFTWARE.
 
 #define GLOBAL_TIMER_PERIOD 1
 
-#ifdef linux
+#ifndef N02_WIN32
 
 inline unsigned int timeGetTime() {
     timespec ts;
@@ -69,7 +69,7 @@ namespace n02 {
             return fixedTime = getTime();
         }
 
-        inline unsigned int getFixedTime()
+        inline unsigned int getFixedTime() const
         {
             return fixedTime;
         }

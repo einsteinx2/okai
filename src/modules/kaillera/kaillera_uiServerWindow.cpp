@@ -43,9 +43,9 @@ namespace n02 {
 
 	namespace kaillera {
 
-		extern TCHAR uiUsername[32];
-		extern TCHAR uiQuitMessage[128];
-		extern TCHAR uiLastIP[128];
+		extern char uiUsername[32];
+		extern char uiQuitMessage[128];
+		extern char uiLastIP[128];
 		char lastGame[128];
 		extern int uiConnectionSetting;
 		extern int selectedAutorunIndex;
@@ -457,22 +457,19 @@ namespace n02 {
 
 			KailleraServerGame::window = 0;
 
-			char user[32];
-			StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(user), uiUsername);
-
-			char ip[128];
-			StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(ip), uiLastIP);
+			if (strlen(uiUsername) == 0)
+				strcpy(uiUsername, "Ape");
 
 			uiConnectionSetting = common_min(common_max(1, uiConnectionSetting), 6);
 
 			SocketAddress toConnect;
 
-			if (toConnect.parse(ip)) {
+			if (toConnect.parse(uiLastIP)) {
 
 				if (toConnect.getPort() == 0)
 					toConnect.setPort(27888);
 
-				if (coreInitialize(user, 0x0F & uiConnectionSetting, &callbacks, 0)) {
+				if (coreInitialize(uiUsername, 0x0F & uiConnectionSetting, &callbacks, 0)) {
 
 					KailleraServerConnection::createAndShow();
 
@@ -494,10 +491,7 @@ namespace n02 {
 					
 						LOGS(======================================================================);
 
-						char quit[128];
-						StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(quit), uiQuitMessage);
-
-						coreDisconnect(quit);
+						coreDisconnect(uiQuitMessage);
 					}
 					coreTerminte();
 

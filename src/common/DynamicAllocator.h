@@ -70,13 +70,13 @@ namespace n02 {
         }
 
         /* returns the number of allocated object */
-        inline int allocatedCount()
+        inline int allocatedCount() const
         {
             return allocated.itemsCount();
         }
 
         /* returns the number of free objects */
-        inline int freeCount()
+        inline int freeCount() const
         {
             return _MaximumAllocation - allocated.itemsCount();
         }

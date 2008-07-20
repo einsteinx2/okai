@@ -112,14 +112,14 @@ namespace n02 {
         }
 
         /* Get an item in the array */
-        inline _BaseType getItem(int index)
+        inline _BaseType getItem(int index) const
         {
             require(index >=0 && index < length);
             return items[index];
         }
 
         /* Get pointer to an item in the array */
-        inline _BaseType * getItemPtr(int index)
+        inline _BaseType * getItemPtr(int index) const
         {
             require(index >=0 && index < length);
             return &items[index];
@@ -139,7 +139,7 @@ namespace n02 {
         }
 
         /* returns the no of items in the array */
-        inline int itemsCount()
+        inline int itemsCount() const
         {
             return length;
         }

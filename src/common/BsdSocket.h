@@ -62,6 +62,7 @@ namespace n02 {
         BsdSocket(int family, int type, int protocol, int paramPort, bool blocking, int minBufferSize);
         ~BsdSocket();
 
+		bool isInitialized() const;
 
     protected:
 
@@ -71,11 +72,11 @@ namespace n02 {
         void close();
 
         /* misc functions for setting socket parameters */
-        void setMinimumBufferSize(int minBufferSize);
-        void setBlockingMode(bool blocking);
+        void setMinimumBufferSize(int minBufferSize) const;
+        void setBlockingMode(bool blocking) const;
 
         /* function for retriving local address */
-        void getLocalAddress(SocketAddress * saPtr);
+        void getLocalAddress(SocketAddress & saPtr) const;
 
 
         // callback when data arrives
@@ -83,34 +84,34 @@ namespace n02 {
     public:
 
         /* send */
-        inline int send(const void * buffer, const int length)
+        inline int send(const void * buffer, const int length) const
         {
             return (sendto(sock, reinterpret_cast<const char*>(buffer), length, 0, defaultAddress.getAddrPtr(), defaultAddress.getSize()) == SOCKET_ERROR);
         }
 
         /* send */
-        inline int sendTo(const void * buffer, const int length, SocketAddress & addressPtr)
+        inline int sendTo(const void * buffer, const int length, SocketAddress & addressPtr) const
         {
             return (sendto(sock, reinterpret_cast<const char*>(buffer), length, 0, addressPtr.getAddrPtr(), addressPtr.getSize()) == SOCKET_ERROR);
         }
 
         /* recv */
-        inline bool recv (void * buffer, int * length)
+        inline bool recv (void * buffer, int & length) const
         {
             int temp_len;
-            if ((temp_len = ::recv(sock, reinterpret_cast<char*>(buffer), *length, 0)) > 0) {
-                *length = temp_len;
+            if ((temp_len = ::recv(sock, reinterpret_cast<char*>(buffer), length, 0)) > 0) {
+                length = temp_len;
                 return true;
             }
             return false;
         }
 
         /* recv */
-        inline bool recvFrom (void * buffer, int * length, SocketAddress * addressPtr)
+        inline bool recvFrom (void * buffer, int & length, SocketAddress & addressPtr) const
         {
             int temp_len;
-            if ((temp_len = recvfrom(sock, reinterpret_cast<char*>(buffer), *length, 0, addressPtr->getAddrPtr(), addressPtr->getSizePtr())) > 0) {
-                *length = temp_len;
+            if ((temp_len = recvfrom(sock, reinterpret_cast<char*>(buffer), length, 0, addressPtr.getAddrPtr(), addressPtr.getSizePtr())) > 0) {
+                length = temp_len;
                 return true;
             }
             return false;

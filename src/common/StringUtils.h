@@ -30,9 +30,10 @@ SOFTWARE.
 ******************************************************************************/
 
 #pragma once
-
-#include <tchar.h>
+// Remnoving all TCHAR stuff...its not a c++ standard
+//#include <tchar.h>
 #include <string.h>
+#pragma intrinsic(memcpy, strcpy, strlen)
 // TODO : Review
 // TODO : Test
 namespace n02 {
@@ -43,58 +44,25 @@ namespace n02 {
 
         // playing with integers
         static void intToAlpha(char * a, const int i);
-        static void intToAlphaT(TCHAR * a, const int i);
 
         static char * intToAlpha(const int i);
-        static TCHAR * intToAlphaT(const int i);
 
         static void uintToAlpha(char * a, const unsigned int i);
-        static void uintToAlphaT(TCHAR * a, const unsigned int i);
 
         static char * uintToAlpha(const unsigned int i);
-        static TCHAR * uintToAlphaT(const unsigned int i);
 
         static void uintToHex(char * a, const unsigned int i);
-        static void uintToHexT(TCHAR * a, const unsigned int i);
 
         static char * uintToHex(const unsigned int i);
-        static TCHAR * uintToHexT(const unsigned int i);
 
         static unsigned int alphaToUint(const char * a);
-        static unsigned int alphaToUintT(const TCHAR * a);
 
         static int alphaToInt(const char * a);		
-        static int alphaToIntT(const TCHAR * a);
-
-#if 0
-        /*
-        unordered string formating
-        format: %paramNo$type
-
-        types:
-        u = unsigned int
-        i, d = int
-        s = string
-        c = char
-        x = hex unsigned int
-
-        e.g. 
-
-        cprintf(buffer, "second int = %2$i; first int = %1$i", firstInt, secondInt);
-
-        does not support padding or other fancy stuff */
-
-        static void cprintf(char *buffer, const char *format, void**arglist);
-        static void tprintf(TCHAR *buffer, const TCHAR *format, void**arglist);
-#endif
-
 
         // buffering
         static void bytesToStr(char * strbuffer, const unsigned char * bytes_buffer, const int len, const int spacing = 123456789);
-        static void bytesToStrT(TCHAR * strbuffer, const unsigned char * bytes_buffer, const int len, const int spacing = 123456789);
 
         static void strToBytes(unsigned char * bytes_buffer, char * strbuffer, int len);
-        static void strToBytesT(unsigned char * bytes_buffer, TCHAR * strbuffer, int len);
 
         static void bytesToPrintable(char * strbuffer, unsigned char * bytes_buffer, int len);
 
@@ -102,12 +70,12 @@ namespace n02 {
         static bool isPrintable(char x);
         static bool isAlpha(char x);
         static bool isAlnum(char x);
-        static bool isAlnumT(TCHAR x);
+
         static void trim(char * buffer);
 
         // conversion
-        static int TCHARToUTF8 (unsigned char * buffer, const TCHAR * text);
-        static int UTF8ToTCHAR (TCHAR * dest, const unsigned char * buffer, int bufferSizeBytes);
+        static int WIDEToUTF8 (unsigned char * buffer, const wchar_t * text);
+        static int UTF8ToWIDE (wchar_t * dest, const unsigned char * buffer, int bufferSizeBytes);
 
 		// base 64 encoding
 		// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890+/

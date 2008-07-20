@@ -132,14 +132,14 @@ namespace n02 {
         }
 
         /* get an item */
-        inline _BaseType getItem(int index)
+        inline _BaseType getItem(int index) const
         {
             require(index >=0 && index < length);
             return items[index];
         }
 
         /* returns item pointer */
-        inline _BaseType * getItemPtr(int index)
+        inline _BaseType * getItemPtr(int index) const
         {
             require(index >=0 && index < length);
             return &items[index];
@@ -159,7 +159,7 @@ namespace n02 {
         }
 
         // return size
-        inline int itemsCount()
+        inline int itemsCount() const
         {
             return length;
         }

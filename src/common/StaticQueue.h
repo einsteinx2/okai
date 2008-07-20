@@ -142,76 +142,76 @@ namespace n02 {
         }
 
         /* peek ahead in the queue */
-        inline _BaseType peek(int offset)
+        inline _BaseType peek(int offset) const
         {
             require(length > 0 && offset < length);
             return items[(base+offset) % _TotalLength];
         }
 
         /* peek ahead in the queue */
-        inline void peek(_BaseType * item, int offset)
+        inline void peek(_BaseType * item, int offset) const
         {
             require(length > 0 && offset < length);
             *item = items[(base+offset) % _TotalLength];
         }
 
         /* peek ahead in the queue */
-        inline _BaseType* peekPtr(int offset)
+        inline _BaseType* peekPtr(int offset) const
         {
             require(length > 0 && offset < length);
             return &items[(base+offset) % _TotalLength];
         }
 
         /* peek from the back */
-        inline _BaseType peekBack(int offset)
+        inline _BaseType peekBack(int offset) const
         {
             return peek(size()-offset-1);
         }
 
         /* peek from the back */
-        inline void peekBack(_BaseType * item, int offset)
+        inline void peekBack(_BaseType * item, int offset) const
         {
             peek(item, size()-offset-1);
         }
 
         /* peek from the back */
-        inline _BaseType* peekBackPtr(int offset)
+        inline _BaseType* peekBackPtr(int offset) const
         {
             return peekPtr(size()-offset-1);
         }
 
         /* returns the front of thq queue */
-        inline _BaseType front()
+        inline _BaseType front() const
         {
             require(length > 0);
             return peek(0);
         }
 
         /* returns the front of thq queue */
-        inline void frontPtr(_BaseType * item)
+        inline void frontPtr(_BaseType * item) const
         {
             require(length > 0);
             peek(item, 0);
         }
 
         /* returns the back of thq queue */
-        inline _BaseType back()
+        inline _BaseType back() const
         {
             return peek(size()-1);
         }
 
         /* returns the back of thq queue */
-        inline _BaseType * backPtr()
+        inline _BaseType * backPtr() const
         {
             return peekPtr(size()-1);
         }
 
         /* returns the back of thq queue */
-        inline int size()
+        inline int size() const
         {
             return length;
         }
-        inline int itemsCount()
+        inline int itemsCount() const
         {
             return length;
         }

@@ -204,7 +204,7 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 			delete s;
 		} else if (last == LISTCMD_SETTITLE) {
 			TRACE();
-			TCHAR * s = reinterpret_cast<TCHAR*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
+			char * s = reinterpret_cast<char*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
 			String title;
 			title << "Connected to " << s;
 			n02::kaillera::uiSetTitleCallback(title);

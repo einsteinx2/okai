@@ -64,6 +64,7 @@ namespace n02 {
 
     void commonInitialize();
     void commonTerminate();
+	const char * n02GetName();
 
 };
 

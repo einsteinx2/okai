@@ -186,112 +186,87 @@ namespace n02 {
 
 };
 
-
-
-
 #ifdef N02_WIN32
 #include <windows.h>
 #endif
 
 namespace n02 {
+
 #ifdef N02_WIN32
 
     typedef struct {
         HMODULE handle;
-        TCHAR fileName[1024];
+        char fileName[1024];
     } ExternalLibrary02;
-
-
 
 
     class ExternalModulesHandler:
         public DynamicArray<ExternalLibrary02>
     {
-
         typedef void (N02CCNV * ModuleInit02FCNT)(ExternalModuleHelper02 * modHelper);
-
-
     public:
-
-        void loadExternalLibrary(TCHAR * fileName)
+        void loadExternalLibrary(char * fileName)
         {
             LOG(Loading %s, fileName);
-
-            HMODULE hDll = LoadLibrary(fileName);
-
+            HMODULE hDll = LoadLibraryA(fileName);
             if (hDll != NULL) {
-
                 ModuleInit02FCNT modInitialize = (ModuleInit02FCNT)GetProcAddress(hDll, "_moduleInit02@4");
-
                 if (modInitialize != NULL) {
-
                     modInitialize(&modHelper);
-
                     ExternalLibrary02 ex;
-                    _tcscpy(ex.fileName, fileName);
+                    strcpy(ex.fileName, fileName);
                     ex.handle = hDll;
-
                     addItem(ex);
-
                 } else {
-
-                    LOG(Entry point locating failed);
+                    LOGS(Entry point locating failed);
                     FreeLibrary(hDll);
-
-                }				
+                }
             } else {
-
                 LOG(Load failed; error = %i, GetLastError());
-
             }
         }
 
-        TCHAR * fileext(TCHAR * fn){
-            fn += _tcslen(fn);
+        char * fileext(char * fn){
+            fn += strlen(fn);
             int extc = 0;
             while (*fn != '.' && ++extc < 6)
                 fn--;
             return fn;
         }
 
-        void checkFilenName(TCHAR * fileName, TCHAR * dirName) {
-            if (_tcsstr(fileName, _T("02e.dll")) && _tcsstr(fileext(fileName), _T(".dll"))) {
-                TCHAR cfilename[2000];
-                unsigned char cfilenameAnsi[2000];
-                memset(cfilename, 0, sizeof(cfilename));
-                _tcsncpy(cfilename, dirName, _tcslen(dirName)-1);
-                _tcscat(cfilename, fileName);
-                StringUtils::TCHARToUTF8(cfilenameAnsi, cfilename);
-                LOG(Search found %s, cfilenameAnsi);
+        void checkFilenName(char * fileName, char * dirName) {
+            if (strstr(fileName, "02e.dll") && strstr(fileext(fileName), ".dll")) {
+                char cfilename[2000];
+                strncpy(cfilename, dirName, strlen(dirName)-1);
+                strcat(cfilename, fileName);
+                LOG(Search found %s, fileName);
                 loadExternalLibrary(cfilename);
             }
         }
 
-        void searchDirectory(TCHAR * directory){
+        void searchDirectory(char * directory){
 
-            unsigned char directoryAnsi[2000];
-            StringUtils::TCHARToUTF8(directoryAnsi, directory);
-            LOG(Searching %s, directoryAnsi);
+            LOG(Searching %s, directory);
 
-            TCHAR currentDir[2048];
-            GetCurrentDirectory(2048, currentDir);
+            char currentDir[2048];
+            GetCurrentDirectoryA(2048, currentDir);
 
-            WIN32_FIND_DATA FindFileData;
+            WIN32_FIND_DATAA FindFileData;
             HANDLE hFind = INVALID_HANDLE_VALUE;
 
-            TCHAR DirSpec[2055];
-            _tcsncpy(DirSpec, directory, _tcslen(directory)+1);
-            SetCurrentDirectory(DirSpec);
-            _tcsncat (DirSpec, _T("\\*"), 3);
+            char DirSpec[2055];
+            strncpy(DirSpec, directory, strlen(directory)+1);
+            SetCurrentDirectoryA(DirSpec);
+			strncat (DirSpec, "\\*", 3);
 
 
-            hFind = FindFirstFile(DirSpec, &FindFileData);
+            hFind = FindFirstFileA(DirSpec, &FindFileData);
 
             if (hFind != INVALID_HANDLE_VALUE) {
                 if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
                     checkFilenName(FindFileData.cFileName, DirSpec);
                 }
-                while (FindNextFile(hFind, &FindFileData) != 0) {
+                while (FindNextFileA(hFind, &FindFileData) != 0) {
                     if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0){
                         checkFilenName(FindFileData.cFileName, DirSpec);
                     }
@@ -300,7 +275,7 @@ namespace n02 {
             } else {
                 LOG(Invalid directory);
             }
-            SetCurrentDirectory(currentDir);
+            SetCurrentDirectoryA(currentDir);
         }
 
         void unloadExternalLibraries(){
@@ -317,19 +292,19 @@ namespace n02 {
 
             LOG(Searching for okai modules);
 
-            TCHAR currentDir[2048];
+            char currentDir[2048];
 
-            GetSystemDirectory(currentDir, 2048);
+            GetSystemDirectoryA(currentDir, 2048);
             searchDirectory(currentDir);
 
-            GetCurrentDirectory(2048, currentDir);
+            GetCurrentDirectoryA(2048, currentDir);
             searchDirectory(currentDir);
 
-            _tcscat(currentDir, _T("\\modules"));
+            strcat(currentDir, "\\modules");
             searchDirectory(currentDir);
 
-            GetCurrentDirectory(2048, currentDir);
-            _tcscat(currentDir, _T("\\n02"));
+            GetCurrentDirectoryA(2048, currentDir);
+            strcat(currentDir, "\\n02");
             searchDirectory(currentDir);
         }
 
@@ -362,109 +337,4 @@ namespace n02 {
 #endif
     }
 };
-
-
-//	/******************************************************************************
-//
-//
-//
-//	*********************************************************************/
-//
-//	static INT_PTR CALLBACK ModulesDialogProc(HWND hwndDlg,
-//		UINT uMsg,
-//		WPARAM /* wParam */,
-//		LPARAM /* lParam */
-//		)
-//	{
-//		switch(uMsg) {
-//			case WM_INITDIALOG:
-//				{
-//					// Initialize modules LV
-//					ListViewControl lvc;
-//					lvc.handle = GetDlgItem(hwndDlg, LV_MODS);
-//					lvc.addColumn(_T("Index"), 3 * 12);
-//					lvc.addColumn(_T("Name"), 8 * 12);
-//					lvc.addColumn(_T("Type"), 8 * 12);
-//					lvc.addColumn(_T("Description"), 20 * 12);
-//					lvc.addColumn(_T("Condition1"), 4 * 12);
-//					lvc.addColumn(_T("Status"), 4 * 12);
-//					lvc.fullRowSelect();
-//
-//					int i = 0;
-//					ModuleAbstraction02 * m = 0;
-//
-//					// fill it
-//					while ((m = modulesHandlerGetByIndex(i))!= 0) {
-//						
-//						TCHAR temp[256];
-//						wsprintf(temp, _T("%i"), i);
-//
-//						int index = lvc.addRow(temp, i);
-//
-//						lvc.fillRow(ANSIToTCHAR(m->name, 0, 0), 1, index);
-//						lvc.fillRow(ANSIToTCHAR(m->type, 0, 0), 2, index);
-//
-//						char desc[256];
-//						m->getDescription(desc, 256);
-//
-//						lvc.fillRow(ANSIToTCHAR(desc, 0, 0), 3, index);
-//						
-//						wsprintf(temp, _T("%x"), m->appAttributesIntegrationConditioning);
-//						lvc.fillRow(temp, 4, index);
-//
-//
-//						int status = m->getStatus();
-//						if (status == 0) {
-//							lvc.fillRow(_T("Working"), 5, index);
-//						} else {
-//							*desc = 0;
-//							if (status & MOD02_STATUS_NOT_WORKING_DIFFERENT_VERSION) {
-//								_tcscat(temp, _T("version mismatch, "));
-//							}
-//							if (status & MOD02_STATUS_NOT_WORKING_ESSENTIALS_MISSING) {
-//								_tcscat(temp, _T("essentials missing, "));
-//							}
-//							if (status & MOD02_STATUS_NOT_WORKING_SYSTEM_ESSENTIALS_MISSING) {
-//								_tcscat(temp, _T("system requirement not met, "));
-//							}
-//							lvc.fillRow(temp, 5, index);
-//						}
-//
-//						i++;
-//					}
-//
-//					// Initialize the dlls LV
-//					lvc.handle = GetDlgItem(hwndDlg, LV_DLLS);
-//
-//					// Fill it
-//					for (int x = 0; x < externalModules.itemsCount(); x++) {
-//						lvc.addRow(externalModules[x].fileName);
-//					}
-//
-//					// initialize the window
-//					SetWindowText(hwndDlg, _T("n02 v") N02_VER_STR _T(" modules"));
-//					SendMessage(hwndDlg, WM_SETICON, (WPARAM)ICON_SMALL, (LPARAM)icon02);
-//					SendMessage(hwndDlg, WM_SETICON, (WPARAM)ICON_BIG, (LPARAM)icon02);		
-//
-//
-//				}
-//
-//				return TRUE;
-//
-//			case WM_CLOSE:
-//				EndDialog(hwndDlg, 0);
-//				break;
-//		};
-//		return 0;
-//	}
-//
-//	void N02CCNV modulesConfigShowConfiguration(void * parent) {
-//		DialogBox(hInstance, MAKEINTRESOURCE(DLG_MODULES), (HWND)parent, ModulesDialogProc);
-//	}
-//
-//	OptionItemsInterface02 modulesConfig = {
-//		modulesConfigShowConfiguration
-//	};
-//
-//	STDMODULE(modModulesConfig, "modulesConfig", MTYPE02_OPTION, modulesConfig, 0, MOD02_STATUS_WORKING, "Configure modules item")
 

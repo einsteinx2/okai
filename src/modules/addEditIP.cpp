@@ -38,8 +38,8 @@ namespace n02 {
 
     namespace addedit {
         int returnValue;
-        TCHAR name[128];
-        TCHAR ip[128];
+        char name[128];
+        char ip[128];
     };
 
     bool AddNewIP(Component * parent) {
@@ -49,9 +49,9 @@ namespace n02 {
         delete newCmp;
         return addedit::returnValue == 1;
     }
-    bool EditIP(Component * parent, TCHAR * NAME, TCHAR * IP) {
-        _tcscpy(addEditGetIP(), IP);
-        _tcscpy(addEditGetName(), NAME);
+    bool EditIP(Component * parent, char * NAME, char * IP) {
+        strcpy(addEditGetIP(), IP);
+        strcpy(addEditGetName(), NAME);
 
         addedit::returnValue = 1;
 
@@ -63,10 +63,10 @@ namespace n02 {
 
         return addedit::returnValue == 1;
     }
-    TCHAR * addEditGetIP() {
+    char * addEditGetIP() {
         return addedit::ip;
     }
-    TCHAR * addEditGetName() {
+    char * addEditGetName() {
         return addedit::name;
     }
 };

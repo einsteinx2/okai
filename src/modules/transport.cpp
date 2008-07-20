@@ -149,14 +149,13 @@ namespace n02 {
     TransportModule02 transport;
 
     static char activeModName[32];
-    static TCHAR activeModNameT[32];
 
     CONFIG_START(transportConfig)
-        CONFIG_STRVAR(_T("active"), activeModNameT, 32, _T(""))
-        CONFIG_END
+    CONFIG_STRVAR("active", activeModName, 32, "")
+    CONFIG_END
 
-        void transportReset() {
-            transport = defaultTransport;
+    void transportReset() {
+        transport = defaultTransport;
     }
 
     static void transportActivate(ModuleAbstraction02 * mod);
@@ -167,8 +166,7 @@ namespace n02 {
 
         char active[128];
         ConfigurationManager config(transportConfig);
-        config.load(_T("transport"));
-        StringUtils::TCHARToUTF8(reinterpret_cast<unsigned char*>(active), activeModNameT);
+        config.load("transport");
 
         if (strlen(active) > 0
             && strlen(active) < 16
@@ -182,9 +180,8 @@ namespace n02 {
 
     void transportTerminate()
     {
-        StringUtils::UTF8ToTCHAR(activeModNameT, reinterpret_cast<unsigned char*>(activeModName), 32);
         ConfigurationManager config(transportConfig);
-        config.save(_T("transport"));
+        config.save("transport");
     }
 
     static bool recentlyActivated;

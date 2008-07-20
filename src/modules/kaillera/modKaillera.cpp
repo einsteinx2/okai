@@ -51,37 +51,37 @@ namespace n02 {
         /************************************************************
         ** vars
         *******************************/
-        TCHAR uiUsername[32];
-        TCHAR uiQuitMessage[128];
-        TCHAR uiLastIP[128];
+        char uiUsername[32];
+        char uiQuitMessage[128];
+        char uiLastIP[128];
         int uiConnectionSetting;
         int recordingEnabled;
         int selectedAutorunIndex;
         int selectedDelayParam;
-        DynamicOrderedArray<TCHAR*> uiServersIP;
-        DynamicOrderedArray<TCHAR*> uiServersName;
+        DynamicOrderedArray<char*> uiServersIP;
+        DynamicOrderedArray<char*> uiServersName;
 
 
         /************************************************************
         ** Config Table
         *******************************/
         CONFIG_START(kailleraConfig)
-            CONFIG_STRVAR(_T("nick"), uiUsername, 32, _T("Ape"))
-            CONFIG_STRVAR(_T("qmsg"), uiQuitMessage, 128, _T("Ape Escaped!"))
-            CONFIG_STRVAR(_T("ip"), uiLastIP, 128, _T("127.0.0.1:27886"))
-            CONFIG_INTVAR(_T("connection"), uiConnectionSetting, 1)
-            CONFIG_INTVAR(_T("record"), recordingEnabled, 1)
-            CONFIG_STRLIST(_T("servers_ip"), uiServersIP, 128)
-            CONFIG_STRLIST(_T("servers_name"), uiServersName, 128)
-            CONFIG_END
+        CONFIG_STRVAR("nick", uiUsername, 32, "Ape")
+        CONFIG_STRVAR("qmsg", uiQuitMessage, 128, "Ape Escaped!")
+        CONFIG_STRVAR("ip", uiLastIP, 128, "127.0.0.1:27888")
+        CONFIG_INTVAR("connection", uiConnectionSetting, 1)
+        CONFIG_INTVAR("record", recordingEnabled, 1)
+        CONFIG_STRLIST("servers_ip", uiServersIP, 128)
+		CONFIG_STRLIST("servers_name", uiServersName, 128)
+		CONFIG_END
 
-            /************************************************************
-            ** Misc Prototypes
-            *******************************/
-            // after copying IP to uiLastIP, call this to proceed for connecting
-            void ConnectCallback();
+		/************************************************************
+		** Misc Prototypes
+		*******************************/
+		// after copying IP to uiLastIP, call this to proceed for connecting
+		void ConnectCallback();
 
-        /************************************************************
+		/************************************************************
         ** GUI Window
         *******************************/
 
@@ -127,8 +127,8 @@ namespace n02 {
         // add server button press
         void uiAddServer(){
             if (AddNewIP(ModKailleraServerSelect::window)) {
-                uiServersName.addItem(_tcsdup(addEditGetName()));
-                uiServersIP.addItem(_tcsdup(addEditGetIP()));
+                uiServersName.addItem(_strdup(addEditGetName()));
+                uiServersIP.addItem(_strdup(addEditGetIP()));
             }
         }
 
@@ -138,8 +138,8 @@ namespace n02 {
                 if (EditIP(ModKailleraServerSelect::window, uiServersName[index], uiServersIP[index])) {
                     delete uiServersName[index];
                     delete uiServersIP[index];
-                    uiServersName[index] = _tcsdup(addEditGetName());
-                    uiServersIP[index] = _tcsdup(addEditGetIP());
+                    uiServersName[index] = _strdup(addEditGetName());
+                    uiServersIP[index] = _strdup(addEditGetIP());
                     ModKailleraServerSelect::cmponnt->redrawServersRow(index);
                 }
             }
@@ -171,7 +171,7 @@ namespace n02 {
 
             // Load config
             ConfigurationManager config(kailleraConfig);
-            config.load(_T("kaillera"));
+            config.load("kaillera");
 
             // set up synchronization stuff
             guiIsRunning = 1;
@@ -188,7 +188,7 @@ namespace n02 {
             gui = 0;
 
             // Save config
-            config.save(_T("kaillera"));
+            config.save("kaillera");
 
         }
 

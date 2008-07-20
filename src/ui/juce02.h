@@ -30,7 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 #pragma once
 
-//#define JUCE_DLL
+#define JUCE_DLL
 
 #ifdef linux
 

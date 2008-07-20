@@ -448,3 +448,12 @@ extern "C" {
 
 #endif
 
+
+namespace n02 {
+
+	const char * n02GetName() {
+		return "n02";
+	}
+
+};
+

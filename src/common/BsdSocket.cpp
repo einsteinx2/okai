@@ -83,7 +83,9 @@ namespace n02 {
         }
         socketsList.addItem(this);
 
-        socket(family, type, protocol, paramPort, blocking, minBufferSize);
+		if (!socket(family, type, protocol, paramPort, blocking, minBufferSize)) {
+			close();
+		}
 
     }
 
@@ -91,6 +93,11 @@ namespace n02 {
     {
         close();
         socketsList.removeItem(this);
+    }
+
+    bool BsdSocket::isInitialized() const
+    {
+        return sock != SOCKET_ERROR;
     }
 
 
@@ -151,7 +158,7 @@ namespace n02 {
     }
 
 
-    void BsdSocket::setMinimumBufferSize(int minBufferSize)
+    void BsdSocket::setMinimumBufferSize(int minBufferSize) const
     {
         if (sock != SOCKET_ERROR && minBufferSize > 0) {
             socklen_t lenn = sizeof(int);
@@ -165,7 +172,7 @@ namespace n02 {
         }
     }
 
-    void BsdSocket::setBlockingMode(bool blocking)
+    void BsdSocket::setBlockingMode(bool blocking) const
     {
         if (sock != SOCKET_ERROR) {
             unsigned long temp = blocking?0:1;
@@ -173,10 +180,10 @@ namespace n02 {
         }
     }
 
-    void BsdSocket::getLocalAddress(SocketAddress * saPtr)
+    void BsdSocket::getLocalAddress(SocketAddress & saPtr) const
     {
         if (sock != SOCKET_ERROR) {
-            getsockname(sock, saPtr->getAddrPtr(), saPtr->getSizePtr());
+            getsockname(sock, saPtr.getAddrPtr(), saPtr.getSizePtr());
         }
     }
 
