@@ -15,7 +15,7 @@ all: n02
 
 Makefile: premake.lua
 	@echo ==== Regenerating Makefiles ====
-	@premake --file $^ --cc g++ --os linux --target gnu
+	@premake --file $^ --os linux --target gnu
 
 n02:
 	@echo ==== Building n02 ====

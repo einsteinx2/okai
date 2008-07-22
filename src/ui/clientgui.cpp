@@ -166,7 +166,7 @@ namespace n02 {
     }
 
     void GuiCleanup() {
-        LOG(Cleaning up gui);
+        LOGS(Cleaning up gui);
     }
 
 };

@@ -33,7 +33,7 @@ SOFTWARE.
 
 #define USE_WINDOWS_INI
 // only use for one shot save files
-//#define USE_CPP_CUSTOM_INI
+#define USE_CPP_CUSTOM_INI
 
 #ifdef USE_WINDOWS_INI
 #if !defined(N02_WIN32) || defined(USE_CPP_CUSTOM_INI)
@@ -164,7 +164,7 @@ namespace n02 {
 							case ConfigurationItem::STRLIST:
 								{
 									DynamicOrderedArray<char*> * list = reinterpret_cast<DynamicOrderedArray<char*>*>(cnf->pointer);
-									list->addItem(_strdup(value));
+									list->addItem(strdup(value));
 								}
 								break;
                         case ConfigurationItem::STRUCT:
@@ -369,12 +369,13 @@ namespace n02 {
 
     void ConfigurationManager::add(const ConfigurationItem* item)
     {
-        for (int x = 0; x < itemsCount(); x++) {
-            if (strcmp(item->name, getItemPtr(x)->name) < 0) {
-                insertItemPtr(const_cast<ConfigurationItem*>(item), x);
-                return;
-            }
-        }
+//TODO: Investigate... althou there is no need for this  bit of code, it was causing ini writing messup
+        //for (int x = 0; x < itemsCount(); x++) {
+        //    if (strcmp(item->name, getItemPtr(x)->name) < 0) {
+        //        insertItemPtr(const_cast<ConfigurationItem*>(item), x);
+        //        return;
+        //    }
+        //}
         addItemPtr(const_cast<ConfigurationItem*>(item));
     }
 

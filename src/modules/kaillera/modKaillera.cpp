@@ -127,8 +127,8 @@ namespace n02 {
         // add server button press
         void uiAddServer(){
             if (AddNewIP(ModKailleraServerSelect::window)) {
-                uiServersName.addItem(_strdup(addEditGetName()));
-                uiServersIP.addItem(_strdup(addEditGetIP()));
+                uiServersName.addItem(strdup(addEditGetName()));
+                uiServersIP.addItem(strdup(addEditGetIP()));
             }
         }
 
@@ -138,8 +138,8 @@ namespace n02 {
                 if (EditIP(ModKailleraServerSelect::window, uiServersName[index], uiServersIP[index])) {
                     delete uiServersName[index];
                     delete uiServersIP[index];
-                    uiServersName[index] = _strdup(addEditGetName());
-                    uiServersIP[index] = _strdup(addEditGetIP());
+                    uiServersName[index] = strdup(addEditGetName());
+                    uiServersIP[index] = strdup(addEditGetIP());
                     ModKailleraServerSelect::cmponnt->redrawServersRow(index);
                 }
             }

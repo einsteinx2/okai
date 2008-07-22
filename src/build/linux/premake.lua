@@ -8,13 +8,13 @@ project.configs = { "Release" }
 
 package = newpackage()
 package.name = "n02"
-package.kind = "lib"
+package.kind = "dll"
 package.language = "c++"
 package.objdir = "../../../temp/"
 
 package.config["Release"].objdir = "../../../temp/"
 package.config["Release"].target = "n02"
-package.config["Release"].defines       = { "N02_WIN32=1" };
+package.config["Release"].defines       = { "N02_LINUX=1" };
 package.includepaths = { 
     "../../common",
     "../../interface",
@@ -44,8 +44,6 @@ package.files = {
 	"../../common/Logger.h",
 	"../../common/PosixThread.cpp",
 	"../../common/PosixThread.h",
-	"../../common/SEH_win32.cpp",
-	"../../common/SEH_win32.h",
 	"../../common/SocketAddress.cpp",
 	"../../common/SocketAddress.h",
 	"../../common/StaticAllocator.h",
@@ -67,8 +65,6 @@ package.files = {
 	"../../interface/GamesList.h",
 	"../../interface/gameplay.cpp",
 	"../../interface/gameplay.h",
-	"../../interface/kailleraclient.cpp",
-	"../../interface/kailleraclient.h",
 	"../../interface/n02.cpp",
 	"../../interface/n02.h",
 	"../../interface/n02module.h",

@@ -30,7 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 
 #pragma once
-#include <tchar.h>
+
 
 #include "DynamicOrderedArray.h"
 

@@ -33,7 +33,18 @@ SOFTWARE.
 // Remnoving all TCHAR stuff...its not a c++ standard
 //#include <tchar.h>
 #include <string.h>
+#include <cstdio>
 #pragma intrinsic(memcpy, strcpy, strlen)
+
+#ifndef N02_WIN32
+
+#define sprintf_s(Y, L, X, ...) \
+{\
+    char buffer[1024];\
+    sprintf(buffer, X, __VA_ARGS__);\
+    strncpy(Y, buffer, L);\
+}
+#endif
 // TODO : Review
 // TODO : Test
 namespace n02 {

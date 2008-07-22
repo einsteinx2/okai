@@ -70,7 +70,7 @@ namespace n02 {
         ~DynamicArray(void)
         {
             if (items) {
-                free(items);
+                commonFree<_BaseType>(items);
                 items = 0;
             }
             length = 0;

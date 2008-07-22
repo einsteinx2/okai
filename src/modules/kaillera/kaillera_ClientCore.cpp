@@ -473,7 +473,7 @@ namespace n02 {
 				TRACE();
 				LOG(erroneous state %i[%i], state, input);
 				char xxx[234];
-				wsprintfA(xxx, "erroneous state/input %i[%i]", state, input);
+				sprintf(xxx, "erroneous state/input %i[%i]", state, input);
 				callbacks.clientLoginStatusChange(xxx);
 				TRACE();
 			}

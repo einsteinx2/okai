@@ -50,6 +50,7 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="4"
 				DebugInformationFormat="0"
+				DisableSpecificWarnings="4996;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -128,6 +129,7 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="4"
 				DebugInformationFormat="0"
+				DisableSpecificWarnings="4996;4100"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

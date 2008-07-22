@@ -221,7 +221,7 @@ namespace n02 {
         if (index >= 0) {
             transportActivate(modHelper.modHandler->getByIndex(index));
         } else {
-            LOG(Invalid module index specified);
+            LOGS(Invalid module index specified);
         }
     }
 

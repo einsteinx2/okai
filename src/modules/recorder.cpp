@@ -80,8 +80,8 @@ namespace n02 {
 
     static int N02CCNV  recorderDefaultAddSyncData (const void * value, const int len)
     { 
-        char strBuffer[256];
 #if 0
+		char strBuffer[256];
         if (len > 0) {
             StringUtils::bytesToStr(strBuffer, const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>(value)), len);
             LOG(%s; %i; %i, strBuffer, len);
