@@ -8,7 +8,7 @@ project.configs = { "Release" }
 
 package = newpackage()
 package.name = "n02"
-package.kind = "dll"
+package.kind = "lib"
 package.language = "c++"
 package.objdir = "../../../temp/"
 

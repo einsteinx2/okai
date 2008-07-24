@@ -58,21 +58,21 @@ namespace n02 {
         }
 
         /* Adds an item to the list */
-        inline void addItem(_BaseType item)
+        inline void addItem(const _BaseType item)
         {
             require(length < _TotalLen);
             items[length++] = item;
         }
 
         /* Adds an item to the list via pointer */
-        inline void addItemPtr(_BaseType * itemPtr)
+        inline void addItemPtr(const _BaseType * itemPtr)
         {
             require(length < _TotalLen);
             items[length++] = *itemPtr;
         }
 
         /* Removes an item from the list  pointed by index */
-        inline void removeIndex(int index)
+        inline void removeIndex(const int index)
         {
             require(index >= 0 && index < length);
             if (length-1!=index) {

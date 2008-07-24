@@ -33,7 +33,7 @@ SOFTWARE.
 
 #define USE_WINDOWS_INI
 // only use for one shot save files
-#define USE_CPP_CUSTOM_INI
+//#define USE_CPP_CUSTOM_INI
 
 #ifdef USE_WINDOWS_INI
 #if !defined(N02_WIN32) || defined(USE_CPP_CUSTOM_INI)

@@ -26,83 +26,56 @@ SOFTWARE.
 
 #pragma once
 
-#define CONNECTING_TIMEOUT_LIMIT 10000
-#define PING_CONSIDERATION_RATIO 3
-#define PING_LIMIT 4
-#define CONNECTION_TIMEOUT 90000
+#include "nyx_User.h"
 
-#include "nyx_UserMessaging.h"
 
-class User :
-	public UserMessaging
+// game class
+class Game
 {
-public:
+	// id
+	unsigned int id;
 
-
-
-public:
-
-	// User class definition
-
-	// user state
+	//state
 	enum {
-		CONNECTING=0,
-		IDLE=1,
-		PLAYING=2,
-		DISCONNECTED=3
+		WAITING,
+		LOADING,
+		RUNNING,
+		PURGED
 	} state;
 
+	// owner
+	User * owner;
 
-	// general info
-	unsigned short id;
-	char nick[32];
+	// players
+	DynamicOrderedArray<User*, 8> players;
+
+	// misc info
+	char name[128];
 	char app[128];
-	char connection;
-	int ping;
+	int maxUsers;
 
+	// gameplay info
 
-	// game info & gameplay data
-	int gamePlayerIndex;
-	int gamePlayerDelay;
-	bool gamePlayerReady;
-
-	void * game;
-
-	DataQueue inBuffer;
-	DataQueue outBuffer;
-
-	StaticOrderedArray<void*, 256> inCache;
-	StaticOrderedArray<void*, 256> outCache;
-
-	int inputLength;
-
-	// timeout & retransmission vars
-	unsigned int lastDataArrival;
-	unsigned int lastDataSent;
-
-
-	// misc
-	DynamicOrderedArray<unsigned int, 10> chatTimes;
-
-public:
+	unsigned int frame;
 
 	// constructor
-	User(unsigned short uid);
+	Game(const char * name, User & user);
 
-	// called back when a new instruction for the user arrives
-	void instructionArrivalCallback(Instruction & ki);
-	
-	// idle step function
-	bool idleStep();
+	// starts game
+	void start();
 
-	// when sent a global message
-	void sendGlobal(Instruction & i)
-	{
-		if (state != CONNECTING)
-			includeInstruction(i);
+	// game state for when a new player joins
+	void writeGameState(Instruction &);
 
-		if (state==IDLE)
-			sendMessage();
-	}
+	// add and remove players
+	void addUser(User & user);
+	bool removeUser(User & player);
+
+	// sed status update
+	void updateStatus();
+	// kick an user out of the game
+	void kickUser(unsigned short user);
+
+	bool step();
 
 };

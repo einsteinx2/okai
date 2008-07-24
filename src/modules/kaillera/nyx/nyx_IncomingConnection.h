@@ -24,9 +24,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "common.h"
+#pragma once
 
-using namespace n02;
+#include "nyx.h"
 
 class IncomingConnection :
 	protected UdpSocket

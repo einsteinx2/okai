@@ -116,6 +116,7 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4996"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -179,11 +180,31 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\nyx.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\nyx_config.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\nyx_config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_Game.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_Game.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_GamesList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_GamesList.h"
 				>
 			</File>
 			<File
@@ -204,6 +225,14 @@
 			</File>
 			<File
 				RelativePath="..\..\nyx_UserMessaging.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_UsersList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\nyx_UsersList.h"
 				>
 			</File>
 		</Filter>

@@ -25,6 +25,7 @@ SOFTWARE.
 ******************************************************************************/
 
 #pragma once
+
 #include "kaillera_Instruction.h"
 
 using namespace n02;
@@ -48,6 +49,11 @@ private:
 	int oldInstructionsPerMessage;
 
 public:
+
+	void log() {
+		LOG(%s, defaultAddress.toString());
+	}
+
 	UserMessaging()
 		: UdpSocket(0)
 	{

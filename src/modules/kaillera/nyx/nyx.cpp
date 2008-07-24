@@ -25,18 +25,14 @@ SOFTWARE.
 ******************************************************************************/
 
 #include <signal.h>
+#include "nyx.h"
+#include "nyx_IncomingConnection.h"
 
-#include "common.h"
-#include "kaillera_Instruction.h"
-
-
-using namespace n02;
-using namespace n02::kaillera;
 
 GlobalTimer serverTime;
+StaticArray<User*, 128> users;
 
-#include "nyx_IncomingConnection.h"
-#include "nyx_config.h"
+
 
 // Incoming connections class
 class NyxIncomingConnection : public IncomingConnection {
@@ -46,12 +42,11 @@ public: NyxIncomingConnection (int port) : IncomingConnection(port) {}
 
 
 
-
-
-
+// server running flag
 bool serverIsRunning;
 
-void __cdecl Signalhandler(int signal_){
+// signal handler
+void Signalhandler(int signal_){
 	if (signal_ == SIGINT){
 		LOGS("SIGINT - Shutting down...");
 		serverIsRunning = false;
@@ -67,20 +62,29 @@ void __cdecl Signalhandler(int signal_){
 	}
 }
 
-
-// incoming connection
+// incoming connection handler
 void NyxIncomingConnection::incomingDataCallback(char * data, int length, SocketAddress & source) {
 	if (length == 5) {
 		LOG(ping from %s, source.toString());
 		BsdSocket::sendTo("PONG", 5, source);
 	} else if (length == 10 && strcmp(data, "HELLO0.83")==0) {
-		LOG(con request from %s, source.toString());
-		BsdSocket::sendTo("VER", 5, source);
+		LOG(connection request from %s, source.toString());
+		if (UsersList::getConnectingCount() < config::macConnecting && UsersList::getCount() < config::maxUsers) {
+			User * u = new User(UsersList::getSpareId());
+			char reply[20];
+			sprintf(reply, "HELLOD00D%i", u->getPort());
+			BsdSocket::sendTo(reply, strlen(reply)+1, source);
+			UsersList::addUser(u);
+		} else {
+			BsdSocket::sendTo("TOO", 4, source);
+		}
 	} else {
 		LOG(unknown %s %s, data, source.toString());
+		BsdSocket::sendTo("VER", 4, source);
 	}
 }
 
+// entry point
 int main(int argc, char * args[]) {
 
 	// initialize commons
@@ -116,12 +120,12 @@ int main(int argc, char * args[]) {
 
 		while (serverIsRunning == true) {
 			for (int x = 0; x < 10 && serverIsRunning; x++) {
+				serverTime.fixGetTime();
 				BsdSocket::step(0, 1);
 			}
-			// step users list
+			UsersList::step();
 			// step gameslist
 		}
-
 	} else {
 		LOGBASICS("Failed initializing communication layer");
 	}
@@ -135,7 +139,7 @@ int main(int argc, char * args[]) {
 }
 
 
-
+// n02 commons callbacks
 const char * n02::n02GetName() {
 	return "nyx";
 }

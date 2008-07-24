@@ -26,83 +26,35 @@ SOFTWARE.
 
 #pragma once
 
-#define CONNECTING_TIMEOUT_LIMIT 10000
-#define PING_CONSIDERATION_RATIO 3
-#define PING_LIMIT 4
-#define CONNECTION_TIMEOUT 90000
+#include "nyx_Game.h"
 
-#include "nyx_UserMessaging.h"
 
-class User :
-	public UserMessaging
+class GamesList	
 {
 public:
 
-
-
-public:
-
-	// User class definition
-
-	// user state
-	enum {
-		CONNECTING=0,
-		IDLE=1,
-		PLAYING=2,
-		DISCONNECTED=3
-	} state;
-
-
-	// general info
-	unsigned short id;
-	char nick[32];
-	char app[128];
-	char connection;
-	int ping;
-
-
-	// game info & gameplay data
-	int gamePlayerIndex;
-	int gamePlayerDelay;
-	bool gamePlayerReady;
-
-	void * game;
-
-	DataQueue inBuffer;
-	DataQueue outBuffer;
-
-	StaticOrderedArray<void*, 256> inCache;
-	StaticOrderedArray<void*, 256> outCache;
-
-	int inputLength;
-
-	// timeout & retransmission vars
-	unsigned int lastDataArrival;
-	unsigned int lastDataSent;
-
-
-	// misc
-	DynamicOrderedArray<unsigned int, 10> chatTimes;
-
-public:
-
-	// constructor
-	User(unsigned short uid);
-
-	// called back when a new instruction for the user arrives
-	void instructionArrivalCallback(Instruction & ki);
+	static StaticArray<Game*, 64> games;
 	
-	// idle step function
-	bool idleStep();
+	static void step();
 
-	// when sent a global message
-	void sendGlobal(Instruction & i)
+	static void addGame(Game * g)
 	{
-		if (state != CONNECTING)
-			includeInstruction(i);
-
-		if (state==IDLE)
-			sendMessage();
+		games.addItem(g);
 	}
+
+	static int getCount() {
+		return games.itemsCount();
+	}
+
+	static void writeGamesState(Instruction &);
+
+	//TODO: do indexed type optimization from 0->maxUsers mod later
+	static unsigned int id;
+	static unsigned int getSpareId()
+	{
+		return ++id;
+	}
+
+	Game * findGame(unsigned int id);
 
 };

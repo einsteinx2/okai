@@ -67,7 +67,7 @@ CONFIG_INTVAR("minConset", minConset, 6)
 CONFIG_INTVAR("maxPing", maxPing, 100)
 CONFIG_INTVAR("port", port, 27888)
 CONFIG_INTVAR("floodMsgNo", floodMsgNo, 5)
-CONFIG_INTVAR("floodMsgTime", floodMsgTime, 3)
+CONFIG_INTVAR("floodMsgTime", floodMsgTime, 3000)
 CONFIG_STRLIST("motd", motd, 128)
 CONFIG_END
 

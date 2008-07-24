@@ -24,85 +24,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "common.h"
 
-#define CONNECTING_TIMEOUT_LIMIT 10000
-#define PING_CONSIDERATION_RATIO 3
-#define PING_LIMIT 4
-#define CONNECTION_TIMEOUT 90000
+using namespace n02;
 
-#include "nyx_UserMessaging.h"
+#include "nyx_config.h"
+#include "nyx_UsersList.h"
+#include "nyx_GamesList.h"
 
-class User :
-	public UserMessaging
-{
-public:
+extern GlobalTimer serverTime;
 
-
-
-public:
-
-	// User class definition
-
-	// user state
-	enum {
-		CONNECTING=0,
-		IDLE=1,
-		PLAYING=2,
-		DISCONNECTED=3
-	} state;
-
-
-	// general info
-	unsigned short id;
-	char nick[32];
-	char app[128];
-	char connection;
-	int ping;
-
-
-	// game info & gameplay data
-	int gamePlayerIndex;
-	int gamePlayerDelay;
-	bool gamePlayerReady;
-
-	void * game;
-
-	DataQueue inBuffer;
-	DataQueue outBuffer;
-
-	StaticOrderedArray<void*, 256> inCache;
-	StaticOrderedArray<void*, 256> outCache;
-
-	int inputLength;
-
-	// timeout & retransmission vars
-	unsigned int lastDataArrival;
-	unsigned int lastDataSent;
-
-
-	// misc
-	DynamicOrderedArray<unsigned int, 10> chatTimes;
-
-public:
-
-	// constructor
-	User(unsigned short uid);
-
-	// called back when a new instruction for the user arrives
-	void instructionArrivalCallback(Instruction & ki);
-	
-	// idle step function
-	bool idleStep();
-
-	// when sent a global message
-	void sendGlobal(Instruction & i)
-	{
-		if (state != CONNECTING)
-			includeInstruction(i);
-
-		if (state==IDLE)
-			sendMessage();
-	}
-
-};
