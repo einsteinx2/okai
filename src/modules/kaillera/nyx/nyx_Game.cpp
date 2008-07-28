@@ -25,4 +25,109 @@ SOFTWARE.
 ******************************************************************************/
 
 #include "nyx_Game.h"
+#include "nyx_GamesList.h"
+#include "nyx_UsersList.h"
+
+Game::Game(const char * name_, User * user): state(WAITING)
+{
+	strncpy(name, name_, 127);
+
+	owner = user;
+
+	maxUsers = 8;
+	id = GamesList::getSpareId();
+
+	LOG(%s created a new game: %i %s, user->nick, id, name);
+}
+
+void Game::start()
+{
+}
+
+Game::~Game()
+{
+
+}
+
+void Game::writeGameState(Instruction & i)
+{
+	i.writeSignedInt32(players.itemsCount());
+	for (int x = 0; x < players.itemsCount(); x++) {
+		User * u = players.getItem(x);
+		i.writeString(u->nick);
+		i.writeUnsignedInt32(u->ping);
+		i.writeUnsignedInt16(u->id);
+		i.writeSignedInt8(u->connection);
+	}
+}
+
+
+void Game::addUser(User * user)
+{
+	players.addItem(user);
+
+	Instruction kix(GAMRJOIN);
+	kix.writeSignedInt32((int)this);
+	kix.writeString(user->nick);
+	kix.writeSignedInt32(user->ping);
+	kix.writeUnsignedInt16(user->id);
+	kix.writeSignedInt8(user->connection);
+
+	sendToAll(kix);
+}
+
+void Game::sendToAll(Instruction & i) {
+	for (int x = 0; x < players.itemsCount(); x++) {
+		players[x]->sendGlobal(i);
+	}
+}
+
+bool Game::removeUser(User * player)
+{
+	LOG(%s left game %i, player->nick, id);
+
+	{
+		Instruction kix(GAMRLEAV);
+		kix.writeSignedInt16(player->id);
+		strcpy(kix.user, player->nick);
+		sendToAll(kix);
+	}
+
+	for (int x = 0; x < players.itemsCount(); x++) {
+		if (players[x] == player) {
+			players.removeIndex(x);
+			break;
+		}
+	}
+
+	if (players.itemsCount() == 0)
+		return true;
+
+	if (owner == player)
+		owner = players[0];
+
+	return false;
+}
+
+
+void Game::updateStatus()
+{
+	Instruction gs(GAMESTAT);
+	gs.writeUnsignedInt32(id);
+	gs.writeSignedInt8(state);
+	gs.writeSignedInt8(players.itemsCount());
+	gs.writeSignedInt8(maxUsers);
+	UsersList::sendToAll(gs);
+}
+
+
+void Game::kickUser(unsigned short user)
+{
+}
+
+
+bool Game::step()
+{
+	return players.itemsCount() != 0;
+}
 

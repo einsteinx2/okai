@@ -32,6 +32,7 @@ SOFTWARE.
 // game class
 class Game
 {
+public:
 	// id
 	unsigned int id;
 
@@ -39,8 +40,7 @@ class Game
 	enum {
 		WAITING,
 		LOADING,
-		RUNNING,
-		PURGED
+		RUNNING
 	} state;
 
 	// owner
@@ -55,11 +55,11 @@ class Game
 	int maxUsers;
 
 	// gameplay info
-
 	unsigned int frame;
 
 	// constructor
-	Game(const char * name, User & user);
+	Game(const char * name, User * user);
+	~Game();
 
 	// starts game
 	void start();
@@ -68,8 +68,8 @@ class Game
 	void writeGameState(Instruction &);
 
 	// add and remove players
-	void addUser(User & user);
-	bool removeUser(User & player);
+	void addUser(User * user);
+	bool removeUser(User * player);
 
 	// sed status update
 	void updateStatus();
@@ -77,5 +77,8 @@ class Game
 	void kickUser(unsigned short user);
 
 	bool step();
+
+	// send an instruction to all members of the game
+	void sendToAll(Instruction &);
 
 };

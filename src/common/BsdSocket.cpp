@@ -108,10 +108,11 @@ namespace n02 {
         tv.tv_sec = secs;
         tv.tv_usec = ms * 1000;
 
-#ifndef linux
+#ifdef N02_WIN32
         memcpy(&tempFdList, &fdList, 2 * sizeof(u_int) + sizeof(SOCKET) * fdList.fd_count);
 #else
-        memcpy(&tempFdList, &fdList, sizeof(fdList));
+		FD_COPY(&fdList, &tempFdList);
+        //memcpy(&tempFdList, &fdList, sizeof(fdList));
 #endif
 
         if (select((int)(ndfs + 1), &tempFdList, 0, 0, &tv) != 0) {
@@ -194,9 +195,9 @@ namespace n02 {
             closesocket(sock);
             FD_CLR(sock, &fdList);
             sock = (SOCKET)SOCKET_ERROR;
+			calcNdfs();
         }
     }
-
 
     void BsdSocket::initialize()
     {
@@ -218,7 +219,8 @@ namespace n02 {
     {
         ndfs = 0;
         for (int i = 0; i < socketsList.itemsCount(); i++) {
-            ndfs = common_max(socketsList[i]->sock, ndfs);
+			if (socketsList[i]->sock != (SOCKET)SOCKET_ERROR)
+				ndfs = common_max(socketsList[i]->sock, ndfs);
         }
     }
 

@@ -33,6 +33,7 @@ class UsersList
 public:
 
 	static StaticArray<User*, 128> users;
+
 	static int getConnectingCount();
 
 	static int getCount() {
@@ -55,6 +56,9 @@ public:
 	}
 
 	static void sendToAll (Instruction &);
+
+
+	User * findUser(unsigned short id);
 
 };
 

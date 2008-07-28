@@ -88,6 +88,7 @@ public:
 
 	// constructor
 	User(unsigned short uid);
+	~User();
 
 	// called back when a new instruction for the user arrives
 	void instructionArrivalCallback(Instruction & ki);
@@ -101,8 +102,12 @@ public:
 		if (state != CONNECTING)
 			includeInstruction(i);
 
-		if (state==IDLE)
+		if (state!=PLAYING)
 			sendMessage();
 	}
+
+	void sendGameData(void *, int);
+
+	void leaveGame();
 
 };

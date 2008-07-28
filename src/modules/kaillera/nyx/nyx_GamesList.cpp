@@ -31,15 +31,50 @@ StaticArray<Game*, 64> GamesList::games;
 void GamesList::writeGamesState(Instruction & instr)
 {
 	for (int x = 0; x < games.itemsCount(); x++) {
-		//TODO: Fill this in
-					/*k_game * game = gameslist.get(i);					
-			ki.store_string(game->name);
-			ki.store_int(game->id);
-			ki.store_string(game->owner->appname);
-			ki.store_string(game->owner->username);
-			sprintf(Vc, "%i/%i", game->players.length, game->maxusers);
-			ki.store_string(Vc);
-			ki.store_char(game->status);*/
+		Game * g = games.getItem(x);
+		instr.writeString(g->name);
+		instr.writeUnsignedInt32(g->id);
+		instr.writeString(g->owner->app);
+		instr.writeString(g->owner->nick);
+		char vc[20];
+		sprintf(vc, "%i/%i", g->players.itemsCount(), g->maxUsers);
+		instr.writeString(vc);
+		instr.writeSignedInt8(g->state);
 	}
 }
 
+Game * GamesList::findGame(unsigned int id)
+{
+	for (int x = 0; x < games.itemsCount(); x++) {
+		if (id == games.getItem(x)->id)
+			return games.getItem(x);
+	}
+	return 0;
+}
+
+void GamesList::step()
+{
+	for (int x = 0; x < games.itemsCount(); x++) {
+		games.getItem(x)->step();
+	}
+}
+
+void GamesList::removeGame(Game *gr) {
+	for (int x = 0; x < games.itemsCount(); x++) {
+		Game * g;
+		if ((g = games.getItem(x))->id == gr->id) {
+			
+			LOG(Closing game %i, g->id);
+
+			Instruction kix (GAMESHUT);
+			kix.writeUnsignedInt32(gr->id);
+			UsersList::sendToAll(kix);
+
+			delete g;
+			games.removeIndex(x);
+			return;
+		}
+	}
+}
+
+unsigned int GamesList::id = 0;

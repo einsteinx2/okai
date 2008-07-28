@@ -124,7 +124,7 @@ int main(int argc, char * args[]) {
 				BsdSocket::step(0, 1);
 			}
 			UsersList::step();
-			// step gameslist
+			GamesList::step();
 		}
 	} else {
 		LOGBASICS("Failed initializing communication layer");

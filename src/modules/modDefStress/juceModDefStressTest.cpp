@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  3 Jul 2008 5:29:14 pm
+  Creation date:  28 Jul 2008 10:19:43 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -107,7 +107,7 @@ juceModDefStressTest::juceModDefStressTest ()
     label4->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
     addAndMakeVisible (lblStatus = new Label (T("new label"),
-                                              T("label text")));
+                                              T("will appear here")));
     lblStatus->setFont (Font (15.0000f, Font::plain));
     lblStatus->setJustificationType (Justification::centredLeft);
     lblStatus->setEditable (false, false, false);
@@ -134,9 +134,9 @@ juceModDefStressTest::juceModDefStressTest ()
 		if (game) {
 			do {
 				if (modHelper.gameList->getCaps(game) & GCAPS_STATES) {
-					cmbGames->addItem(game, index);
+					cmbGames->addItem(game, ++index);
 				}
-				index++;
+				//index++;
 			} while ((game = modHelper.gameList->next())!=0);
 		}
 	}
@@ -230,12 +230,14 @@ void juceModDefStressTest::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_btnStart] -- add your button handler code here..
 		String game = cmbGames->getText();
 		n02::defStressT::uiStartGame(game.toUTF8());
+		sldDelay->setValue(1);
         //[/UserButtonCode_btnStart]
     }
     else if (buttonThatWasClicked == btnStop)
     {
         //[UserButtonCode_btnStop] -- add your button handler code here..
 		n02::defStressT::uiStopGame();
+		sldDelay->setValue(1);
         //[/UserButtonCode_btnStop]
     }
 
@@ -318,9 +320,9 @@ BEGIN_JUCER_METADATA
          bold="0" italic="0" justification="33"/>
   <LABEL name="new label" id="2be3f51fcfe1bf89" memberName="lblStatus"
          virtualName="" explicitFocusOrder="0" pos="272 112 150 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="label text" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15"
-         bold="0" italic="0" justification="33"/>
+         edBkgCol="0" labelText="will appear here" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
   <COMBOBOX name="new combo box" id="e405d3d92a19e898" memberName="cmbModes"
             virtualName="" explicitFocusOrder="0" pos="336 8 102 24" editable="0"
             layout="33" items="" textWhenNonSelected="Switch" textWhenNoItems="(no choices)"/>

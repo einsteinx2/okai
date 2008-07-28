@@ -74,3 +74,13 @@ void UsersList::sendToAll (Instruction & i)
 		users[x]->sendGlobal(i);
 	}
 }
+
+
+User * UsersList::findUser(unsigned short id)
+{
+	for (int x = 0; x < users.itemsCount(); x++) {
+		if (users[x]->id == id)
+			return users[x];
+	}
+	return 0;
+}

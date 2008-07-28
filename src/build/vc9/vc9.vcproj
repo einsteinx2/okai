@@ -91,7 +91,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="$(InputDir)..\..\..\release\release.bat"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -170,7 +170,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="$(InputDir)..\..\..\release\release.bat"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>

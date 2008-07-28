@@ -36,6 +36,25 @@ User::User(unsigned short uid) : state(CONNECTING)
 
 	ping = gamePlayerIndex = gamePlayerDelay = 0;
 	lastDataSent = 0;
+
+	gamePlayerReady = false;
+
+	game = 0;
+
+	inputLength = 0;
+}
+
+User::~User() {
+	TRACE();
+	
+	int len = inCache.itemsCount() - 1;
+	while (len >= 0){
+		delete inCache[len--];
+	}
+	len = outCache.itemsCount() - 1;
+	while (len >= 0){
+		delete outCache[len--];
+	}
 }
 
 void User::instructionArrivalCallback(Instruction & ki)
@@ -89,7 +108,6 @@ void User::instructionArrivalCallback(Instruction & ki)
 					_ping = ping - (_ping >> PING_CONSIDERATION_RATIO);
 
 					if (_ping <= config::maxPing) {
-						LOGS(ping);
 						Instruction ping (SERVPING);
 						ping.writeBytes(nick, 16);
 
@@ -187,7 +205,7 @@ void User::instructionArrivalCallback(Instruction & ki)
 			strcpy(ki.user, nick);
 			UsersList::sendToAll(ki);
 			state = DISCONNECTED;
-			//leave_game();
+			leaveGame();
 			break;
 		case PARTCHAT:
 			{
@@ -221,24 +239,55 @@ void User::instructionArrivalCallback(Instruction & ki)
 				}
 			}
 			break;
+		case GAMEMAKE:
+			{
+				Game * g = new Game(ki.getCurrentStringPtr(), this);
+				GamesList::addGame(g);
+				game = g;
+				
+				Instruction gmade (GAMEMAKE);
+				gmade.writeString(ki.getCurrentStringPtr());
+				gmade.writeString(app);
+				gmade.writeSignedInt32(g->id);
+				strcpy(gmade.user, nick);
+				UsersList::sendToAll(gmade);
+				
+				g->addUser(this);
 
-		case GAMECHAT:
-
-			/*ki.seek(strlen(ki.getCurrentStringPtr())+1);
-			strcpy(ki.user, nick);
-			UsersList::sendToAll(ki);*/
-			
-				/*case INSTRUCTION_GAMECHAT:
-				{
-					if (game != 0 && gameslist.posof(game) != 0){
-						ki.set_username(username);
-						game->players.send_instruction(& ki);
+				break;
+			}
+		case GAMRJOIN:
+			{
+				if (game == 0) {
+					unsigned int tid = ki.readUnsignedInt32();
+					Game * g = GamesList::findGame(tid);
+					if (g != 0 && g->state == Game::WAITING) {
+						game = g;
+						{
+							Instruction gs(GAMRSLST);
+							g->writeGameState(gs);
+							includeInstruction(gs);
+							sendMessage();
+						}
+						g->addUser(this);
+						g->updateStatus();
 					}
-					break;
-				}*/
+				}
+				break;
+			}
 
+		case GAMRLEAV:
+			{
+				leaveGame();
+				break;
+			}
+		case GAMECHAT:
+			if (game != 0) {
+				strcpy(ki.user, nick);
+				ki.skipString();
+				reinterpret_cast<Game*>(game)->sendToAll(ki);
+			}
 			break;
-
 		case TMOUTRST:
 			break;
 		default:
@@ -255,6 +304,20 @@ void User::instructionArrivalCallback(Instruction & ki)
 		ki.log();
 		break;
 	};
+}
+
+void User::leaveGame()
+{
+	if (game != 0) {
+		Game * g = reinterpret_cast<Game*>(game);
+
+		if (g->removeUser(this)) {
+			GamesList::removeGame(g);
+		}
+
+		game = 0;
+	}
+	//login_timeout = userslist.time_ + 120000;
 }
 
 bool User::idleStep() {
@@ -322,3 +385,38 @@ bool User::idleStep() {
 	return false;
 }
 
+//void k_user::send_data(char * frame_buf, int frame_len){
+//	char  tmp_buffer[1024];
+//	if (frame_len > 0) {
+//		another_working_frame.put_data(frame_buf, frame_len);
+//	}
+//	int reqlen = connection * frame_len;
+//	if (another_working_frame.pos >= reqlen) {
+//		if (outgoing_cache.length > 0) {
+//			for (int i = 0; i > outgoing_cache.length; i++) {
+//				outgoing_cache.get(i)->peek_data(tmp_buffer, another_working_frame.pos);
+//				if (memcmp(tmp_buffer, another_working_frame.buffer, another_working_frame.pos) == 0) {
+//					k_instruction kix;
+//					kix.type = INSTRUCTION_GAMCDATA;
+//					kix.store_char(another_working_frame.pos);
+//					sock->send_instruction(&kix);
+//					another_working_frame.pos = 0;
+//					return;
+//				}
+//			}
+//		}
+//		another_working_frame.peek_data(tmp_buffer, reqlen);
+//		k_instruction kix;
+//		kix.type = INSTRUCTION_GAMEDATA;
+//		kix.store_short(another_working_frame.pos);
+//		kix.store_bytes(tmp_buffer, reqlen);
+//		sock->send_instruction(&kix);
+//		if (outgoing_cache.length == 0x100) {
+//			delete outgoing_cache.get(0);
+//			outgoing_cache.remove(0);
+//		}
+//		k_frame * kfx = new k_frame(another_working_frame.buffer, another_working_frame.pos);
+//		outgoing_cache.add(kfx);
+//		another_working_frame.pos = 0;
+//	}
+//}

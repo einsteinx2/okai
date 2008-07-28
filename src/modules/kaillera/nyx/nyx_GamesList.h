@@ -46,6 +46,7 @@ public:
 		return games.itemsCount();
 	}
 
+	// write game state
 	static void writeGamesState(Instruction &);
 
 	//TODO: do indexed type optimization from 0->maxUsers mod later
@@ -55,6 +56,9 @@ public:
 		return ++id;
 	}
 
-	Game * findGame(unsigned int id);
+	// find a game in list
+	static Game * findGame(unsigned int);
 
+	// remove a game from list
+	static void removeGame(Game *);
 };

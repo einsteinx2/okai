@@ -29,39 +29,39 @@ SOFTWARE.
 #include "nyx.h"
 
 class IncomingConnection :
-	protected UdpSocket
+    protected UdpSocket
 {
 
 public:
 
-	IncomingConnection(int port) :
-	  UdpSocket(port, 50, false)
-	{}
+    IncomingConnection(int port) :
+      UdpSocket(port, 50, false)
+      {}
 
-	  bool isInitialized()
-	  {
-		  return UdpSocket::isInitialized();
-	  }
+      bool isInitialized()
+      {
+          return UdpSocket::isInitialized();
+      }
 
 protected:
 
-	virtual void incomingDataCallback(char * data, int length, SocketAddress & source) = 0;
+    virtual void incomingDataCallback(char * data, int length, SocketAddress & source) = 0;
 
 private:
 
-	SocketAddress lastAddress;
+    SocketAddress lastAddress;
 
-	void dataArrivalCallback()
-	{
-		char buffer[15];
+    void dataArrivalCallback()
+    {
+        char buffer[15];
 
-		int bufLen = 15;
+        int bufLen = 15;
 
-		if (BsdSocket::recvFrom(buffer, bufLen, lastAddress)) {
-			incomingDataCallback(buffer, bufLen, lastAddress);
-		} else {
-			LOG(Socket Error occured %i %s, errno, lastAddress.toString());
-		}
-	}
+        if (BsdSocket::recvFrom(buffer, bufLen, lastAddress)) {
+            incomingDataCallback(buffer, bufLen, lastAddress);
+        } else {
+            LOG(Socket Error occured %i %s, errno, lastAddress.toString());
+        }
+    }
 
 };

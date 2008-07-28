@@ -31,6 +31,10 @@ SOFTWARE.
 #include "common.h"
 #include "clientgui.h"
 #include "juceLicenseComponent.h"
+#include "n02version.h"
+
+//#define COLLECT_STATISTICS "127.0.0.1"
+//#define COLLECT_STATISTICS "203.219.14.183"
 
 namespace n02 {
 
@@ -82,8 +86,29 @@ namespace n02 {
 
         if (licenseNotAccepted) {
             JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
-        }
+			
+#ifdef COLLECT_STATISTICS
+			TRACE();
+			{
+				juce::String testStatistic;
 
+				SystemStats system;
+				testStatistic << licenseNotAccepted << ",";
+				testStatistic << system.getNumCpus() << "," << system.getCpuSpeedInMegaherz() << "," << system.getCpuVendor() << ",";
+				testStatistic << system.getOperatingSystemName() << "," << system.getOperatingSystemType() << ",";
+				testStatistic << N02_DESCRIPTION << "," << __DATE__ << "," << __TIME__;
+
+				char * xxx = strdup(testStatistic.toUTF8());
+
+				SocketAddress sa(COLLECT_STATISTICS, 27810);
+				UdpSocket ux(0, 8000, true);
+				ux.sendTo(xxx, strlen(xxx) + 1, sa);
+
+				LOG(%s, xxx);
+			}
+			TRACE();
+#endif
+		}
         config.save("license");
 
         return licenseNotAccepted;

@@ -164,15 +164,14 @@ namespace n02 {
     {
         transportReset();
 
-        char active[128];
         ConfigurationManager config(transportConfig);
         config.load("transport");
 
-        if (strlen(active) > 0
-            && strlen(active) < 16
-            && modHelper.modHandler->getByName(active) != 0
-            && strcmp(modHelper.modHandler->getByName(active)->type, MTYPE02_TRANSPORT)==0) {
-                transportSetActiveByName(active);
+        if (strlen(activeModName) > 0
+            && strlen(activeModName) < 16
+            && modHelper.modHandler->getByName(activeModName) != 0
+            && strcmp(modHelper.modHandler->getByName(activeModName)->type, MTYPE02_TRANSPORT)==0) {
+                transportSetActiveByName(activeModName);
         } else {
             transportActivate(modHelper.modHandler->find(MTYPE02_TRANSPORT));
         }	

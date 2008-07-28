@@ -185,7 +185,16 @@ private:
 				require(bufLen > 1 + 4 + 2);
 			}
 		} else {
-			LOG(Socket Error occured %i, errno);
+			int er = errno;
+			
+			if (er == 0) {
+				Instruction leave(USERLEAV);
+				leave.writeString("Connection closed");
+				leave.seek(-1 * leave.getFilledSize());
+				instructionArrivalCallback(leave);
+			} else {
+				LOG(Socket Error occured %i, er);
+			}
 		}
 		TRACE();
 	}
