@@ -90,7 +90,7 @@ namespace n02 {
         }
 
         /* send */
-        inline int sendTo(const void * buffer, const int length, SocketAddress & addressPtr) const
+        inline int sendTo(const void * buffer, const int length, const SocketAddress & addressPtr) const
         {
             return (sendto(sock, reinterpret_cast<const char*>(buffer), length, 0, addressPtr.getAddrPtr(), addressPtr.getSize()) == SOCKET_ERROR);
         }

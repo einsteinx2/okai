@@ -99,8 +99,6 @@ namespace n02 {
         void uiModChangeCallback(int index) {
             ModKailleraServerSelect::OnClose();
             modHelper.activeTransportByIndex(index);
-            delete ModKailleraServerSelect::window;
-            ModKailleraServerSelect::window = 0;
         }
 
 
@@ -187,6 +185,9 @@ namespace n02 {
             delete gui;
             gui = 0;
 
+			delete ModKailleraServerSelect::window;
+            //ModKailleraServerSelect::window = 0;
+
             // Save config
             config.save("kaillera");
 
@@ -270,5 +271,4 @@ namespace n02 {
 
     // abstraction stuff...
     STDMODULE(modKaillera, "n02.kaillera", MTYPE02_TRANSPORT, trModKaillera, 0, 0, MOD02_STATUS_WORKING, "Kaillera module"); 
-
 };

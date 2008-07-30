@@ -253,7 +253,7 @@ void juceModDefStressTest::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == sldDelay)
     {
         //[UserSliderCode_sldDelay] -- add your slider handling code here..
-		n02::defStressT::delay = sldDelay->getValue();
+		n02::defStressT::delay = (int)sldDelay->getValue();
         //[/UserSliderCode_sldDelay]
     }
 

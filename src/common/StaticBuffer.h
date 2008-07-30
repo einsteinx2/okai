@@ -62,7 +62,7 @@ namespace n02 {
         }
 
         /* constructor */
-        StaticBuffer(const char * sourceBuffer, const int length){
+        StaticBuffer(const unsigned char * sourceBuffer, const int length){
             presetBufferPtr(sourceBuffer, length);
         }
 
@@ -241,6 +241,11 @@ namespace n02 {
             return end - ptr;
         }
 
+        inline void seek(int value)
+        {
+            if (ptr + value >= begin && ptr + value <= end)
+                ptr += value;
+        }
     public:
 
         inline int copyBuffer(void * targetBuffer)

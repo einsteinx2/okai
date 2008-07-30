@@ -30,6 +30,8 @@ SOFTWARE.
 ******************************************************************************/
 #pragma once
 
+#include "common.h"
+
 //#define JUCE_DLL
 
 #ifdef linux
@@ -74,6 +76,9 @@ SOFTWARE.
 			running = false;												\
 			if (syncThread)													\
 				syncThread->notify();										\
+		}																	\
+		void waitNotifyAndCloseNotify() {									\
+			closeButtonPressed();											\
 		}																	\
 		static Name * window;												\
 		static _Component * cmponnt;										\

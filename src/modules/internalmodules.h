@@ -5,6 +5,7 @@
 	\
 	\
 	\
+	MODULE(modP2P) \
 	MODULE(modKaillera) \
 	\
 	MODULE(modDefStress) \

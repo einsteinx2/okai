@@ -133,15 +133,6 @@ namespace n02 {
 				int syncDataTransfer;
 			} gameInfo;
 
-			typedef struct {
-				unsigned startOff:16; // always equals to 10
-				unsigned type: 2;
-				unsigned length: 7;
-				unsigned player: 3;
-				unsigned sequence: 3;
-				unsigned end: 1;
-			} asyncDataHeader;
-
 #define ASYNCDATA_GAMESYNC 0
              
 			void send(Instruction & instr) {

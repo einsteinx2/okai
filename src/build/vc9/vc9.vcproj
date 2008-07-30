@@ -599,6 +599,62 @@
 			<Filter
 				Name="n02.p2p"
 				>
+				<File
+					RelativePath="..\..\modules\p2p\jucep2pSelect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\jucep2pSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\jucep2pSession.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\jucep2pSession.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\modP2P.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\modP2P.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_Core.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_Core.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_Instruction.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_Messaging.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_uiSelect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_uiSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_uiSession.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\p2p\p2p_uiSession.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="n02.sc"
