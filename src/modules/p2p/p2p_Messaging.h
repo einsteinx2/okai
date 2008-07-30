@@ -92,6 +92,21 @@ namespace n02 {
 				return state == INITIALIZED;
 			}
 
+			void resetState()
+			{
+				lastIncludedInstruction = 0xFFFFFFFF;
+				lastReceivedInstruction = 0xFFFFFFFF;
+				newInstructions = 0;
+
+				while (itemsCount()) {
+					delete getItemPtr(0)->body;
+					removeIndex(0);
+				}
+
+				state = INITIALIZED;
+
+			}
+
             void terminate()
 			{
 				TRACE();
@@ -120,6 +135,10 @@ namespace n02 {
             void setAddress(const SocketAddress & addr)
 			{
 				defaultAddress = addr;
+			}
+			void setLastAddress()
+			{
+				defaultAddress = lastAddress;
 			}
 
             void sendSSRV(const char*c, const int len, const SocketAddress & addr)
@@ -159,7 +178,7 @@ namespace n02 {
                 register int noToSend = common_min(common_min(totalCount, noOfInstructions), 64);
 				void * top = message.getCurrentBinaryPtr();
 
-				message.writeUnsignedInt8(0xff & noToSend);
+				message.writeUnsignedInt8(noToSend ==0? 0xff : 0xff & noToSend);
 				message.writeUnsignedInt32(lastIncludedInstruction);
 				message.writeUnsignedInt32(lastReceivedInstruction);
 
@@ -171,7 +190,7 @@ namespace n02 {
 
 				BsdSocket::sendTo(top, message.getFilledSize(), defaultAddress);
 
-				LOGBUFFER("Sending", top, message.getFilledSize());
+				//LOGBUFFER("Sending", top, message.getFilledSize());
 
 				newInstructions = 0;
                 TRACE();
@@ -203,24 +222,35 @@ namespace n02 {
                 int bufLen = BIG_RECV_BUFFER_SIZE;
 
                 if (BsdSocket::recvFrom(BsdSocket::bigRecvBuffer, bufLen, lastAddress)) {
-					if (bufLen > 5) {
+
+					//LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);
+
+					if (bufLen >= 9) {
 						StaticBuffer<1> message(reinterpret_cast<unsigned char*>(BsdSocket::bigRecvBuffer), bufLen);
 						unsigned char count = message.readUnsignedInt8();
 						if (count != 0) {
 							unsigned int latestInstr = message.readUnsignedInt32();
 							unsigned int latestAck = message.readUnsignedInt32();
 
-							while (getItemPtr(0)->serial <= latestAck) {
-								removeIndex(0);
+							if (count == 0xff)
+								count = 0;
+
+							if (latestAck != 0xffffffff) {
+								//LOG(%i .. %u %u , itemsCount(), latestAck, getItemPtr(0)->serial);
+								while (itemsCount() > 0 && getItemPtr(0)->serial <= latestAck) {
+									delete getItemPtr(0)->body;
+									removeIndex(0);
+								}
 							}
 
-							if (latestInstr > lastReceivedInstruction && (latestInstr - lastReceivedInstruction) <= count) {
+							if ((latestInstr > lastReceivedInstruction && (latestInstr - lastReceivedInstruction) <= count) || lastReceivedInstruction == 0xffffffff) {
 								latestInstr -= count;
-								for (int x = 1; x <= count; x++) {
+								for (int x = 0; x < count; x++) {
 									unsigned char len = message.readUnsignedInt8();
-									if (latestInstr + x > lastReceivedInstruction) {
+									if (latestInstr + x == lastReceivedInstruction) {
 										Instruction i(reinterpret_cast<unsigned char*>(message.getCurrentBinaryPtr()), len);
 										core::instructionArrivalCallback(i);
+										lastReceivedInstruction++;
 									}
 									message.seek(len);
 								}

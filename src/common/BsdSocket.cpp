@@ -120,7 +120,8 @@ namespace n02 {
                 for (int i = 0; i < socketsList.itemsCount(); i++){
                     TRACE();
                     BsdSocket * sck = socketsList[i];
-                    if (FD_ISSET(sck->sock, &tempFdList)!=0){
+					//LOG(%x %i, sck, sck->sock);
+					if (sck->sock != SOCKET_ERROR && FD_ISSET(sck->sock, &tempFdList)!=0){
                         TRACE();
                         sck->dataArrivalCallback();
                     } else {
@@ -190,6 +191,7 @@ namespace n02 {
 
     void BsdSocket::close()
     {
+		TRACE();
         if (sock != SOCKET_ERROR) {
             shutdown(sock, 2);
             closesocket(sock);

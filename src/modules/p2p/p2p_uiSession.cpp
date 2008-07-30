@@ -28,14 +28,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
-
-
-
-
 #include "jucep2pSession.h"
-
 #include "p2p_Core.h"
-
+#include "gameSelect.h"
 
 namespace n02 {
     namespace p2p {
@@ -49,6 +44,14 @@ namespace n02 {
 
 
 
+		void ChatInput::textEditorReturnKeyPressed(class juce::TextEditor & t) {
+			String text = t.getText();
+			if (text.length() > 0) {
+				sendChat(text.toUTF8());
+				t.setText("");
+			}
+		}
+
 
         extern char nick[32];
         extern char ip[128];
@@ -60,9 +63,16 @@ namespace n02 {
 
         int activeGameCaps = 0;
 
+		char game[128];
 
 
 
+
+		static void N02CCNV statusUpdate(char * status) {
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(status)));
+
+
+		}
 
 
 
@@ -71,45 +81,134 @@ namespace n02 {
 
 		}
 
+		static void N02CCNV chatReceived (const char * src, const char * msg)
+		{
+			char buf[512];
+			sprintf_s(buf, 512, "<%s> %s", src, msg);
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
+		}
 
+		static void N02CCNV connected ()
+		{
+			*game = 0;
+		}
+		static void N02CCNV changeGameLocked ()
+		{
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_CGLOCK);
+		}
 
+		void N02CCNV  setUserReady (bool r)
+		{
+			char buf[512];
+			sprintf_s(buf, 512, "You are %sready", r? "": "not ");
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_SET_READY, r? &buf:0);
+		}
+		void N02CCNV  setPeerReady (bool r)
+		{
+			char buf[512];
+			sprintf_s(buf, 512, "Peer is %sready", r? "": "not ");
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
+		}
 
+		void N02CCNV gameChanged (char*g)
+		{
+			strcpy(game, g);
+			char buf[512];
+			sprintf_s(buf, 512, "Game changed to %s", game);
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
 
+			if (modHelper.gameList->find(game)==0) {
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("The game is not available on your list")));
+			} else {
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_UPDATE_CAPS, 0, modHelper.gameList->getCaps(game));
+			}
+			
+		}
+
+		static bool gameIsRunning = false;
+
+		void N02CCNV gameStart (int playerNo, int numPlayers)
+		{
+			modHelper.startGame(game, playerNo, numPlayers);
+			gameIsRunning = true;
+		}
+		void N02CCNV gameEnded ()
+		{
+			statusUpdate("Game endedxxx");
+			if (gameIsRunning) {
+				modHelper.endGame();
+				gameIsRunning = false;
+			}
+		}
+
+		int N02CCNV getSelectedSmoothing ()
+		{
+			return selectedSmoothing;
+		}
 
 
 		static ClientCoreCallbacks callbcaks = {
-			SSRV
+			statusUpdate,
+			SSRV,
+			chatReceived,
+			connected,
+			changeGameLocked,
+			setUserReady,
+			setPeerReady,
+			gameChanged,
+			gameStart,
+			gameEnded,
+			getSelectedSmoothing
 		};
-
-
-
-
 
         void uiReadynessChange(bool ready)
         {
+			if (ready && modHelper.gameList->find(game) ==0) {
+				if (*game ==0)
+					ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("No game selected")));
+				else
+					ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("The selected game is not available on your list")));
+
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_SET_READY, 0);
+			} else
+				coreSetReady(ready);
         }
         void uiGetIP()
         {
         }
         void uiDrop()
         {
+			
         }
         void uiChangeGame()
         {
+			coreChangeGameLock();
         }
         void uiDisconnect()
         {
+			coreDisconnect();
         }
         void uiCpr()
         {
+			coreCpr();
         }
 
 
-		bool isSID(char * dst) {
+		bool isSID(char * dst)
+		{
 			return false;
 		}
 
+		void uiChangeGameCallBack()
+		{
+			char * g = getSelectedGame(ModP2PSessionWindow::window);
+			if (g != 0)
+				coreChangeGameReleaseChange(g);
+			else
+				coreChangeGameReleaseNoChange();
 
+		}
 
         void sessionRun(bool connect)
         {

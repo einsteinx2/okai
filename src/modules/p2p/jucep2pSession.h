@@ -75,6 +75,7 @@ private:
 	{
 		void  handleMessage (const Message &message);
 	} messenger;
+	n02::p2p::ChatInput chatInp;
     //[/UserVariables]
 
     //==============================================================================

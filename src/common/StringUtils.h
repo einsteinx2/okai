@@ -36,7 +36,7 @@ SOFTWARE.
 #include <cstdio>
 #pragma intrinsic(memcpy, strcpy, strlen)
 
-#ifndef N02_WIN32
+#if !defined(N02_WIN32) || defined(N02_GNU)
 
 #define sprintf_s(Y, L, X, ...) \
 {\

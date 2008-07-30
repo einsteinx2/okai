@@ -78,7 +78,11 @@ namespace n02 {
 	// release lock
 #define P2P_INSTF_CHANGE_RELEASE	P2P_INSTRSF(1)
 	// new game
-#define P2P_INSTF_CHANGE_CHANGE		P2P_INSTRSF(1)
+#define P2P_INSTF_CHANGE_CHANGE		P2P_INSTRSF(2)
+	// lock failed
+#define P2P_INSTF_CHANGE_LOCKFAIL	P2P_INSTRSF(3)
+	// lock successful
+#define P2P_INSTF_CHANGE_LOCKED		P2P_INSTRSF(4)
 
 	//== Asynchronous data... partitioning flags
 #define P2P_INSTR_ASYNC				5
@@ -92,6 +96,11 @@ namespace n02 {
 	//== Synchronous data...
 	// data has a 4 byte unsigned int serial field
 #define P2P_INSTF_SYNC_SERIAL		P2P_INSTRF(0)
+
+	//== readyness
+#define P2P_INSTF_READY_READY		P2P_INSTRSF(1)
+#define P2P_INSTF_READY_NOTREADY	P2P_INSTRSF(2)
+
 
 	//== game sync
 	// game synchronization data
@@ -115,6 +124,7 @@ namespace n02 {
 	class Instruction: public StaticBuffer<254>
 	{
 	
+	public:
 		InstructionType type;
 		int flags;
 
@@ -132,7 +142,7 @@ namespace n02 {
 		}
 
 		// see if a flag or something is set
-		bool has(int flag)
+		bool has(int flag) const
 		{
 			return flag == flags || (flags & flag) == flag;
 		}
@@ -141,6 +151,9 @@ namespace n02 {
 		int pack (PackedInstruction & pack)
 		{
 			pack.body = new unsigned char[pack.length = (unsigned char)min(1 + getFilledSize(), 255)];
+
+			//LOG(xxx %i, pack.length );
+
 			pack.body[0] = (type & 0x0f) | (flags & 0x0f) << 4;
 			copyBuffer(pack.body + 1);
 			return pack.length;
@@ -159,13 +172,18 @@ namespace n02 {
 			flags =  (ffield & 0xf0) >> 4;
 			if (len > 1)
 				presetBufferPtr(buffer + 1, len -1);
+			else {
+				begin = const_cast<unsigned char*>(buffer);
+				ptr = begin;
+				end = begin;
+			}
 		}
 		// log
-		void log() {
+		void log() const {
 			LOG(instruction to parse type %i; flags %x, type, flags);
 			LOGBUFFER("Body", ptr, reinterpret_cast<unsigned int>(end) - reinterpret_cast<unsigned int>(ptr));
 		}
-		void logFilled() {
+		void logFilled() const {
 			LOG(instruction filled type %i; flags %x, type, flags);
 			LOGBUFFER("Body", begin, reinterpret_cast<unsigned int>(ptr) - reinterpret_cast<unsigned int>(begin));
 		}

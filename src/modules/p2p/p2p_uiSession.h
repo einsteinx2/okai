@@ -50,9 +50,19 @@ namespace n02 {
 		void uiDisconnect();
 		void uiCpr();
 
+		void uiChangeGameCallBack();
+
 #define MSG_SET_READY 1
 #define MSG_APPEND 2
+#define MSG_CGLOCK 3
+#define MSG_UPDATE_CAPS 4
 
+		class ChatInput: public TextEditorListener {
+			void  textEditorTextChanged (TextEditor &editor){}
+			void  textEditorReturnKeyPressed (TextEditor &editor);
+			void  textEditorEscapeKeyPressed (TextEditor &editor){}
+			void  textEditorFocusLost (TextEditor &editor){}
+		};
 
 	};
 };

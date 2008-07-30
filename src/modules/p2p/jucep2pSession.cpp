@@ -175,6 +175,8 @@ jucep2pSession::jucep2pSession ()
 
 	textLength = 0;
 
+	txtChatInput->addListener(&chatInp);
+
     //[/Constructor]
 }
 
@@ -244,7 +246,7 @@ void jucep2pSession::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == chkReady)
     {
         //[UserButtonCode_chkReady] -- add your button handler code here..
-		n02::p2p::uiReadynessChange(chkRecord->getToggleState());
+		n02::p2p::uiReadynessChange(chkReady->getToggleState());
         //[/UserButtonCode_chkReady]
     }
     else if (buttonThatWasClicked == chkRecord)
@@ -350,9 +352,17 @@ void jucep2pSession::P2PSessionMessageListener::handleMessage(const juce::Messag
 			case MSG_APPEND:
 				{
 					String * s = reinterpret_cast<String*>(param2);
+					s->append(T("\r"), 1);
 					window->appendText(s);
 					delete s;
 				}
+				break;
+			case MSG_CGLOCK:
+				n02::p2p::uiChangeGameCallBack();
+				break;
+			case MSG_UPDATE_CAPS:
+				n02::p2p::activeGameCaps = param3;
+				window->updateAutorunItems();
 				break;
 		};
 	}

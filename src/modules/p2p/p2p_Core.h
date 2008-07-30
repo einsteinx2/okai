@@ -50,8 +50,20 @@ namespace n02 {
 
 
 		typedef struct {
+			void (N02CCNV * statusUpdate)(char * status);
 			void (N02CCNV * SSRV) (const char *, const int);
+			void (N02CCNV * chatReceived) (const char * src, const char * msg);
+			void (N02CCNV * connected) ();
+			void (N02CCNV * changeGameLocked) ();
+			void (N02CCNV * setUserReady) (bool);
+			void (N02CCNV * setPeerReady) (bool);
+			void (N02CCNV * gameChanged) (char*);
+			void (N02CCNV * gameStart) (int, int);
+			void (N02CCNV * gameEnded) ();
+			int  (N02CCNV * getSelectedSmoothing) ();
 		} ClientCoreCallbacks;
+
+#define MASK_INITIAL_FRAMES 60
 
 
 		bool coreInitialize (const char * userName, ClientCoreCallbacks * callbacks, const int localPort);

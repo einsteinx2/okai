@@ -79,20 +79,23 @@ namespace n02 {
         transport.sendAsyncData(value, len, position);	
     }
     static void N02CCNV gameplaySendSyncData(const void * value, const int len){
+#if 0
         char strBuffer[256];
         StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
         LOG(%s; %i, strBuffer, len);
+#endif
         transport.sendSyncData(value, len);
     }
     static int  N02CCNV gameplayRecvSyncData(void * value, const int len){
         int return_val = transport.recvSyncData(value, len);
         recorder.addSyncData(value, return_val);
+#if 0
         {
             char strBuffer[256];
             StringUtils::bytesToStr(strBuffer, (unsigned char*)value, len);
             LOG(%s; %i; ret=%i, strBuffer, len, return_val);
         }
-
+#endif
         return return_val;
     }
     static int  N02CCNV gameplaySyncData(void * value, const int len){

@@ -72,7 +72,7 @@ namespace n02 {
         /* write specified no of bytes to the buffer */
         inline void writeBytes(const void * bytes, const int length)
         {
-            require(end - ptr <= length && bytes != 0 && length != 0);
+            require(end - ptr >= length && bytes != 0 && length != 0);
             memcpy(ptr, bytes, length);
             ptr += length;
         }
@@ -90,7 +90,7 @@ namespace n02 {
         }
 
 #define _primitive_write(_type) \
-    require(end - ptr < sizeof(_type)); \
+    require(end - ptr >= sizeof(_type)); \
     *reinterpret_cast<_type*>(ptr) = value; \
     ptr += sizeof(_type);
 
@@ -166,7 +166,7 @@ namespace n02 {
         }
 
 #define _primitive_read_return(_type) \
-    require(end - ptr > sizeof(_type)); \
+    require(end - ptr >= sizeof(_type)); \
     register _type return_value = *reinterpret_cast<_type*>(ptr);\
     ptr += sizeof(_type);\
     return return_value;

@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Development|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\temp\dev"
 			ConfigurationType="2"
 			CharacterSet="1"
 			WholeProgramOptimization="1"

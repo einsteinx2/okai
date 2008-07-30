@@ -273,7 +273,7 @@ namespace n02 {
                 }
                 FindClose(hFind);
             } else {
-                LOG(Invalid directory);
+                LOGS(Invalid directory);
             }
             SetCurrentDirectoryA(currentDir);
         }
@@ -290,7 +290,7 @@ namespace n02 {
 
         void search() {
 
-            LOG(Searching for okai modules);
+            LOGS(Searching for okai modules);
 
             char currentDir[2048];
 
