@@ -96,7 +96,6 @@ namespace n02 {
 				int inputLength;
 				int totalInputLength;
 				unsigned char playerNo;
-				unsigned char numPlayers;
 				DataQueue myBuffer;
 				DataQueue inBuffer;
 				unsigned char defaultInput[256];
@@ -117,6 +116,14 @@ namespace n02 {
 				connection.include(instr);
 				if (state != CONNECTED && (state != RUNNING || instr.type == SYNC))
 					connection.sendMessage();
+			}
+
+			void endGame(int reason) {
+				Instruction drop(DROP, reason);
+				send(drop);
+				callbacks.gameEnded();
+				resetLocalReadyness();
+				//resetGameInfo();
 			}
 
 			// state transformation function
@@ -200,6 +207,7 @@ namespace n02 {
 							return;
 						} else if (input == RECVED_ACK) {
 							state = CONNECTED;
+							usersInfo.cgLocked = false;
 
 							Instruction hello(HELLO, P2P_INSTF_HELLO_ACK);
 							hello.writeSignedInt8(N02_P2P_CORE_VERSION);
@@ -229,6 +237,7 @@ namespace n02 {
 					case CONNECTING:
 						if (input == RECVED_ACK) {
 							state = CONNECTED;
+							usersInfo.cgLocked = false;
 
 							callbacks.statusUpdate("Connection confirmed");
 							callbacks.connected();
@@ -290,11 +299,7 @@ namespace n02 {
 							return;
 						} else if (input == RECVED_DROP || input == ACTION_END) {
 
-							Instruction drop(DROP, 1);
-							send(drop);
-
-							callbacks.gameEnded();
-							resetLocalReadyness();
+							endGame(1);
 
 							state = CONNECTED;
 							return;
@@ -302,11 +307,8 @@ namespace n02 {
 						break;
 					case LOADED:
 						if (input == RECVED_DROP || input == ACTION_END) {
-							Instruction drop(DROP, 1);
-							send(drop);
-
-							callbacks.gameEnded();
-							resetLocalReadyness();
+							
+							endGame(1);
 
 							state = CONNECTED;
 							return;
@@ -339,10 +341,7 @@ namespace n02 {
 						break;
 					case ALLLOADED:
 						if (input == RECVED_DROP || input == ACTION_END) {
-							Instruction drop(DROP, 1);
-							send(drop);
-							callbacks.gameEnded();
-							resetLocalReadyness();
+							endGame(1);
 							state = CONNECTED;
 							return;
 						} else if (input == ACTION_IDLE) {
@@ -376,7 +375,9 @@ namespace n02 {
 
 							} else if (gameInfo.totalInputLength == 4) {
 								gameInfo.ping = (GlobalTimer::getTime() - gameInfo.ping) / gameInfo.totalInputLength;
-								gameInfo.delay = (int) gameInfo.ping * 100000 / client->app.framerate;
+								gameInfo.delay = (int) gameInfo.ping * client->app.framerate / 100000;
+
+								gameInfo.delay /= 2;
 
 								Instruction gsnc(GSYNC);
 								
@@ -389,6 +390,7 @@ namespace n02 {
 								send(gsnc);
 
 								LOG(ping is %i, gameInfo.ping);
+								LOG(delay is %i, gameInfo.delay);
 								
 							}
 							return;
@@ -404,10 +406,7 @@ namespace n02 {
 							if (time - lastDataSent > 100) {
 								lastDataSent = time;
 								if (time - lastDataReceived > 12000) {
-									Instruction drop(DROP, 2);
-									send(drop);
-									callbacks.gameEnded();
-									resetLocalReadyness();
+									endGame(2);
 									state = CONNECTED;
 								} else {
 									connection.sendMessage(60);
@@ -415,10 +414,7 @@ namespace n02 {
 							}
 							return;
 						} else if (input == RECVED_DROP || input == ACTION_END) {
-							Instruction drop(DROP, 1);
-							send(drop);
-							callbacks.gameEnded();
-							resetLocalReadyness();
+							endGame(1);
 							state = CONNECTED;
 							return;
 						}
@@ -515,14 +511,27 @@ namespace n02 {
 					case GSYNC:
 						{
 							int delay = instr.readUnsignedInt8();
+
+							LOG(Local delay %i, gameInfo.delay);
+							LOG(Received delay %i, delay);
+
 							int smoothing = instr.readUnsignedInt8();
+
+							LOG(Local smoothing %i, callbacks.getSelectedSmoothing());
+							LOG(Received smoothing %i, smoothing);
+
 							int inlen = instr.readSignedInt8();
 
 							gameInfo.delay = (delay + gameInfo.delay) / 2;
+
+							gameInfo.delay += 1;
+
 							smoothing += callbacks.getSelectedSmoothing();
 							smoothing /= 2;
 
-							delay += smoothing;
+							gameInfo.delay += smoothing;
+
+							LOG(FInal delay %i, gameInfo.delay);
 
 							if (inlen == gameInfo.inputLength && inlen > 0) {
 								instr.readBytes(gameInfo.defaultInput + (((gameInfo.playerNo - 1) ^ 1) * gameInfo.inputLength), inlen);
@@ -532,6 +541,9 @@ namespace n02 {
 						break;
 					case SYNC:
 						gameInfo.inBuffer.push(instr.getCurrentBinaryPtr(), gameInfo.inputLength);
+						break;
+					case DROP:
+						updateState(RECVED_DROP);
 						break;
 					default:
 						instr.log();
@@ -553,7 +565,6 @@ namespace n02 {
 			gameInfo.delay = 0;
 			gameInfo.inputLength = 0;
 			gameInfo.totalInputLength = 0;
-			gameInfo.numPlayers = 0;
 			gameInfo.myBuffer.reset();
 			gameInfo.inBuffer.reset();
 		}
@@ -714,30 +725,51 @@ namespace n02 {
 				}
 
 				if (gameInfo.frame + gameInfo.delay <= MASK_INITIAL_FRAMES) {
+					//printf("M");
 					Instruction data(SYNC);
 					data.writeBytes(gameInfo.defaultInput, len);
 					send(data);
 					gameInfo.myBuffer.push(gameInfo.defaultInput, len);
+
+					//printf("{%08x/",*reinterpret_cast<const int*>(value));
+					//for (int x = 0; x < gameInfo.myBuffer.length(); x+=4) {
+					//	printf("%08x", *(reinterpret_cast<int*>(gameInfo.myBuffer.front())+x/4));
+					//}
+
+					//printf(":%i}", gameInfo.myBuffer.length());
+
+
 					return;
 				}
 #endif
 
 				Instruction data(SYNC);
-				data.writeBytes(value, len);
-				gameInfo.myBuffer.push(value, len);
+				data.writeBytes(value, gameInfo.inputLength);
+				gameInfo.myBuffer.push(value, gameInfo.inputLength);
 				send(data);
+
+				//printf("{%08x/",*reinterpret_cast<const int*>(value));
+				//for (int x = 0; x < gameInfo.myBuffer.length(); x+=4) {
+				//	printf("%08x", *(reinterpret_cast<int*>(gameInfo.myBuffer.front())+x/4));
+				//}
+
+				//printf(":%i}", gameInfo.myBuffer.length());
+
 			}
 		}
 
 		int  N02CCNV recvSyncData(void * value, const int len)
 		{
 			if (state==RUNNING) {
-				if (++gameInfo.frame >= gameInfo.delay) {
+				if (++gameInfo.frame > gameInfo.delay) {
 					while (gameInfo.inBuffer.length() == 0 && state == RUNNING) {
 						stepc(2);
 					}
 
 					if (gameInfo.inBuffer.length() > 0) {
+						
+						//printf("{%i/%i/%08x}",gameInfo.inBuffer.length(), gameInfo.myBuffer.length(), *reinterpret_cast<int*>(gameInfo.myBuffer.front()));
+
 						gameInfo.inBuffer.pop(reinterpret_cast<unsigned char*>(value) + (1 ^ (gameInfo.playerNo -1)) * gameInfo.inputLength, gameInfo.inputLength);
 						gameInfo.myBuffer.pop(reinterpret_cast<unsigned char*>(value) + (0 ^ (gameInfo.playerNo -1)) * gameInfo.inputLength, gameInfo.inputLength);
 #ifdef MASK_INITIAL_FRAMES
@@ -753,9 +785,8 @@ namespace n02 {
 #endif
 					return 0;
 				}
-			} else {
-				return -1;
 			}
+			return -1;
 		}
 		int  N02CCNV syncData(void * value, const int len)
 		{

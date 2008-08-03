@@ -40,33 +40,29 @@ SOFTWARE.
 namespace n02 {
     namespace p2p {
 
-		// callbacks
+        // callbacks
         namespace core {
             void instructionArrivalCallback(Instruction & instr);
-			void ssrvCallback(char *, int);
+            void ssrvCallback(char *, int);
         };
 
-		// state
+        // state
         enum MessagingState {
             UNINITIALIZED, // uninitialized
             INITIALIZED, // initialized but not connected
             INSTSONLY // connected
         };
 
-		//class
-        class Messaging:
-            private UdpSocket,
-            private DynamicOrderedArray<PackedInstruction, MAX_CACHED_INSTRS * 2>		
-        {
+        //class
+        class Messaging: private UdpSocket, private DynamicOrderedArray<PackedInstruction, MAX_CACHED_INSTRS> {
         private:
-            
-			MessagingState state;
-            
-			// last isntruction we included
-			unsigned int lastIncludedInstruction;
+            MessagingState state;
+
+            // last isntruction we included
+            unsigned int lastIncludedInstruction;
             // last instruction we received
-			unsigned int lastReceivedInstruction;
-			// no of new instructions since last send
+            unsigned int lastReceivedInstruction;
+            // no of new instructions since last send
             int newInstructions;
 
         public:
@@ -76,85 +72,80 @@ namespace n02 {
             Messaging() : state(UNINITIALIZED), UdpSocket(){}
 
             bool initialize(int localPort)
-			{
-				require(state == UNINITIALIZED);
+            {
+                require(state == UNINITIALIZED);
+                resetState();
+                if (UdpSocket::initialize(localPort, 32000)) {
+                    state = INITIALIZED;
+                } else {
+                    state = UNINITIALIZED;
+                    close();
+                }
+                return state == INITIALIZED;
+            }
 
-				lastIncludedInstruction = 0xFFFFFFFF;
-				lastReceivedInstruction = 0xFFFFFFFF;
-				
-				newInstructions = 0;
+            void resetState()
+            {
+                lastIncludedInstruction = 0xFFFFFFFF;
+                lastReceivedInstruction = 0xFFFFFFFF;
+                newInstructions = 0;
 
-				if (UdpSocket::initialize(localPort, 32000)) {
-					state = INITIALIZED;
-				} else {
-					close();
-				}
-				return state == INITIALIZED;
-			}
+                while (itemsCount()) {
+                    delete getItemPtr(0)->body;
+                    removeIndex(0);
+                }
 
-			void resetState()
-			{
-				lastIncludedInstruction = 0xFFFFFFFF;
-				lastReceivedInstruction = 0xFFFFFFFF;
-				newInstructions = 0;
-
-				while (itemsCount()) {
-					delete getItemPtr(0)->body;
-					removeIndex(0);
-				}
-
-				state = INITIALIZED;
-
-			}
+                state = INITIALIZED;
+            }
 
             void terminate()
-			{
-				TRACE();
-				require(state != UNINITIALIZED);
+            {
+                TRACE();
+                require(state != UNINITIALIZED);
 
-				while (itemsCount() > 0) {
-					delete getItemPtr(0)->body;
-					removeIndex(0);
-				}
+                while (itemsCount() > 0) {
+                    delete getItemPtr(0)->body;
+                    removeIndex(0);
+                }
 
-				close();
+                close();
 
-				state = UNINITIALIZED;
-				TRACE();
-			}
+                state = UNINITIALIZED;
+                TRACE();
+            }
 
-			void setConnected(bool c)
-			{
-				require(state != UNINITIALIZED);
-				if (c)
-					state = INSTSONLY;
-				else
-					state = INITIALIZED;			
-			}
+            void setConnected(bool c)
+            {
+                require(state != UNINITIALIZED);
+                if (c)
+                    state = INSTSONLY;
+                else
+                    state = INITIALIZED;			
+            }
 
             void setAddress(const SocketAddress & addr)
-			{
-				defaultAddress = addr;
-			}
-			void setLastAddress()
-			{
-				defaultAddress = lastAddress;
-			}
+            {
+                defaultAddress = addr;
+            }
+            void setLastAddress()
+            {
+                defaultAddress = lastAddress;
+            }
 
             void sendSSRV(const char*c, const int len, const SocketAddress & addr)
-			{
-				StaticBuffer<1024> message;
-				void * top = message.getCurrentBinaryPtr();
-				message.writeSignedInt8(0);
-				message.writeBytes(c, len);
-				BsdSocket::sendTo(top, message.getFilledSize(), addr);
-			}
+            {
+                StaticBuffer<1024> message;
+                void * top = message.getCurrentBinaryPtr();
+                message.writeSignedInt8(0);
+                message.writeBytes(c, len);
+                BsdSocket::sendTo(top, message.getFilledSize(), addr);
+            }
 
             void include(Instruction & instr) {
                 TRACE();
                 PackedInstruction packedFormat;
                 instr.pack(packedFormat);
-				packedFormat.serial = 0xffffffff & ++lastIncludedInstruction;
+                packedFormat.serial = 0xffffffff & ++lastIncludedInstruction;
                 addItem(packedFormat);
                 newInstructions++;
                 TRACE();
@@ -170,29 +161,28 @@ namespace n02 {
             inline void sendMessage(const int noOfInstructions)
             {
                 TRACE();
-				
-				require(state != UNINITIALIZED);
+                require(state != UNINITIALIZED);
 
-				register StaticBuffer<2048> message;
-				register int totalCount = itemsCount();
+                register StaticBuffer<2048> message;
+                register int totalCount = itemsCount();
                 register int noToSend = common_min(common_min(totalCount, noOfInstructions), 64);
-				void * top = message.getCurrentBinaryPtr();
+                void * top = message.getCurrentBinaryPtr();
 
-				message.writeUnsignedInt8(noToSend ==0? 0xff : 0xff & noToSend);
-				message.writeUnsignedInt32(lastIncludedInstruction);
-				message.writeUnsignedInt32(lastReceivedInstruction);
+                message.writeUnsignedInt8(noToSend ==0? 0xff : 0xff & noToSend);
+                message.writeUnsignedInt32(lastIncludedInstruction);
+                message.writeUnsignedInt32(lastReceivedInstruction);
 
-				for (int x = totalCount - noToSend; x < totalCount; x++) {
-					PackedInstruction * packed = getItemPtr(x);
-					message.writeSignedInt8(packed->length);
-					message.writeBytes(packed->body, packed->length);
-				}
+                for (int x = totalCount - noToSend; x < totalCount; x++) {
+                    PackedInstruction * packed = getItemPtr(x);
+                    message.writeSignedInt8(packed->length);
+                    message.writeBytes(packed->body, packed->length);
+                }
 
-				BsdSocket::sendTo(top, message.getFilledSize(), defaultAddress);
+                BsdSocket::sendTo(top, message.getFilledSize(), defaultAddress);
 
-				//LOGBUFFER("Sending", top, message.getFilledSize());
+                //LOGBUFFER("Sending", top, message.getFilledSize());
 
-				newInstructions = 0;
+                newInstructions = 0;
                 TRACE();
             }
 
@@ -209,7 +199,7 @@ namespace n02 {
                 BsdSocket::step(0, ms);
             }
 
-			// todo add sendSSRV
+            // todo add sendSSRV
 
         private:
 
@@ -223,50 +213,50 @@ namespace n02 {
 
                 if (BsdSocket::recvFrom(BsdSocket::bigRecvBuffer, bufLen, lastAddress)) {
 
-					//LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);
+                    //LOGBUFFER("Received", BsdSocket::bigRecvBuffer, bufLen);
 
-					if (bufLen >= 9) {
-						StaticBuffer<1> message(reinterpret_cast<unsigned char*>(BsdSocket::bigRecvBuffer), bufLen);
-						unsigned char count = message.readUnsignedInt8();
-						if (count != 0) {
-							unsigned int latestInstr = message.readUnsignedInt32();
-							unsigned int latestAck = message.readUnsignedInt32();
+                    if (bufLen >= 9) {
+                        StaticBuffer<1> message(reinterpret_cast<unsigned char*>(BsdSocket::bigRecvBuffer), bufLen);
+                        unsigned char count = message.readUnsignedInt8();
+                        if (count != 0) {
+                            unsigned int latestInstr = message.readUnsignedInt32();
+                            unsigned int latestAck = message.readUnsignedInt32();
 
-							if (count == 0xff)
-								count = 0;
+                            if (count == 0xff)
+                                count = 0;
 
-							if (latestAck != 0xffffffff) {
-								//LOG(%i .. %u %u , itemsCount(), latestAck, getItemPtr(0)->serial);
-								while (itemsCount() > 0 && getItemPtr(0)->serial <= latestAck) {
-									delete getItemPtr(0)->body;
-									removeIndex(0);
-								}
-							}
+                            if (latestAck != 0xffffffff) {
+                                //LOG(%i .. %u %u , itemsCount(), latestAck, getItemPtr(0)->serial);
+                                while (itemsCount() > 0 && getItemPtr(0)->serial <= latestAck) {
+                                    delete getItemPtr(0)->body;
+                                    removeIndex(0);
+                                }
+                            }
 
-							if ((latestInstr > lastReceivedInstruction && (latestInstr - lastReceivedInstruction) <= count) || lastReceivedInstruction == 0xffffffff) {
-								latestInstr -= count;
-								for (int x = 0; x < count; x++) {
-									unsigned char len = message.readUnsignedInt8();
-									if (latestInstr + x == lastReceivedInstruction) {
-										Instruction i(reinterpret_cast<unsigned char*>(message.getCurrentBinaryPtr()), len);
-										core::instructionArrivalCallback(i);
-										lastReceivedInstruction++;
-									}
-									message.seek(len);
-								}
-							}
-						} else {
-							count = message.readUnsignedInt8();
-							if (count != 0) {
-								message.seek(-1);
-								core::ssrvCallback(message.getCurrentStringPtr(), message.getSpaceLeft());
-							} else {
-								//TODO: other
-							}
-						}
-					} else {
-						LOG(Invalid len message %i, bufLen);
-					}                    
+                            latestInstr -= count;
+                            for (int x = 0; x < count; x++) {
+                                unsigned char len = message.readUnsignedInt8();
+                                if ((latestInstr + x) == lastReceivedInstruction) {
+                                    Instruction i(reinterpret_cast<unsigned char*>(message.getCurrentBinaryPtr()), len);
+                                    core::instructionArrivalCallback(i);
+                                    lastReceivedInstruction++;
+                                }
+                                message.seek(len);
+                            }
+                        } else {
+                            count = message.readUnsignedInt8();
+                            if (count != 0) {
+                                if (state == INITIALIZED) {
+                                    message.seek(-1);
+                                    core::ssrvCallback(message.getCurrentStringPtr(), message.getSpaceLeft());
+                                }
+                            } else {
+                                //TODO: other
+                            }
+                        }
+                    } else {
+                        LOG(Invalid len message %i, bufLen);
+                    }
                 } else {
                     LOG(Socket Error occured %i, errno);
                 }

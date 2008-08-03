@@ -228,6 +228,7 @@ namespace n02 {
 			char txt[512];
 			sprintf_s(txt, 511, "<%s> %s\r", userName, message);
 			sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
+			modHelper.chatReceived(userName, message);
 
 			TRACE();
 		}

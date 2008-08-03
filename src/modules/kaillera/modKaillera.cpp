@@ -230,10 +230,10 @@ namespace n02 {
         {
             g.setColour (Colours::black);
             if (columnId == 2) {
-                const String text (uiServersIP.getItem(rowNumber));
+				const String text (FROMUTF8(uiServersIP.getItem(rowNumber)));
                 g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
             } else {
-                const String text (uiServersName.getItem(rowNumber));
+                const String text (FROMUTF8(uiServersName.getItem(rowNumber)));
                 g.drawText (text, 4, 0, width - 6, height, Justification::centredLeft, true);
             }
             g.setColour (Colours::black.withAlpha (0.2f));

@@ -158,10 +158,10 @@ namespace n02 {
         {
             g.setColour (Colours::black);
             if (columnId == 2) {
-                const String text (ips.getItem(rowNumber));
+                const String text (FROMUTF8(ips.getItem(rowNumber)));
                 g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
             } else {
-                const String text (names.getItem(rowNumber));
+                const String text (FROMUTF8(names.getItem(rowNumber)));
                 g.drawText (text, 4, 0, width - 6, height, Justification::centredLeft, true);
             }
             g.setColour (Colours::black.withAlpha (0.2f));
@@ -192,8 +192,6 @@ namespace n02 {
                 //uibtnConnectCallback();
             }
         }
-
-
 	};
 };
 

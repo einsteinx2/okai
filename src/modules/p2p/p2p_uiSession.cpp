@@ -86,6 +86,7 @@ namespace n02 {
 			char buf[512];
 			sprintf_s(buf, 512, "<%s> %s", src, msg);
 			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
+			modHelper.chatReceived(src, msg);
 		}
 
 		static void N02CCNV connected ()
@@ -176,10 +177,11 @@ namespace n02 {
         }
         void uiGetIP()
         {
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("Not implemented")));
         }
         void uiDrop()
         {
-			
+			endGame();
         }
         void uiChangeGame()
         {

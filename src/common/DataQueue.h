@@ -32,6 +32,7 @@ SOFTWARE.
 #pragma once
 
 #include "_common.h"
+#include <cstdio>
 
 namespace n02 {
 
@@ -96,6 +97,7 @@ namespace n02 {
             require (dataLen > 0 && data != 0);
             ensureSized(dataLen);
             memcpy(ptr, data, dataLen);
+			//printf("[%08x:%i]", *reinterpret_cast<int*>(ptr), ptr - begin);
             ptr += dataLen;
             return ptr - begin;
         }
@@ -129,7 +131,7 @@ namespace n02 {
             int min_copy_length;
             if ((min_copy_length = common_min (dataBufferLen, ptr - begin)) > 0) {
                 memcpy(dataBuffer, begin, min_copy_length);
-                memcpy(begin, begin+min_copy_length, min_copy_length);
+                memcpy(begin, begin+min_copy_length, (ptr - begin) - min_copy_length);
                 ptr -= min_copy_length;
                 return min_copy_length;
             }
@@ -154,6 +156,7 @@ namespace n02 {
         {
             if (begin) {
                 if (ptr + extraDataLen > end) {
+					//printf("redo");
                     int new_size = (end - begin) << 1;
                     while (begin + new_size < ptr + extraDataLen) {
                         new_size = new_size << 1;
@@ -164,6 +167,7 @@ namespace n02 {
                     end = begin + new_size;
                 }
             } else {
+				//printf("inalloc");
                 begin = ptr = commonAlloc<unsigned char>(extraDataLen * 8);
                 end = begin + extraDataLen * 8;
             }
