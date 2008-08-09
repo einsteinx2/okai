@@ -138,7 +138,6 @@ namespace n02 {
 		{
 			statusUpdate("Game endedxxx");
 			if (gameIsRunning) {
-				modHelper.endGame();
 				gameIsRunning = false;
 			}
 		}

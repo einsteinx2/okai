@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -28,47 +28,20 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
+#pragma once
 
-#include "addEditIP.h"
-#include "common.h"
-#include "juceAddEditIPDialog.h"
-#include "clientgui.h"
-#include "locid.h"
+#include "juce02.h"
 
 namespace n02 {
 
-    namespace addedit {
-        int returnValue;
-        char name[128];
-        char ip[128];
-    };
+    void initializeLocalisation();
+    void terminateLocalisation();
+    void showLocalisationConfig();
 
-    bool AddNewIP(Component * parent) {
-        addedit::returnValue = 0;
-        juceAddEditIPDialog * newCmp;
-		DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-        delete newCmp;
-        return addedit::returnValue == 1;
-    }
-    bool EditIP(Component * parent, char * NAME, char * IP) {
-        strcpy(addEditGetIP(), IP);
-        strcpy(addEditGetName(), NAME);
+    char * getLocalisedUTF8(int ID);
+    juce_wchar * getLocalisedUTF16(int ID);
 
-        addedit::returnValue = 1;
+#define LUTF8(X) getLocalisedUTF8(X)
+#define LUTF16(X) getLocalisedUTF16(X)
 
-        juceAddEditIPDialog * newCmp;
-
-		DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-
-        delete newCmp;
-
-        return addedit::returnValue == 1;
-    }
-    char * addEditGetIP() {
-        return addedit::ip;
-    }
-    char * addEditGetName() {
-        return addedit::name;
-    }
 };
-

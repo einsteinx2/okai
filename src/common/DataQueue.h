@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -97,7 +97,7 @@ namespace n02 {
             require (dataLen > 0 && data != 0);
             ensureSized(dataLen);
             memcpy(ptr, data, dataLen);
-			//printf("[%08x:%i]", *reinterpret_cast<int*>(ptr), ptr - begin);
+            //printf("[%08x:%i]", *reinterpret_cast<int*>(ptr), ptr - begin);
             ptr += dataLen;
             return ptr - begin;
         }
@@ -156,7 +156,7 @@ namespace n02 {
         {
             if (begin) {
                 if (ptr + extraDataLen > end) {
-					//printf("redo");
+                    //printf("redo");
                     int new_size = (end - begin) << 1;
                     while (begin + new_size < ptr + extraDataLen) {
                         new_size = new_size << 1;
@@ -167,7 +167,7 @@ namespace n02 {
                     end = begin + new_size;
                 }
             } else {
-				//printf("inalloc");
+                //printf("inalloc");
                 begin = ptr = commonAlloc<unsigned char>(extraDataLen * 8);
                 end = begin + extraDataLen * 8;
             }

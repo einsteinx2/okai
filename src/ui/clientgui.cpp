@@ -61,6 +61,9 @@ namespace n02 {
 		String stat;
 		stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
 		LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
+
+		initializeLocalisation();
+
 	}
 
     /* Thread juice */
@@ -162,6 +165,9 @@ namespace n02 {
         guiThread.stop();
         guiThread.guiInitialized = 0;
         interfGuiThreadEndCallback();
+
+		terminateLocalisation();
+
         return 0;
     }
 

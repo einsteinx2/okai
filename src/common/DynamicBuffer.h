@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -149,7 +149,7 @@ namespace n02 {
         /* read specified no of bytes */
         inline int readBytes(void * bytes, const int length)
         {
-            require (end - ptr >= length && length > 0);
+            require (end - ptr >= length && length >= 0);
             memcpy(bytes, ptr, length);
             ptr += length;
             return length;
@@ -293,6 +293,16 @@ namespace n02 {
             begin = body;
             ptr = begin;
             end = begin + _InitialLen;
+        }
+
+		inline void resetEx(unsigned char * c, int len)
+        {
+			if (body)
+				commonFree<unsigned char>(body);
+
+            begin = body = c;
+            ptr = begin;
+            end = begin + len;
         }
 
     protected:

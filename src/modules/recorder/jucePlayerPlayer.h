@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Aug 2008 3:03:23 pm
+  Creation date:  9 Aug 2008 9:16:09 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
-#define __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
+#ifndef __JUCER_HEADER_JUCEPLAYERPLAYER_JUCEPLAYERPLAYER_C6709985__
+#define __JUCER_HEADER_JUCEPLAYERPLAYER_JUCEPLAYERPLAYER_C6709985__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "clientgui.h"
@@ -36,13 +36,12 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class juceAddEditIPDialog  : public Component,
-                             public ButtonListener
+class jucePlayerPlayer  : public Component
 {
 public:
     //==============================================================================
-    juceAddEditIPDialog ();
-    ~juceAddEditIPDialog();
+    jucePlayerPlayer ();
+    ~jucePlayerPlayer();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -50,7 +49,7 @@ public:
 
     void paint (Graphics& g);
     void resized();
-    void buttonClicked (Button* buttonThatWasClicked);
+    void handleCommandMessage (int commandId);
 
 
     //==============================================================================
@@ -58,21 +57,18 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	int textLength;
     //[/UserVariables]
 
     //==============================================================================
-    Label* label;
-    Label* label2;
-    TextEditor* txtName;
-    TextEditor* txtIP;
-    TextButton* btnAdd;
-    TextButton* btnCancel;
+    ProgressBar* pbProgress;
+    TextEditor* txtStatus;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    juceAddEditIPDialog (const juceAddEditIPDialog&);
-    const juceAddEditIPDialog& operator= (const juceAddEditIPDialog&);
+    jucePlayerPlayer (const jucePlayerPlayer&);
+    const jucePlayerPlayer& operator= (const jucePlayerPlayer&);
 };
 
 
-#endif   // __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
+#endif   // __JUCER_HEADER_JUCEPLAYERPLAYER_JUCEPLAYERPLAYER_C6709985__

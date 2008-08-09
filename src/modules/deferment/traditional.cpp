@@ -86,7 +86,7 @@ namespace n02 {
                 }
                 TRACE(); autorun->callbackRunFrame(drawFrame? GAME_RUNFRAME_DRAW: GAME_RUNFRAME_NODRAW, 1);
             } else {
-                TRACE(); modHelper.endGame();
+                //TRACE(); modHelper.endGame();
             }
             TRACE();
         }
@@ -95,7 +95,7 @@ namespace n02 {
     using namespace deferment;
 
     static RunAlgorithmInterface02 raTradDelay = {
-        RA_GENERIC,
+		RA_GENERIC | RA_TRAD,
         initialize,
         getGameplayType,
         terminate,

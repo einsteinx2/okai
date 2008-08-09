@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -105,7 +105,14 @@ namespace n02 {
 #define GTSADFA_START_GAME 2
 #define GTSADFA_END_GAME 1
 
+	static int gameEndType;
+#define ENDTYPE_TRANSPORT 1
+#define ENDTYPE_USER 2
+
     void N02CCNV interfStartGame (const char * gameP, const int playerNoP, const int numPlayersP){
+
+		gameEndType = 0;
+
         LOG(%s; %i / %i, gameP, playerNoP, numPlayersP);
         strcpy(game, gameP);
         playerNo = playerNoP;
@@ -151,7 +158,17 @@ namespace n02 {
             client->gameplay.callbackGameLoad(game, playerNo, numPlayers, gamePlayType);			
         }
     }
+
+	// this is the version outside calls
     void N02CCNV  interfEndGame (){
+        LOGS(0);
+		gameEndType = ENDTYPE_USER;
+		defaultGameplayInterface.endGame();
+		//gtsandfa.input = GTSADFA_END_GAME;
+    }
+
+	// game ended is when game ends in transport without any help from the host application
+	void N02CCNV  interfGameEnded (){
         LOGS(0);
         TRACE(); recorder.stop();
 
@@ -159,12 +176,15 @@ namespace n02 {
             TRACE(); autorun.terminate();
         }
 
-        if (autom == 0) {
+        //if (autom == 0) {
             gtsandfa.input = GTSADFA_END_GAME;
-        }
+        //}
 
-        TRACE(); client->gameplay.callbackGameEnd();	
+		if (gameEndType != ENDTYPE_USER) {
+			TRACE(); client->gameplay.callbackGameEnd();
+		}
     }
+
     void N02CCNV  interfChatReceived (const char *nick, const char *text){
         LOG(%s; %s, nick, text);
         if (gtsandfa.state==2) {
@@ -280,13 +300,13 @@ namespace n02 {
                     //				__try {
                     bool exit = false;
                     do {
-                        TRACE();
+                        // TRACE();
                         gtsandfa.state = gtsandfaTT[((gtsandfa.state)<<2)|gtsandfa.input];
                         gtsandfa.input = 0;
                         switch (gtsandfa.state) {
                             case 0: // Normal
                                 {
-                                    TRACE();
+                                    //TRACE();
 #ifdef N02_WIN32
                                     MSG message;
                                     while (PeekMessage(&message, 0, 0, 0, PM_REMOVE)){
@@ -294,7 +314,7 @@ namespace n02 {
                                         DispatchMessage(&message);
                                     }
 #endif
-                                    TRACE();
+                                    //TRACE();
                                     if (transport.step()){
                                         continue;
                                     }
@@ -322,7 +342,7 @@ namespace n02 {
                                 exit = true;
                                 break;
                         };
-                        TRACE();
+                        //TRACE();
                         PosixThread::sleep(500); // clock
                     } while (!exit); // Exit state
 
@@ -451,9 +471,9 @@ extern "C" {
 
 namespace n02 {
 
-	const char * n02GetName() {
-		return "n02";
-	}
+    const char * n02GetName() {
+        return "n02";
+    }
 
 };
 

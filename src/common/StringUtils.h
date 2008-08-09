@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -45,6 +45,13 @@ SOFTWARE.
     strncpy(Y, buffer, L);\
 }
 #endif
+
+#ifdef N02_WIN32
+#define PATH_SEPERATOR "\\"
+#else
+#define PATH_SEPERATOR "/"
+#endif
+
 // TODO : Review
 // TODO : Test
 namespace n02 {
@@ -88,14 +95,14 @@ namespace n02 {
         static int WIDEToUTF8 (unsigned char * buffer, const wchar_t * text);
         static int UTF8ToWIDE (wchar_t * dest, const unsigned char * buffer, int bufferSizeBytes);
 
-		// base 64 encoding
-		// ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890+/
-		// well...base64 is 8 bit -> 6 bit encoding so string buffer length should be
-		// max buffer len for encoding = 1024
-		// returns len of new buffer null terminated = (len * 8 / 6) + 2
-		static int base64encode(char * destination, const void * sourceBuffer, const int len);
-		// returns len of new buffer null terminated = (strlen(source) * 6 / 8) + 1
-		static int base64decode(void * destination, const char * source);
+        // base 64 encoding
+        // ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890+/
+        // well...base64 is 8 bit -> 6 bit encoding so string buffer length should be
+        // max buffer len for encoding = 1024
+        // returns len of new buffer null terminated = (len * 8 / 6) + 2
+        static int base64encode(char * destination, const void * sourceBuffer, const int len);
+        // returns len of new buffer null terminated = (strlen(source) * 6 / 8) + 1
+        static int base64decode(void * destination, const char * source);
 
         //
         static void initialize();

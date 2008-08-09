@@ -108,7 +108,7 @@ namespace n02 {
         cmbDelay->clear();
         if ((client->app.attributes & APP_ATTRIBUTES_AUTORUN) != 0) {
             cmbRun->setEnabled(true);
-            lblRun->setEditable(true);
+            lblRun->setEnabled(true);
             cmbDelay->setEnabled(true);
             lblDelay->setEnabled(true);
             int firstSelIndex = -1;

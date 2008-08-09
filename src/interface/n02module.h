@@ -197,7 +197,7 @@ struct RecorderInterface02 {
 	int (N02CCNV * addAsyncData) (const void * value, const int len);
 	int (N02CCNV * addChat) (const char * username, const char * chat);
 	int (N02CCNV * addDrop) (const char * username, int playerNo);
-	void (N02CCNV * reserved0)(int, int);
+	void (N02CCNV * setDefaultInput)(void *, int len);
 	void (N02CCNV * reserved1)(int, int);
 	void (N02CCNV * reserved2)(int, int);
 	void (N02CCNV * reserved3)(int, int);

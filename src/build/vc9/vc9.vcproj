@@ -43,8 +43,8 @@
 				AdditionalOptions="/EHsc-"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32;JUCE_DLL"
+				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui;..\win32"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32;JUCE_DLL;N02_DEV"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -63,6 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="..\win32\zlib.lib"
 				OutputFile="..\..\..\release\$(ProjectName).dll"
 				ModuleDefinitionFile="$(InputDir)..\..\interface\PSENet.def"
 				GenerateDebugInformation="true"
@@ -122,7 +123,7 @@
 				AdditionalOptions="/EHsc-"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui"
+				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui;..\win32"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
@@ -142,6 +143,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="..\win32\zlib.lib"
 				OutputFile="..\..\..\release\$(ProjectName).dll"
 				ModuleDefinitionFile="$(InputDir)..\..\interface\PSENet.def"
 				GenerateDebugInformation="true"
@@ -416,6 +418,18 @@
 				RelativePath="..\..\ui\juce02.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\ui\localisation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ui\localisation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\ui\locid.h"
+				>
+			</File>
 			<Filter
 				Name="license"
 				>
@@ -493,12 +507,44 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="autorun"
-				>
-			</Filter>
-			<Filter
 				Name="recorder"
 				>
+				<File
+					RelativePath="..\..\modules\recorder\jucePlayerPlayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\jucePlayerPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\jucePlaylist.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\jucePlaylist.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\krec.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\modPlayer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\modPlayer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\modRecorder.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\recorder\modRecorder.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="deferment"

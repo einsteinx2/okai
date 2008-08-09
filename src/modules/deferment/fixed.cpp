@@ -97,7 +97,7 @@ namespace n02 {
             void * rsBuf = getReserveInput();
             int r = transport.recvSyncData(rsBuf, inputLength);
             if (r == -1) {
-                modHelper.endGame();
+                //modHelper.endGame();
                 return;
             } else if (r==0) {
                 TRACE(); recorder.addSyncData(rsBuf, numPlayers * inputLength);

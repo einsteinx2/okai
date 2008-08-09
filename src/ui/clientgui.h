@@ -31,6 +31,7 @@ SOFTWARE.
 #pragma once
 
 #include "juce02.h"
+#include "localisation.h"
 
 namespace n02 {
 

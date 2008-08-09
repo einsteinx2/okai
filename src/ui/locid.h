@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -29,46 +29,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "addEditIP.h"
-#include "common.h"
-#include "juceAddEditIPDialog.h"
-#include "clientgui.h"
-#include "locid.h"
+#pragma once
 
-namespace n02 {
+// 10-1000. Helper objects related ids
 
-    namespace addedit {
-        int returnValue;
-        char name[128];
-        char ip[128];
-    };
-
-    bool AddNewIP(Component * parent) {
-        addedit::returnValue = 0;
-        juceAddEditIPDialog * newCmp;
-		DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-        delete newCmp;
-        return addedit::returnValue == 1;
-    }
-    bool EditIP(Component * parent, char * NAME, char * IP) {
-        strcpy(addEditGetIP(), IP);
-        strcpy(addEditGetName(), NAME);
-
-        addedit::returnValue = 1;
-
-        juceAddEditIPDialog * newCmp;
-
-		DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-
-        delete newCmp;
-
-        return addedit::returnValue == 1;
-    }
-    char * addEditGetIP() {
-        return addedit::ip;
-    }
-    char * addEditGetName() {
-        return addedit::name;
-    }
-};
+#define LID_NAME 1
+#define LID_DEL1 10
+#define LID_DEL2 11
+#define LID_YES1 12
+#define LID_NO01 13
+#define LID_ADD1 14
+#define LID_EDT1 15
+#define LID_SELG 16
+#define LID_ERR1 17
+#define LID_NGOL 18
+#define LID_PLRS 19
+#define LID_STS1 20
+#define LID_FRMP 21
+#define LID_ADD2 22
+#define LID_CAN1 23
+#define LID_EDT2 24
+#define LID_OK01 25
+#define LID_NM01 26
+#define LID_IP01 27
 

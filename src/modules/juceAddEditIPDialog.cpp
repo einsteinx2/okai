@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Jul 2008 2:15:49 pm
+  Creation date:  5 Aug 2008 3:03:23 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -21,6 +21,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "common.h"
+#include "locid.h"
 //[/Headers]
 
 #include "juceAddEditIPDialog.h"
@@ -48,16 +49,16 @@ juceAddEditIPDialog::juceAddEditIPDialog ()
       btnAdd (0),
       btnCancel (0)
 {
-    addAndMakeVisible (label = new Label (T("new label"),
-                                          T("Name:")));
+    addAndMakeVisible (label = new Label (T("l"),
+                                          String::empty));
     label->setFont (Font (15.0000f, Font::plain));
     label->setJustificationType (Justification::centredRight);
     label->setEditable (false, false, false);
     label->setColour (TextEditor::textColourId, Colours::black);
     label->setColour (TextEditor::backgroundColourId, Colour (0x0));
 
-    addAndMakeVisible (label2 = new Label (T("new label"),
-                                           T("IP:")));
+    addAndMakeVisible (label2 = new Label (T("l"),
+                                           String::empty));
     label2->setFont (Font (15.0000f, Font::plain));
     label2->setJustificationType (Justification::centredRight);
     label2->setEditable (false, false, false);
@@ -83,13 +84,13 @@ juceAddEditIPDialog::juceAddEditIPDialog ()
     txtIP->setText (String::empty);
 
     addAndMakeVisible (btnAdd = new TextButton (T("new button")));
-    btnAdd->setButtonText (T("add"));
+    btnAdd->setButtonText (String::empty);
     btnAdd->setConnectedEdges (Button::ConnectedOnRight);
     btnAdd->addButtonListener (this);
     btnAdd->setColour (TextButton::buttonColourId, Colour (0xffbbffc7));
 
     addAndMakeVisible (btnCancel = new TextButton (T("new button")));
-    btnCancel->setButtonText (T("cancel"));
+    btnCancel->setButtonText (String::empty);
     btnCancel->setConnectedEdges (Button::ConnectedOnLeft);
     btnCancel->addButtonListener (this);
     btnCancel->setColour (TextButton::buttonColourId, Colour (0xffffd3bb));
@@ -97,11 +98,17 @@ juceAddEditIPDialog::juceAddEditIPDialog ()
 
     //[UserPreSize]
 	if (returnValue==1) {
-		btnAdd->setButtonText(T("Edit"));
+		btnAdd->setButtonText(n02::LUTF16(LID_EDT2));
 
 		txtIP->setText(FROMUTF8(ip));
 		txtName->setText(FROMUTF8(name));
+	} else {
+		btnAdd->setButtonText(n02::LUTF16(LID_ADD2));
 	}
+	label->setText(n02::LUTF16(LID_NM01), true);
+	label2->setText(n02::LUTF16(LID_IP01), true);
+	btnCancel->setButtonText(n02::LUTF16(LID_CAN1));
+
     //[/UserPreSize]
 
     setSize (296, 120);
@@ -200,14 +207,14 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330000013"
                  fixedSize="1" initialWidth="296" initialHeight="120">
   <BACKGROUND backgroundColour="ffffffff"/>
-  <LABEL name="new label" id="bc6e2dff38f4319e" memberName="label" virtualName=""
+  <LABEL name="l" id="bc6e2dff38f4319e" memberName="label" virtualName=""
          explicitFocusOrder="0" pos="16 16 56 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Name:" editableSingleClick="0" editableDoubleClick="0"
+         edBkgCol="0" labelText="" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="34"/>
-  <LABEL name="new label" id="2e8bf0c4ebd7172b" memberName="label2" virtualName=""
+  <LABEL name="l" id="2e8bf0c4ebd7172b" memberName="label2" virtualName=""
          explicitFocusOrder="0" pos="16 48 56 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="IP:" editableSingleClick="0" editableDoubleClick="0"
+         edBkgCol="0" labelText="" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="34"/>
   <TEXTEDITOR name="new text editor" id="a9b27039ff7b269d" memberName="txtName"
@@ -220,10 +227,10 @@ BEGIN_JUCER_METADATA
               caret="1" popupmenu="1"/>
   <TEXTBUTTON name="new button" id="40e5bf395e8bb212" memberName="btnAdd" virtualName=""
               explicitFocusOrder="0" pos="152 80 64 24" bgColOff="ffbbffc7"
-              buttonText="add" connectedEdges="2" needsCallback="1" radioGroupId="0"/>
+              buttonText="" connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="f79a1fcb769fcdd4" memberName="btnCancel"
               virtualName="" explicitFocusOrder="0" pos="216 80 64 24" bgColOff="ffffd3bb"
-              buttonText="cancel" connectedEdges="1" needsCallback="1" radioGroupId="0"/>
+              buttonText="" connectedEdges="1" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

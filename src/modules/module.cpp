@@ -166,13 +166,14 @@ namespace n02 {
     void N02CCNV interfPlayerDropped (const char *nick, const int playernb);
     void N02CCNV interfAsyncData (const void * data, const int size);
     void * N02CCNV interfGetExtendedInterface (const n02ClientInterface * clientInterface, const int type);
+	void N02CCNV  interfGameEnded ();
 
     ExternalModuleHelper02 modHelper = {
         0,
         &modulesHandler,
         &gameListInterface,
         interfStartGame,
-        interfEndGame,
+        interfGameEnded,
         interfChatReceived,
         interfPlayerDropped,
         interfAsyncData,

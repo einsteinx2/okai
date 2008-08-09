@@ -45,8 +45,8 @@ namespace n02 {
 		}
 
 		void uiModChangeCallback(int index) {
+			modHelper.activeTransportByIndex(index);
 			ModP2PSelectWindow::window->waitNotifyAndCloseNotify();
-            modHelper.activeTransportByIndex(index);
         }
 
 		char nick[32];
@@ -54,6 +54,7 @@ namespace n02 {
 		int port;
 		DynamicOrderedArray<char*> ips;
 		DynamicOrderedArray<char*> names;
+		extern int recordingEnabled;
 
 		// add server button press
 		void uiAddServer(){
@@ -100,18 +101,22 @@ namespace n02 {
 		}
 
 
+
 		CONFIG_START(p2pConfig)
 		CONFIG_STRVAR("nick", nick, 32, "Ape")
 		CONFIG_STRVAR("ip", ip, 128, "127.0.0.1:27886")
 		CONFIG_INTVAR("port", port, 27886)
 		CONFIG_STRLIST("ips", ips, 128)
 		CONFIG_STRLIST("names", names, 128)
+		CONFIG_INTVAR("record", recordingEnabled, 1)
 		CONFIG_END
-
 
 
 		void N02CCNV activeteGui()
 		{
+
+#ifdef N02_DEV
+
             // Load config
             ConfigurationManager config(p2pConfig);
             config.load("p2p");
@@ -128,6 +133,13 @@ namespace n02 {
 			TRACE();
             // Save config
             config.save("p2p");
+
+#else
+			modHelper.activeTransportByName("n02.kaillera");
+
+#endif
+
+
 		}
 		int  N02CCNV getSelectedAutorunIndex()
 		{

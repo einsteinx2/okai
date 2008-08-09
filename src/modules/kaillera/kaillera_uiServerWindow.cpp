@@ -401,7 +401,6 @@ namespace n02 {
 		static void N02CCNV gameEnded ()
 		{
 			if (gameRunning) {
-				modHelper.endGame();
 				gameRunning = false;
 				if (isGameWindowActive()) {
 					sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8("Game ended\r")));

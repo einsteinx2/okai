@@ -8,12 +8,20 @@
 	MODULE(modP2P) \
 	MODULE(modKaillera) \
 	\
+	MODULE(modPlayer) \
+	\
 	MODULE(modDefStress) \
 	MODULE(modDefStressRun) \
 	\
 	\
 	\
+	MODULE(modRecorder) \
+	\
+	\
+	\
+	\
 	MODULE(modFixedDelay) \
-	MODULE(modTradDelay)
+	MODULE(modTradDelay) \
+	MODULE(modAutoplay)
 	
 

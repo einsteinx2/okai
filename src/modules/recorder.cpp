@@ -112,6 +112,11 @@ namespace n02 {
         return 0;
     }
 
+	static void N02CCNV recorderDefaultSetDefaultInput (void *, int len)
+	{
+
+	}
+
     static void N02CCNV  recorderDefaultReserved(int, int)
     {
         LOGS(0);
@@ -127,7 +132,7 @@ namespace n02 {
         recorderDefaultAddAsyncData,
         recorderDefaultAddChat,
         recorderDefaultAddDrop,
-        recorderDefaultReserved,
+        recorderDefaultSetDefaultInput,
         recorderDefaultReserved,
         recorderDefaultReserved,
         recorderDefaultReserved

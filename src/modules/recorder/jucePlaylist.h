@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Aug 2008 3:03:23 pm
+  Creation date:  9 Aug 2008 5:15:33 am
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,11 +19,41 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
-#define __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
+#ifndef __JUCER_HEADER_JUCEPLAYLIST_JUCEPLAYLIST_86C933B3__
+#define __JUCER_HEADER_JUCEPLAYLIST_JUCEPLAYLIST_86C933B3__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "clientgui.h"
+#include "common.h"
+
+namespace n02 {
+	namespace playback {
+		typedef struct {
+			juce::tchar value[1024];
+		} FileName;
+
+		#include "krec.h"
+		class PlayListBoxModel
+			: public TableListBoxModel {
+		public:
+			DynamicOrderedArray<krecFileHeader01, 2> list;
+			DynamicOrderedArray<FileName, 2> names;
+			void playSelected(int rowNo);
+			void saveSelected(int rowNo);
+			void playBrowse();
+
+			void RePopulateList();
+			PlayListBoxModel(){}
+			int  getNumRows ();
+			void  paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected);
+			void  paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected);
+			void  cellClicked (int rowNumber, int columnId, const MouseEvent &e);
+			void  cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e);
+			void  deleteKeyPressed (int lastRowSelected);
+			void  returnKeyPressed (int lastRowSelected);
+		};
+	};
+};
 //[/Headers]
 
 
@@ -36,13 +66,14 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class juceAddEditIPDialog  : public Component,
-                             public ButtonListener
+class jucePlaylist  : public Component,
+                      public ButtonListener,
+                      public ComboBoxListener
 {
 public:
     //==============================================================================
-    juceAddEditIPDialog ();
-    ~juceAddEditIPDialog();
+    jucePlaylist ();
+    ~jucePlaylist();
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -51,6 +82,8 @@ public:
     void paint (Graphics& g);
     void resized();
     void buttonClicked (Button* buttonThatWasClicked);
+    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void handleCommandMessage (int commandId);
 
 
     //==============================================================================
@@ -58,21 +91,23 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	n02::playback::PlayListBoxModel playListBox;
     //[/UserVariables]
 
     //==============================================================================
-    Label* label;
-    Label* label2;
-    TextEditor* txtName;
-    TextEditor* txtIP;
-    TextButton* btnAdd;
-    TextButton* btnCancel;
+    TableListBox* lstPlayback;
+    TextButton* btnBrowse;
+    ComboBox* cmbModes;
+    TextButton* btnPlay;
+    TextButton* btnSave;
+    TextButton* btnRefresh;
+    TextButton* btnDelete;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    juceAddEditIPDialog (const juceAddEditIPDialog&);
-    const juceAddEditIPDialog& operator= (const juceAddEditIPDialog&);
+    jucePlaylist (const jucePlaylist&);
+    const jucePlaylist& operator= (const jucePlaylist&);
 };
 
 
-#endif   // __JUCER_HEADER_JUCEADDEDITIPDIALOG_JUCEADDEDITIPDIALOG_C4139AB3__
+#endif   // __JUCER_HEADER_JUCEPLAYLIST_JUCEPLAYLIST_86C933B3__

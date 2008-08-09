@@ -89,6 +89,7 @@ namespace n02 {
 
         // Close button press
         void ModKailleraServerSelect::OnClose(){
+			ModKailleraServerSelect::window->setVisible(false);
             ModKailleraServerSelect::cmponnt->saveConfig();
             guiIsRunning = 0;
             if (gui != 0)
