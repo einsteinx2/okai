@@ -131,7 +131,7 @@ namespace n02 {
 
                 // now put in the buffers
                 {
-                    for (int x = 0; x < data.itemsCount(); x++) {
+                    while (data.itemsCount() > 0) {
                         StaticBuffer<INDIVIDUAL_BUFFER_SIZE> * buf = data[0];
                         data.removeIndex(0);
                         final.writeBytes(buf->getCurrentStringPtr() - buf->getFilledSize(), buf->getFilledSize());

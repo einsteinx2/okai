@@ -1,0 +1,28 @@
+zlib license. Copied from zlib.h :p
+zlib is not our work and does not come under MIT license like the parts 
+   written by us. It's license is:
+=============================================================================
+Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+==============================================================================
+the zconf.h and zlib.h files come from the zlib 1.2.3 root folder. The zlib.lib
+file was compiled with zlib.dsp and visual studio 9 under projects\visual6
+without any modifications to the sources.

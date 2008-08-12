@@ -2,3 +2,5 @@ This is juce sources folder. Obtain JUCE from http://www.rawmaterialsoftware.com
  and replace this folder with contents of the JUCE package.
 Since this project comes under MIT License, it should be GPL compatible. Well
 thats what I read.
+
+version 1.46 of juce is used
