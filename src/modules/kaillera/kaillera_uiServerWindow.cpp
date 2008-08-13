@@ -307,6 +307,7 @@ namespace n02 {
 		{
 			TRACE();
 			if (KailleraServerGame::window != 0) {
+				KailleraServerGame::window->setVisible(false);
 				KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
 				PosixThread::sleep(150); // pray that its no longer active otherwise BANG! crash >_<
 				PosixThread::yield();
