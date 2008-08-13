@@ -762,6 +762,14 @@
 		<File
 			RelativePath="..\..\interface\n02version.h"
 			>
+			<FileConfiguration
+				Name="Development|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					CommandLine="touch $(InputDir)"
+				/>
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
