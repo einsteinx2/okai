@@ -46,6 +46,9 @@ namespace n02 {
 #ifdef N02_WIN32
         sehInitialize();
 #endif
+#ifdef N02_LINUX
+        signalsInitialize();
+#endif
     }
 
     void commonTerminate(){
@@ -54,6 +57,9 @@ namespace n02 {
         GlobalTimer::terminate();
 #ifdef N02_WIN32
         sehTerminate();
+#endif
+#ifdef N02_LINUX
+        signalsTerminate();
 #endif
     }
 

@@ -33,6 +33,7 @@ OBJECTS := \
 	$(OBJDIR)/_common.o \
 	$(OBJDIR)/common.o \
 	$(OBJDIR)/trace.o \
+	$(OBJDIR)/signals_GNU.o \
 	$(OBJDIR)/GamesList.o \
 	$(OBJDIR)/gameplay.o \
 	$(OBJDIR)/n02.o \
@@ -59,9 +60,20 @@ OBJECTS := \
 	$(OBJDIR)/kaillera_uiServerWindow.o \
 	$(OBJDIR)/kaillera_uiServerWindowLists.o \
 	$(OBJDIR)/modKaillera.o \
+	$(OBJDIR)/jucep2pSelect.o \
+	$(OBJDIR)/jucep2pSession.o \
+	$(OBJDIR)/modP2P.o \
+	$(OBJDIR)/p2p_Core.o \
+	$(OBJDIR)/p2p_uiSelect.o \
+	$(OBJDIR)/p2p_uiSession.o \
+	$(OBJDIR)/jucePlayerPlayer.o \
+	$(OBJDIR)/jucePlaylist.o \
+	$(OBJDIR)/modPlayer.o \
+	$(OBJDIR)/modRecorder.o \
 	$(OBJDIR)/clientgui.o \
 	$(OBJDIR)/juceLicenseComponent.o \
 	$(OBJDIR)/license.o \
+	$(OBJDIR)/localisation.o \
 
 MKDIR_TYPE := msdos
 CMD := $(subst \,\\,$(ComSpec)$(COMSPEC))
@@ -144,6 +156,11 @@ $(OBJDIR)/common.o: ../../common/common.cpp
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJDIR)/trace.o: ../../common/trace.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/signals_GNU.o: ../../common/signals_GNU.cpp
 	-@$(CMD_MKOBJDIR)
 	@echo $(notdir $<)
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
@@ -278,6 +295,56 @@ $(OBJDIR)/modKaillera.o: ../../modules/kaillera/modKaillera.cpp
 	@echo $(notdir $<)
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
+$(OBJDIR)/jucep2pSelect.o: ../../modules/p2p/jucep2pSelect.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/jucep2pSession.o: ../../modules/p2p/jucep2pSession.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/modP2P.o: ../../modules/p2p/modP2P.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/p2p_Core.o: ../../modules/p2p/p2p_Core.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/p2p_uiSelect.o: ../../modules/p2p/p2p_uiSelect.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/p2p_uiSession.o: ../../modules/p2p/p2p_uiSession.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/jucePlayerPlayer.o: ../../modules/recorder/jucePlayerPlayer.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/jucePlaylist.o: ../../modules/recorder/jucePlaylist.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/modPlayer.o: ../../modules/recorder/modPlayer.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/modRecorder.o: ../../modules/recorder/modRecorder.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
 $(OBJDIR)/clientgui.o: ../../ui/clientgui.cpp
 	-@$(CMD_MKOBJDIR)
 	@echo $(notdir $<)
@@ -289,6 +356,11 @@ $(OBJDIR)/juceLicenseComponent.o: ../../ui/juceLicenseComponent.cpp
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(OBJDIR)/license.o: ../../ui/license.cpp
+	-@$(CMD_MKOBJDIR)
+	@echo $(notdir $<)
+	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJDIR)/localisation.o: ../../ui/localisation.cpp
 	-@$(CMD_MKOBJDIR)
 	@echo $(notdir $<)
 	@$(CXX) $(CXXFLAGS) -o $@ -c $<

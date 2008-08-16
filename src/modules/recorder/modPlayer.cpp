@@ -15,7 +15,7 @@ namespace n02 {
 		SIMPLEWINDOW(PlayerPlayer, "Playback", Colours::whitesmoke, DocumentWindow::allButtons, jucePlayerPlayer, 424, 176);
 
 		void ModPlayerPlaylist::OnClose() {
-			ModPlayerPlaylist::window->setVisible(false);
+			
 		}
 
 		void uiModChangeCallback(int index) {
@@ -87,7 +87,7 @@ namespace n02 {
 											uncompress(replayBuffer, &len, compressedBuffer, leftLength);
 											length = len;
 										} else {
-											memcpy(replayBuffer, compressedBuffer, length = min(leftLength, length));
+											memcpy(replayBuffer, compressedBuffer, length = common_min(leftLength, length));
 										}
 										commonFree<unsigned char>(compressedBuffer);
 										playbackBuffer.resetEx(replayBuffer, length);
@@ -306,7 +306,8 @@ namespace n02 {
 		{
 			ModPlayerPlaylist::createAndShow();
 			ModPlayerPlaylist::waitForClose();
-			deleteAndZero(ModPlayerPlaylist::window);
+                        ModPlayerPlaylist::window->setVisible(false);
+                        GuiJUCEDisposeObject(ModPlayerPlaylist::window);
 		}
 		static int  N02CCNV getSelectedAutorunIndex()
 		{

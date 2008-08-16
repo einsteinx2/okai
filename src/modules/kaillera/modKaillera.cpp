@@ -181,13 +181,13 @@ namespace n02 {
             // well this is preety much it... wait till we're done
             gui = new PosixThread(true);
             while (guiIsRunning == 1) {
-                gui->wait(100000);
+                gui->wait(1000000);
             }
             delete gui;
             gui = 0;
 
-			delete ModKailleraServerSelect::window;
-            //ModKailleraServerSelect::window = 0;
+            ModKailleraServerSelect::window->setVisible(false);
+            GuiJUCEDisposeObject (ModKailleraServerSelect::window);
 
             // Save config
             config.save("kaillera");

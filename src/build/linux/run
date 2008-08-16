@@ -1,0 +1,4 @@
+#!/bin/bash
+chmod +x premake
+./premake --file premake.lua --os linux --target gnu
+make

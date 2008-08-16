@@ -29,7 +29,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "PosixThread.h"
+#include "common.h"
 
 namespace n02 {
     void* nPThreaadCCNV posix_thread_proc (PosixThread* thread)
@@ -203,100 +203,24 @@ namespace n02 {
         return prio;
     }
 
-    // Stolen  the wait and notify functions from juce
-    // cbf wasting time on it since its already done
-struct EventStruct
-{
-    pthread_cond_t condition;
-    pthread_mutex_t mutex;
-    bool triggered;
-};
+    // Stolen posix version version doesnt work...pthread_cond_timedwait keeps returning timeout even when everything is supposed to work
+    // For the time being...this homemade flag based synchronization thing will do
 
     bool PosixThread::wait(int timeout)
     {
-
-	EventStruct* const es = new EventStruct();
-	es->triggered = false;
-	
-	pthread_cond_init (&es->condition, 0);
-	pthread_mutex_init (&es->mutex, 0);
-	
-	waitable = es;
-	
-	bool ok = true;
-	pthread_mutex_lock (&es->mutex);
-	
-	if (! es->triggered)
-	{
-		if (timeout < 0)
-		{
-		pthread_cond_wait (&es->condition, &es->mutex);
-		}
-		else
-		{
-		struct timespec time;
-	
-	#if N02_MAC
-		time.tv_sec = timeout / 1000;
-		time.tv_nsec = (timeout % 1000) * 1000000;
-		pthread_cond_timedwait_relative_np (&es->condition, &es->mutex, &time);
-	#else
-		struct timeval t;
-		int timeout = 0;
-	
-		gettimeofday (&t, 0);
-	
-		time.tv_sec  = t.tv_sec  + (timeout / 1000);
-		time.tv_nsec = (t.tv_usec + ((timeout % 1000) * 1000)) * 1000;
-	
-		while (time.tv_nsec >= 1000000000)
-		{
-			time.tv_nsec -= 1000000000;
-			time.tv_sec++;
-		}
-	
-		while (! timeout)
-		{
-			timeout = pthread_cond_timedwait (&es->condition, &es->mutex, &time);
-	
-			if (! timeout)
-			// Success
-			break;
-	
-			if (timeout == EINTR)
-			// Go round again
-			timeout = 0;
-		}
-	#endif
-		}
-	
-		ok = es->triggered;
-	}
-
-	waitable = 0;
-	
-	es->triggered = false;
-	
-	pthread_mutex_unlock (&es->mutex);
-	
-	pthread_cond_destroy (&es->condition);
-	pthread_mutex_destroy (&es->mutex);
-	
-	delete es;
-	
+        waitable = reinterpret_cast<void *>(1);
+        unsigned int timeoutTime = GlobalTimer::getTime() + timeout;
+        while (waitable == reinterpret_cast<void *>(1) && GlobalTimer::getTime() < timeoutTime) {
+            sleep(10);
+        }
+        bool ok = (waitable == reinterpret_cast<void*>(0));
+        waitable = 0;
 	return ok;
-	
     }
 
     void PosixThread::notify()
     {
-        if (waitable) {
-		EventStruct* const es = (EventStruct*) waitable;
-		pthread_mutex_lock (&es->mutex);
-		es->triggered = true;
-		pthread_cond_broadcast (&es->condition);
-		pthread_mutex_unlock (&es->mutex);
-	}
+        waitable = 0;
     }
 
     void PosixThread::yield()

@@ -160,8 +160,10 @@ namespace n02 {
 
                 fileHeader.version = KREC_VERSION1;
                 strcpy(fileHeader.app, client->app.name);
-                strcat(fileHeader.app, ";");
-                strcat(fileHeader.app, client->app.version);
+				if (strlen(client->app.version)!=0) {
+					strcat(fileHeader.app, ";");
+					strcat(fileHeader.app, client->app.version);
+				}
                 fileHeader.Compressed = 1;
                 fileHeader.crc = crc32(crc32(0L, Z_NULL, 0), compressedBufrer, compLength);
 
@@ -185,13 +187,15 @@ namespace n02 {
                     of.close();
                     LOG(Successfully written to %s, filename);
                 }
-                LOG(Cleaning up);
+                LOGS(Cleaning up);
                 commonFree<unsigned char>(compressedBufrer);
 #else
                 fileHeader.version = KREC_VERSION1;
                 strcpy(fileHeader.app, client->app.name);
-                strcat(fileHeader.app, ";");
-                strcat(fileHeader.app, client->app.version);
+				if (strlen(client->app.version)!=0) {
+					strcat(fileHeader.app, ";");
+					strcat(fileHeader.app, client->app.version);
+				}
                 fileHeader.Compressed = 0;
                 fileHeader.crc = crc32(crc32(0L, Z_NULL, 0), (unsigned char*)(final.getCurrentStringPtr() - final.getFilledSize()), final.getFilledSize());
 

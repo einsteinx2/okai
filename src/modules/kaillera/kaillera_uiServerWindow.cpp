@@ -311,8 +311,7 @@ namespace n02 {
 				KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
 				PosixThread::sleep(150); // pray that its no longer active otherwise BANG! crash >_<
 				PosixThread::yield();
-				delete KailleraServerGame::window;
-				KailleraServerGame::window = 0;
+                                GuiJUCEDisposeObject (KailleraServerGame::window);
 			}
 			TRACE();
 		}

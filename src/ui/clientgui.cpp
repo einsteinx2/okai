@@ -43,137 +43,157 @@ namespace n02 {
     char secondary[128];
 
     CONFIG_START(juceFontConfig)
-    CONFIG_STRVAR("primary", primary, 128, "")
-    CONFIG_STRVAR("secondary", secondary, 128, "")
-    CONFIG_END
+            CONFIG_STRVAR("primary", primary, 128, "")
+            CONFIG_STRVAR("secondary", secondary, 128, "")
+            CONFIG_END
 
 
-	void GuiInitialize() {
-		LOGS(Initializing gui);
+            void GuiInitialize() {
+        LOGS(Initializing gui);
 
-		ConfigurationManager config(juceFontConfig);
-		config.load("font");
+        ConfigurationManager config(juceFontConfig);
+        config.load("font");
 
-		SystemStats system;
+        SystemStats system;
 
-		LOG(Juce version %s, system.getJUCEVersion().toUTF8());
+        LOG(Juce version %s, system.getJUCEVersion().toUTF8());
 
-		String stat;
-		stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
-		LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
+        String stat;
+        stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
+        LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
 
-		initializeLocalisation();
+        initializeLocalisation();
 
-	}
-
-    /* Thread juice */
-
-    static char * argv[] = {"n02.dll",""};
-
-
-    void N02CCNV  interfGuiThreadEndCallback();
-
-
-    class ThreadJuice : public PosixThread {
-        class OpenKailleraJUCEApp: public JUCEApplication {
-        public:
-            void initialise (const String& commandLineParameters);
-            void shutdown();
-            const String getApplicationName() {return T("Open Kaillera client: n02");}
-        };
-    public:
-        volatile int juceInitialized;
-        void run(){
-            LOG(Juce Thread Entry %i, PosixThread::getCurrentThreadId());
-            JUCEApplication::main(0, argv, new OpenKailleraJUCEApp);
-            LOGS(Juce Thread Exit);
-        }
-    } juceThread;
-
-    void ThreadJuice::OpenKailleraJUCEApp::initialise (const String& commandLineParameters) {
-        juceThread.juceInitialized = 1;
-
-        if (strlen(primary) > 2) {
-            Font::setDefaultSansSerifFontName(primary);
-        }
-        if (strlen(secondary) > 2) {
-            Font::setDefaultSansSerifFontName(secondary);
-        }
-    }
-    void ThreadJuice::OpenKailleraJUCEApp::shutdown() {
-        juceThread.juceInitialized = 0;
-    }
-
-
-
-    class GuiThread: public PosixThread {
-    public:
-        void run() {
-            LOG(Gui thread entry %i, PosixThread::getCurrentThreadId());
-
-            juceThread.juceInitialized = 0;
-            juceThread.start();
-            int counter = 500;
-            while (juceThread.juceInitialized == 0 && counter-->0) {
-                sleep(10); yield();
             }
 
-            guiInitialized = 1;
 
-            do {
-                TRACE(); transportResetActivation();
-                TRACE(); transport.initialize();
-                TRACE(); transport.activeteGui();
-                TRACE(); transport.terminate();
-            } while (transportWasReActivated());
+            class DispositionHandler
+    : public MessageListener
+            {
+                void  handleMessage (const Message &message) {
+                    TRACE();
+                    if (message.pointerParameter != 0) {
+                        LOG(Deleted %x, message.pointerParameter);
+                        //delete message.pointerParameter;
+                    }
+                    TRACE();
+                }
+                public:
+            } * disposer = 0;
 
-            JUCEApplication::quit(false);
+            /* Thread juice */
 
-
-            TRACE(); interfGuiThreadEndCallback();
-            guiInitialized = 0;
-
-            LOGS(Gui thread exit);
-
-        }
-        volatile int guiInitialized;
-    } guiThread;
+            static char * argv[] = {"n02.dll",""};
 
 
-    int GuiStartSync() {
-
-        TRACE(); guiThread.guiInitialized = 0;
-
-        TRACE(); guiThread.start();
-
-        TRACE(); 
-
-        int counter = 500;
-        while (guiThread.guiInitialized==0 && counter-->0) {
-            PosixThread::sleep(10); PosixThread::yield();
-        }
-
-        LOG(GuiSync countter=%i, counter);
-        return counter;
-    }
+            void N02CCNV  interfGuiThreadEndCallback();
 
 
-    int GuiEndSync() {
-        if (guiThread.guiInitialized) {
-            JUCEApplication::quit(true);
-        }
-        guiThread.stop();
-        guiThread.guiInitialized = 0;
-        interfGuiThreadEndCallback();
+            class ThreadJuice : public PosixThread {
+                class OpenKailleraJUCEApp: public JUCEApplication {
+                    public:
+                        void initialise (const String& commandLineParameters);
+                        void shutdown();
+                        const String getApplicationName() {return T("Open Kaillera client: n02");}
+                };
+                public:
+                    volatile int juceInitialized;
+                    void run(){
+                        LOG(Juce Thread Entry %i, PosixThread::getCurrentThreadId());
+                        JUCEApplication::main(0, argv, new OpenKailleraJUCEApp);
+                        LOGS(Juce Thread Exit);
+                    }
+            } juceThread;
 
-		terminateLocalisation();
+            void ThreadJuice::OpenKailleraJUCEApp::initialise (const String& commandLineParameters) {
+                juceThread.juceInitialized = 1;
 
-        return 0;
-    }
+                if (strlen(primary) > 2) {
+                    Font::setDefaultSansSerifFontName(primary);
+                }
+                if (strlen(secondary) > 2) {
+                    Font::setDefaultSansSerifFontName(secondary);
+                }
+                disposer = new DispositionHandler;
+            }
+            void ThreadJuice::OpenKailleraJUCEApp::shutdown() {
+                juceThread.juceInitialized = 0;
+            }
 
-    void GuiCleanup() {
-        LOGS(Cleaning up gui);
-    }
+            void GuiJUCEDisposeObject(void * object) {
+                LOG(GuiJUCEDisposeObject(%x), object);
+                if (disposer != 0)
+                    disposer->postMessage(new Message(10, 20, 30, object));
+            }
+
+            class GuiThread: public PosixThread {
+                public:
+                    void run() {
+                        LOG(Gui thread entry %i, PosixThread::getCurrentThreadId());
+
+                        juceThread.juceInitialized = 0;
+                        juceThread.start();
+                        int counter = 500;
+                        while (juceThread.juceInitialized == 0 && counter-->0) {
+                            sleep(10); yield();
+                        }
+
+                        guiInitialized = 1;
+
+                        do {
+                            TRACE(); transportResetActivation();
+                            TRACE(); transport.initialize();
+                            TRACE(); transport.activeteGui();
+                            TRACE(); transport.terminate();
+                        } while (transportWasReActivated());
+
+                        JUCEApplication::quit(false);
+
+
+                        TRACE(); interfGuiThreadEndCallback();
+                        guiInitialized = 0;
+
+                        LOGS(Gui thread exit);
+
+                    }
+                    volatile int guiInitialized;
+            } guiThread;
+
+
+            int GuiStartSync() {
+
+                TRACE(); guiThread.guiInitialized = 0;
+
+                TRACE(); guiThread.start();
+
+                TRACE(); 
+
+                int counter = 500;
+                while (guiThread.guiInitialized==0 && counter-->0) {
+                    PosixThread::sleep(10); PosixThread::yield();
+                }
+
+                LOG(GuiSync countter=%i, counter);
+                return counter;
+            }
+
+
+            int GuiEndSync() {
+                if (guiThread.guiInitialized) {
+                    JUCEApplication::quit(true);
+                }
+                guiThread.stop();
+                guiThread.guiInitialized = 0;
+                interfGuiThreadEndCallback();
+
+                terminateLocalisation();
+
+                return 0;
+            }
+
+            void GuiCleanup() {
+                LOGS(Cleaning up gui);
+            }
 
 };
 
@@ -182,23 +202,23 @@ namespace n02 {
 
 #include <windows.h>
 
-void n02GuiSetHinstance(HINSTANCE hx){
-    juce::PlatformUtilities::setCurrentModuleInstanceHandle(hx);
-}
+                 void n02GuiSetHinstance(HINSTANCE hx){
+             juce::PlatformUtilities::setCurrentModuleInstanceHandle(hx);
+                 }
 
 #ifdef N02_EXPORTS
-BOOL WINAPI DllMain(
-                    HINSTANCE hinstDLL,
-                    DWORD fdwReason,
-                    LPVOID
-                    ){
+                 BOOL WINAPI DllMain(
+                                     HINSTANCE hinstDLL,
+                                     DWORD fdwReason,
+                                     LPVOID
+                                    ){
 
-                        if (fdwReason == DLL_PROCESS_ATTACH)
-                            n02GuiSetHinstance(hinstDLL);
+                                         if (fdwReason == DLL_PROCESS_ATTACH)
+                                             n02GuiSetHinstance(hinstDLL);
 
 
-                        return TRUE;
-}
+                                         return TRUE;
+                                    }
 
 #endif
 

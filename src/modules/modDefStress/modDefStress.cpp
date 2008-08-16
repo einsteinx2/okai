@@ -182,6 +182,8 @@ namespace n02 {
 
             delete guiThread;
 
+            GuiJUCEDisposeObject(ModDefStressTestWindow::window);
+
             guiThread = 0;
         }
         static int  N02CCNV getSelectedAutorunIndex();

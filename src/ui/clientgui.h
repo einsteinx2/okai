@@ -39,5 +39,5 @@ namespace n02 {
     void GuiCleanup();
     int GuiStartSync();
     int GuiShowLicenseDialog();
-
+    void GuiJUCEDisposeObject(void * object);
 };

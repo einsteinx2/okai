@@ -9,6 +9,7 @@ project.configs = { "Release" }
 package = newpackage()
 package.name = "n02"
 package.kind = "lib"
+-- package.kind = "dll"
 package.language = "c++"
 package.objdir = "../../../temp/"
 
@@ -61,6 +62,8 @@ package.files = {
 	"../../common/common.h",
 	"../../common/trace.cpp",
 	"../../common/trace.h",
+        "../../common/signals_GNU.cpp",
+        "../../common/signals_GNU.h",
 	"../../interface/GamesList.cpp",
 	"../../interface/GamesList.h",
 	"../../interface/gameplay.cpp",
@@ -115,10 +118,36 @@ package.files = {
 	"../../modules/kaillera/kaillera_uiServerWindowLists.h",
 	"../../modules/kaillera/modKaillera.cpp",
 	"../../modules/kaillera/modKaillera.h",
-	"../../ui/clientgui.cpp",
-	"../../ui/clientgui.h",
-	"../../ui/juce02.h",
-	"../../ui/juceLicenseComponent.cpp",
-	"../../ui/juceLicenseComponent.h",
-	"../../ui/license.cpp"
+        "../../modules/p2p/jucep2pSelect.cpp",
+        "../../modules/p2p/jucep2pSelect.h",
+        "../../modules/p2p/jucep2pSession.cpp",
+        "../../modules/p2p/jucep2pSession.h",
+        "../../modules/p2p/modP2P.cpp",
+        "../../modules/p2p/modP2P.h",
+        "../../modules/p2p/p2p_Core.cpp",
+        "../../modules/p2p/p2p_Core.h",
+        "../../modules/p2p/p2p_Instruction.h",
+        "../../modules/p2p/p2p_Messaging.h",
+        "../../modules/p2p/p2p_uiSelect.cpp",
+        "../../modules/p2p/p2p_uiSelect.h",
+        "../../modules/p2p/p2p_uiSession.cpp",
+        "../../modules/p2p/p2p_uiSession.h",
+        "../../modules/recorder/jucePlayerPlayer.cpp",
+        "../../modules/recorder/jucePlayerPlayer.h",
+        "../../modules/recorder/jucePlaylist.cpp",
+        "../../modules/recorder/jucePlaylist.h",
+        "../../modules/recorder/krec.h",
+        "../../modules/recorder/modPlayer.cpp",
+        "../../modules/recorder/modPlayer.h",
+        "../../modules/recorder/modRecorder.cpp",
+        "../../modules/recorder/modRecorder.h",
+        "../../ui/clientgui.cpp",
+        "../../ui/clientgui.h",
+        "../../ui/juce02.h",
+        "../../ui/juceLicenseComponent.cpp",
+        "../../ui/juceLicenseComponent.h",
+        "../../ui/license.cpp",
+        "../../ui/localisation.cpp",
+        "../../ui/localisation.h",
+        "../../ui/locid.h"
 }

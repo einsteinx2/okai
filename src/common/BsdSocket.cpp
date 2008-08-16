@@ -111,8 +111,13 @@ namespace n02 {
 #ifdef N02_WIN32
         memcpy(&tempFdList, &fdList, 2 * sizeof(u_int) + sizeof(SOCKET) * fdList.fd_count);
 #else
-		FD_COPY(&fdList, &tempFdList);
-        //memcpy(&tempFdList, &fdList, sizeof(fdList));
+        FD_ZERO(&tempFdList);
+        for (int i = 0; i < socketsList.itemsCount(); i++){
+            register SOCKET scket = socketsList[i]->sock;
+            if (scket != SOCKET_ERROR){
+                FD_SET(scket, &tempFdList);
+            }
+        }
 #endif
 
         if (select((int)(ndfs + 1), &tempFdList, 0, 0, &tv) != 0) {

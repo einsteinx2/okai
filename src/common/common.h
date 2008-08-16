@@ -59,12 +59,15 @@ SOFTWARE.
 #ifdef N02_WIN32
 #include "SEH_win32.h"
 #endif
+#ifdef N02_LINUX
+#include "signals_GNU.h"
+#endif
 
 namespace n02 {
 
     void commonInitialize();
     void commonTerminate();
-	const char * n02GetName();
+    const char * n02GetName();
 
 };
 

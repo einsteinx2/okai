@@ -150,7 +150,7 @@ namespace n02 {
 		// pack into packed format
 		int pack (PackedInstruction & pack)
 		{
-			pack.body = new unsigned char[pack.length = (unsigned char)min(1 + getFilledSize(), 255)];
+			pack.body = new unsigned char[pack.length = (unsigned char)common_min(1 + getFilledSize(), 255)];
 
 			//LOG(xxx %i, pack.length );
 

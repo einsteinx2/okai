@@ -35,129 +35,121 @@ SOFTWARE.
 #include "p2p_uiSession.h"
 
 namespace n02 {
-	namespace p2p {
+    namespace p2p {
 
-		SIMPLEWINDOW(ModP2PSelectWindow, MOD_P2P_FULL_NAME, Colours::whitesmoke, DocumentWindow::allButtons, jucep2pSelect, 600, 344);
+        SIMPLEWINDOW(ModP2PSelectWindow, MOD_P2P_FULL_NAME, Colours::whitesmoke, DocumentWindow::allButtons, jucep2pSelect, 600, 344);
 
-		void ModP2PSelectWindow::OnClose() {
-			cmponnt->saveConfig();
-			window->setVisible(false);
-		}
-
-		void uiModChangeCallback(int index) {
-			modHelper.activeTransportByIndex(index);
-			ModP2PSelectWindow::window->waitNotifyAndCloseNotify();
+        void ModP2PSelectWindow::OnClose() {
+            cmponnt->saveConfig();
         }
 
-		char nick[32];
-		char ip[128];
-		int port;
-		DynamicOrderedArray<char*> ips;
-		DynamicOrderedArray<char*> names;
-		extern int recordingEnabled;
+        void uiModChangeCallback(int index) {
+            modHelper.activeTransportByIndex(index);
+            ModP2PSelectWindow::window->waitNotifyAndCloseNotify();
+        }
 
-		// add server button press
-		void uiAddServer(){
-			if (AddNewIP(ModP2PSelectWindow::window)) {
-				names.addItem(strdup(addEditGetName()));
-				ips.addItem(strdup(addEditGetIP()));
-			}
-		}
+        char nick[32];
+        char ip[128];
+        int port;
+        DynamicOrderedArray<char*> ips;
+        DynamicOrderedArray<char*> names;
+        extern int recordingEnabled;
 
-		// edit server button press
-		void uiEditServer(int index){
-			if (index >= 0 && index < names.itemsCount()) {
-				if (EditIP(ModP2PSelectWindow::window, names[index], ips[index])) {
-					delete names[index];
-					delete ips[index];
-					names[index] = strdup(addEditGetName());
-					ips[index] = strdup(addEditGetIP());
-				}
-			}
-		}
+        // add server button press
+        void uiAddServer(){
+            if (AddNewIP(ModP2PSelectWindow::window)) {
+                names.addItem(strdup(addEditGetName()));
+                ips.addItem(strdup(addEditGetIP()));
+            }
+        }
 
-		// delete server button press
-		void uiDeleteServer(int index){
-			if (index >= 0 && index < names.itemsCount()) {
-				if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, "Delete", "Do you want to delete the seleted item", "Yes", "No")) {
-					names.removeIndex(index);
-					ips.removeIndex(index);
-				}
-			}
-		}
+        // edit server button press
+        void uiEditServer(int index){
+            if (index >= 0 && index < names.itemsCount()) {
+                if (EditIP(ModP2PSelectWindow::window, names[index], ips[index])) {
+                    delete names[index];
+                    delete ips[index];
+                    names[index] = strdup(addEditGetName());
+                    ips[index] = strdup(addEditGetIP());
+                }
+            }
+        }
 
-
-		void uiConnect()
-		{
-			ModP2PSelectWindow::window->setVisible(false);
-			sessionRun(true);
-			ModP2PSelectWindow::window->setVisible(true);
-		}
-		void uiHost()
-		{
-			ModP2PSelectWindow::window->setVisible(false);
-			sessionRun(false);
-			ModP2PSelectWindow::window->setVisible(true);
-		}
+        // delete server button press
+        void uiDeleteServer(int index){
+            if (index >= 0 && index < names.itemsCount()) {
+                if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, "Delete", "Do you want to delete the seleted item", "Yes", "No")) {
+                    names.removeIndex(index);
+                    ips.removeIndex(index);
+                }
+            }
+        }
 
 
+        void uiConnect()
+        {
+            ModP2PSelectWindow::window->setVisible(false);
+            sessionRun(true);
+            ModP2PSelectWindow::window->setVisible(true);
+        }
+        void uiHost()
+        {
+            ModP2PSelectWindow::window->setVisible(false);
+            sessionRun(false);
+            ModP2PSelectWindow::window->setVisible(true);
+        }
 
-		CONFIG_START(p2pConfig)
-		CONFIG_STRVAR("nick", nick, 32, "Ape")
-		CONFIG_STRVAR("ip", ip, 128, "127.0.0.1:27886")
-		CONFIG_INTVAR("port", port, 27886)
-		CONFIG_STRLIST("ips", ips, 128)
-		CONFIG_STRLIST("names", names, 128)
-		CONFIG_INTVAR("record", recordingEnabled, 1)
-		CONFIG_END
 
 
-		void N02CCNV activeteGui()
-		{
+        CONFIG_START(p2pConfig)
+                CONFIG_STRVAR("nick", nick, 32, "Ape")
+                CONFIG_STRVAR("ip", ip, 128, "127.0.0.1:27886")
+                CONFIG_INTVAR("port", port, 27886)
+                CONFIG_STRLIST("ips", ips, 128)
+                CONFIG_STRLIST("names", names, 128)
+                CONFIG_INTVAR("record", recordingEnabled, 1)
+                CONFIG_END
 
-#ifdef N02_DEV
+
+                void N02CCNV activeteGui()
+        {
 
             // Load config
             ConfigurationManager config(p2pConfig);
             config.load("p2p");
 
-			TRACE();
+            TRACE();
             ModP2PSelectWindow::createAndShow();
 
-			TRACE();
-			ModP2PSelectWindow::waitForClose();
+            TRACE();
+            ModP2PSelectWindow::waitForClose();
+            ModP2PSelectWindow::window->setVisible(false);
 
-			TRACE();
-			delete ModP2PSelectWindow::window;
+            TRACE();
+            LOGS(xxx);
+            GuiJUCEDisposeObject(ModP2PSelectWindow::window);
+            ModP2PSelectWindow::window = 0;
+            LOGS(xxy);
 
-			TRACE();
+            TRACE();
             // Save config
             config.save("p2p");
 
-#else
-			modHelper.activeTransportByName("n02.kaillera");
+        }
+        int  N02CCNV getSelectedAutorunIndex()
+        {
+            return selectedAutorunIndex;
+        }
+        int  N02CCNV getSelectedAutorunDelay()
+        {
+            return selectedDelayParam;
+        }
+        int  N02CCNV isRecordingEnabled()
+        {
+            return recordingEnabled;
+        }
 
-#endif
-
-
-		}
-		int  N02CCNV getSelectedAutorunIndex()
-		{
-			return selectedAutorunIndex;
-		}
-		int  N02CCNV getSelectedAutorunDelay()
-		{
-			return selectedDelayParam;
-		}
-		int  N02CCNV isRecordingEnabled()
-		{
-			return recordingEnabled;
-		}
-
-
-
-
-		int  StoredListListboxModel::getNumRows()
+        int  StoredListListboxModel::getNumRows()
         {
             return names.itemsCount();
         }
@@ -182,7 +174,7 @@ namespace n02 {
         void  StoredListListboxModel::cellClicked (int rowNumber, int columnId, const MouseEvent &e)
         {
             if (ips.itemsCount() > rowNumber) {
-				ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[rowNumber]));
+                ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[rowNumber]));
             }
         }
         void  StoredListListboxModel::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
@@ -197,13 +189,13 @@ namespace n02 {
         void  StoredListListboxModel::returnKeyPressed (int lastRowSelected)
         {
             if (lastRowSelected >= 0 && ips.itemsCount() > lastRowSelected) {
-				ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[lastRowSelected]));
-               // String xxx(uiServersIP.getItem(lastRowSelected));
+                ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[lastRowSelected]));
+            // String xxx(uiServersIP.getItem(lastRowSelected));
                 //ModKailleraServerSelect::cmponnt->updateIP(xxx);
                 //ModKailleraServerSelect::cmponnt->saveConfig();
                 //uibtnConnectCallback();
             }
         }
-	};
+    };
 };
 

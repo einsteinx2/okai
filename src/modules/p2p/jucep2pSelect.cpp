@@ -297,7 +297,7 @@ void jucep2pSelect::saveConfig()
 {
 	strncpy(n02::p2p::ip, txtIP->getText().toUTF8(), 127);
 	strncpy(n02::p2p::nick, txtNick->getText().toUTF8(), 31);
-	n02::p2p::port = min(max(txtPort->getText().getIntValue(), 0), 655634);
+        n02::p2p::port = common_min(common_max(txtPort->getText().getIntValue(), 0), 655634);
 }
 void jucep2pSelect::handleCommandMessage(int  commandId) {
 	char * x = reinterpret_cast<char*>(commandId);
