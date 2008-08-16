@@ -108,7 +108,7 @@ namespace n02 {
                 CONFIG_STRLIST("ips", ips, 128)
                 CONFIG_STRLIST("names", names, 128)
                 CONFIG_INTVAR("record", recordingEnabled, 1)
-                CONFIG_END
+                CONFIG_END;
 
 
                 void N02CCNV activeteGui()
@@ -126,10 +126,8 @@ namespace n02 {
             ModP2PSelectWindow::window->setVisible(false);
 
             TRACE();
-            LOGS(xxx);
             GuiJUCEDisposeObject(ModP2PSelectWindow::window);
             ModP2PSelectWindow::window = 0;
-            LOGS(xxy);
 
             TRACE();
             // Save config

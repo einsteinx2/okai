@@ -73,7 +73,7 @@ namespace n02 {
         CONFIG_INTVAR("record", recordingEnabled, 1)
         CONFIG_STRLIST("servers_ip", uiServersIP, 128)
 		CONFIG_STRLIST("servers_name", uiServersName, 128)
-		CONFIG_END
+		CONFIG_END;
 
 		/************************************************************
 		** Misc Prototypes

@@ -47,7 +47,7 @@ namespace n02 {
         addedit::returnValue = 0;
         juceAddEditIPDialog * newCmp;
 		DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-        delete newCmp;
+		GuiJUCEDisposeObject(newCmp);
         return addedit::returnValue == 1;
     }
     bool EditIP(Component * parent, char * NAME, char * IP) {
@@ -60,7 +60,7 @@ namespace n02 {
 
 		DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
 
-        delete newCmp;
+        GuiJUCEDisposeObject(newCmp);
 
         return addedit::returnValue == 1;
     }

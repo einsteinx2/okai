@@ -57,7 +57,7 @@ namespace n02 {
 #define CONFIG_STRVAR(NAME, VER, LEN, DEF) CONFIG_ITEM(NAME, STRING, VER, LEN, const_cast<char*>(DEF))
 #define CONFIG_STRUCTVAR(NAME, VER) CONFIG_ITEM(NAME, STRUCT, &VER, sizeof(VER), 0)
 #define CONFIG_STRLIST(NAME, VER, LEN) CONFIG_ITEM(NAME, STRLIST, &VER, LEN, 0)
-#define CONFIG_END	{0}	};
+#define CONFIG_END	{0}	}
 
     class ConfigurationManager :
         protected DynamicOrderedArray<ConfigurationItem>

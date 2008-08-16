@@ -231,12 +231,16 @@ namespace n02 {
 									shocker.setPort(27886);
 								coreAddIP(shocker);
 								ModP2PSessionWindow::window->runModalLoop();
-								delete ModP2PSessionWindow::window;
+								ModP2PSessionWindow::window->setVisible(false);
+								ModP2PSessionWindow::window->removeFromDesktop();
+								GuiJUCEDisposeObject(ModP2PSessionWindow::window);
 							}
 						}
 					} else {
 						ModP2PSessionWindow::window->runModalLoop();
-						delete ModP2PSessionWindow::window;
+						ModP2PSessionWindow::window->setVisible(false);
+						ModP2PSessionWindow::window->removeFromDesktop();
+						GuiJUCEDisposeObject(ModP2PSessionWindow::window);
 					}
 					coreTerminte();
 				}

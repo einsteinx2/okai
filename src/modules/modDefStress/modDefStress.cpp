@@ -182,7 +182,9 @@ namespace n02 {
 
             delete guiThread;
 
-            GuiJUCEDisposeObject(ModDefStressTestWindow::window);
+			ModDefStressTestWindow::window->setVisible(false);
+			ModDefStressTestWindow::window->removeFromDesktop();
+			GuiJUCEDisposeObject(ModDefStressTestWindow::window);
 
             guiThread = 0;
         }

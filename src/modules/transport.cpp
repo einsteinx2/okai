@@ -152,7 +152,7 @@ namespace n02 {
 
     CONFIG_START(transportConfig)
     CONFIG_STRVAR("active", activeModName, 32, "")
-    CONFIG_END
+    CONFIG_END;
 
     void transportReset() {
         transport = defaultTransport;

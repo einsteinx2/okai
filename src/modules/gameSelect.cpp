@@ -51,7 +51,8 @@ namespace n02 {
             selectedGameIndex = -1;
 
             int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
-            delete newCmp;
+            
+			GuiJUCEDisposeObject(newCmp);
 
             if (r==0 || selectedIndex == -1)
                 return 0;

@@ -105,8 +105,8 @@ namespace n02 {
 
 										PlayerPlayer::window->runModalLoop();
 										PlayerPlayer::window->setVisible(false);
-										delete PlayerPlayer::window;
-
+										PlayerPlayer::window->removeFromDesktop();
+										GuiJUCEDisposeObject(PlayerPlayer::window);
 										ModPlayerPlaylist::window->setVisible(true);
 									} else {
 										AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "Replay file is too small");
