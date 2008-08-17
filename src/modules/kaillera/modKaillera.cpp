@@ -89,17 +89,13 @@ namespace n02 {
 
         // Close button press
         void ModKailleraServerSelect::OnClose(){
-			ModKailleraServerSelect::window->setVisible(false);
             ModKailleraServerSelect::cmponnt->saveConfig();
-            guiIsRunning = 0;
-            if (gui != 0)
-                gui->notify();
         }
 
         // Mod changing
         void uiModChangeCallback(int index) {
-            ModKailleraServerSelect::OnClose();
             modHelper.activeTransportByIndex(index);
+			ModKailleraServerSelect::window->waitNotifyAndCloseNotify();
         }
 
 
@@ -179,12 +175,7 @@ namespace n02 {
             ModKailleraServerSelect::createAndShow();
 
             // well this is preety much it... wait till we're done
-            gui = new PosixThread(true);
-            while (guiIsRunning == 1) {
-                gui->wait(1000000);
-            }
-            delete gui;
-            gui = 0;
+			ModKailleraServerSelect::waitForClose();
 
             ModKailleraServerSelect::window->setVisible(false);
             GuiJUCEDisposeObject (ModKailleraServerSelect::window);

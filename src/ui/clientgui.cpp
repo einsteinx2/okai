@@ -147,6 +147,8 @@ namespace n02 {
 
 			guiInitialized = 1;
 
+			MessageBoxA(0, "P2P is unlocked for now. Please report any crashes that happens within half a second of a window being closed.", "WIP", MB_OK);
+
 			do {
 				TRACE(); transportResetActivation();
 				TRACE(); transport.initialize();
@@ -185,10 +187,19 @@ namespace n02 {
 			return;
 #ifdef N02_WIN32
 			// causing crashes on linux
-			LOG(Deleting %x, message.pointerParameter);
 			if (guiThread.guiInitialized ==0)
 			return;
-			delete message.pointerParameter;
+
+			{
+				const MessageManagerLock milk;
+				if (milk.lockWasGained()) {
+					LOG(Deleting %x, message.pointerParameter);
+					delete message.pointerParameter;
+					LOGS(Phew...hasnt crashed yet);
+				} else {
+					LOGS(Failed to lock message manager);
+				}
+			}
 #endif
 		}
 		TRACE();

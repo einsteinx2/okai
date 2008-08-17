@@ -93,17 +93,11 @@ namespace n02 {
         void uiModChangeCallback(int index) {
             uiStopGame();
             modHelper.activeTransportByIndex(index);
-            delete ModDefStressTestWindow::window;
-            ModDefStressTestWindow::window = 0;
-            ModDefStressTestWindow::OnClose();
+			ModDefStressTestWindow::window->waitNotifyAndCloseNotify();
         }
 
         void ModDefStressTestWindow::OnClose() {
             uiStopGame();
-            guiIsRunning = 0;
-            if (guiThread != 0)
-                guiThread->notify();
-            PosixThread::yield();
         }
 
         static void N02CCNV initialize()
@@ -175,12 +169,7 @@ namespace n02 {
             guiIsRunning = 1;
             ModDefStressTestWindow::createAndShow();
 
-            guiThread = new PosixThread(true);
-
-            while (guiIsRunning==1)
-                guiThread->wait(1000000);
-
-            delete guiThread;
+			ModDefStressTestWindow::waitForClose();
 
 			ModDefStressTestWindow::window->setVisible(false);
 			ModDefStressTestWindow::window->removeFromDesktop();

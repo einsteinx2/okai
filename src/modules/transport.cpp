@@ -192,6 +192,7 @@ namespace n02 {
                 if (mod->getInterface(&transport)==0) {
                     recentlyActivated = true;
                     strcpy(activeModName, mod->name);
+					LOG(Transported activated %s, mod->name);
                 } else {
                     LOGS(Failed to retrive the module interface structure);
                 }
@@ -204,7 +205,6 @@ namespace n02 {
     }
 
     void N02CCNV transportSetActiveByName(char * name) {
-        LOG(%s, name);
         if (name != 0 && strlen(name) > 0) {
             if (strcmp(name, "dummy"))
                 transportActivate(modHelper.modHandler->getByName(name));
@@ -216,7 +216,6 @@ namespace n02 {
     }
 
     void N02CCNV transportSetActiveByIndex(int index) {
-        LOG(%i, index);
         if (index >= 0) {
             transportActivate(modHelper.modHandler->getByIndex(index));
         } else {
