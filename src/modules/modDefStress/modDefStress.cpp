@@ -103,6 +103,7 @@ namespace n02 {
 
 		void ModDefStressTestWindow::OnClose() {
 			uiStopGame();
+			Component::getCurrentlyModalComponent()->exitModalState(0);
 		}
 
 		static void N02CCNV initialize()

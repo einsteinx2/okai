@@ -282,6 +282,7 @@ void juceKailleraServerGame::clearText() {
 	txtChat->setText("", false);
 	btnStartGame->setEnabled(n02::kaillera::hosting);
 	btnKick->setEnabled(n02::kaillera::hosting);
+	updateAutorunItems();
 }
 void juceKailleraServerGame::handleCommandMessage(int  commandId) {
 	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);

@@ -525,7 +525,7 @@ namespace n02 {
                                 if (type == ASYNCDATA_GAMESYNC) {
                                     LOGS(game sync data arrival);
 
-                                    memcpy(gameInfo.defaultInput + (playerIndex * gameInfo.inputLength), decodedBuffer + 1, len -1);
+                                    memcpy(gameInfo.defaultInput + (playerIndex * gameInfo.inputLength), &decodedBuffer[1], len -1);
                                     gameInfo.syncDataTransfer--;
                                 }
 
@@ -932,7 +932,7 @@ namespace n02 {
                         buffer[0] = (ASYNCDATA_GAMESYNC << 4) | (gameInfo.playerNo - 1);
                         memcpy(buffer+1, data, len);
                         char encBuffer[1024];
-                        StringUtils::base64encode(encBuffer, data, len + 1);
+                        StringUtils::base64encode(encBuffer, buffer, len + 1);
 
                         cedata.writeString(encBuffer);
                         send(cedata);

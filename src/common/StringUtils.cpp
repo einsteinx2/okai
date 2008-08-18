@@ -141,6 +141,24 @@ namespace n02 {
 
         //}
 
+		unsigned char buffer[257];
+		char buf[257];
+		buffer[0] = 0x00;
+		buffer[1] = 0x00;
+		buffer[2] = 0x86;
+		buffer[3] = 0x02;
+		buffer[4] = 0x00;
+		buffer[5] = 0x00;
+		buffer[6] = 0x01;
+		LOGBUFFER("x", buffer, 7);
+		StringUtils::base64encode(buf, buffer, 7);
+		LOG(encoded %s=%i, buf, strlen(buf));
+		memset(buffer, 0, sizeof(buffer));
+		StringUtils::base64decode(buffer, buf);
+		LOGBUFFER("x", buffer, 7);
+
+
+
 
 
     }
@@ -302,25 +320,23 @@ namespace n02 {
                     byte = (current & 0xfc) >> 2;
                     *destination = b64encode[byte];
                     destination++;
-                    LOG(%i %i %x, x, x%3, byte);
                     byte = (current & 3) << 4;
                     break;
                 case 1:
                     byte |= ((current & 0xf0) >> 4);
                     *destination = b64encode[byte];
                     destination++;
-                    LOG(%i %i %x, x, x%3, byte);
                     byte = (current & 0x0f) << 2;
                     break;
                 case 2:
                     byte |= ((current & 0xc0) >> 6);
                     *destination = b64encode[byte];
                     destination++;
-                    LOG(%i %i %x, x, x%3, byte);
+                   // LOG(%i %i %x, x, x%3, byte);
                     byte = current & 0x3f;
                     *destination = b64encode[byte];
                     destination++;
-                    LOG(%i %i %x, x, x%3, byte);
+                   // LOG(%i %i %x, x, x%3, byte);
                     byte = 0;
                     break;
             };
@@ -343,9 +359,10 @@ namespace n02 {
         require (len > 1);
         len = (len * 3 / 4);
         unsigned char current = b64decode[*c]; c++;
-        unsigned char next = b64decode[*c];
+        unsigned char next = b64decode[*c]; c++;
 
         for (int x = 0; x < len; x++) {
+			//LOG(c=%x n=%x, current, next);
             switch (x % 3) {
                 case 0:
                     *dst = (current << 2) | ((next & 0x30) >> 4);
