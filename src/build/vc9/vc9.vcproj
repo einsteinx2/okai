@@ -44,7 +44,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui;..\win32"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32;JUCE_DLL;N02_DEV"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32;N02_DEV"
 				ExceptionHandling="0"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -498,30 +498,6 @@
 				RelativePath="..\..\ui\clientgui.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\ui\juce02.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\juce\juce_amalgamated.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\juce\juce_amalgamated.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ui\localisation.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ui\localisation.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\ui\locid.h"
-				>
-			</File>
 			<Filter
 				Name="license"
 				>
@@ -535,6 +511,38 @@
 				</File>
 				<File
 					RelativePath="..\..\ui\license.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="localisation"
+				>
+				<File
+					RelativePath="..\..\ui\localisation.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ui\localisation.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\ui\locid.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="juce"
+				>
+				<File
+					RelativePath="..\..\ui\juce02.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\juce\juce_amalgamated.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\juce\juce_amalgamated.h"
 					>
 				</File>
 			</Filter>
@@ -661,138 +669,154 @@
 			<Filter
 				Name="n02.kaillera"
 				>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.cpp"
+				<Filter
+					Name="core"
 					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.h"
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_ClientCore.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_ClientCore.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_Instruction.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="interface"
 					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerGame.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerGame.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_ClientCore.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_ClientCore.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_ClientMessaging.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_Instruction.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindow.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\modKaillera.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\kaillera\modKaillera.h"
-					>
-				</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraMasterServersList.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerConnection.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerGame.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerGame.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\juceKailleraServerSelect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_uiServerWindow.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\kaillera_uiServerWindowLists.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\modKaillera.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\kaillera\modKaillera.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="n02.p2p"
 				>
-				<File
-					RelativePath="..\..\modules\p2p\jucep2pSelect.cpp"
+				<Filter
+					Name="core"
 					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\jucep2pSelect.h"
+					<File
+						RelativePath="..\..\modules\p2p\p2p_Core.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_Core.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_Instruction.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_Messaging.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="interface"
 					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\jucep2pSession.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\jucep2pSession.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\modP2P.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\modP2P.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_Core.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_Core.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_Instruction.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_Messaging.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_uiSelect.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_uiSelect.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_uiSession.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\p2p\p2p_uiSession.h"
-					>
-				</File>
+					<File
+						RelativePath="..\..\modules\p2p\jucep2pSelect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\jucep2pSelect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\jucep2pSession.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\jucep2pSession.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\modP2P.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\modP2P.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_uiSelect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_uiSelect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_uiSession.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\modules\p2p\p2p_uiSession.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="n02.sc"
@@ -810,15 +834,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\modules\addEditIP.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\modules\gameSelect.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\gameSelect.h"
 					>
 				</File>
 				<File
@@ -843,6 +859,10 @@
 				</File>
 				<File
 					RelativePath="..\..\modules\juceGameSelect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceModHelpers.h"
 					>
 				</File>
 			</Filter>

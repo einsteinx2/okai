@@ -46,40 +46,26 @@ namespace n02 {
         char * string;
     } localisationEntry;
 
-#define _ENTRY(ID, STR) {false, ID, STR}
-
+#define _ENTRY(ID, STR) {false, ID, STR},
     static localisationEntry entries[] = {
-        _ENTRY(LID_NAME, "Open Kaillera"),
-        _ENTRY(LID_DEL1, "Delete item"),
-        _ENTRY(LID_DEL2, "Do you want to delete the seleted item"),
-        _ENTRY(LID_YES1, "Yes"),
-        _ENTRY(LID_NO01, "No"),
-        _ENTRY(LID_ADD1, "Add Item"),
-        _ENTRY(LID_EDT1, "Edit Item"),
-        _ENTRY(LID_SELG, "Select game"),
-        _ENTRY(LID_ERR1, "Error"),
-        _ENTRY(LID_NGOL, "No games in list"),
-        _ENTRY(LID_PLRS, "%i players"),
-        _ENTRY(LID_STS1, ", states"),
-        _ENTRY(LID_FRMP, "+%i frames"),
-        _ENTRY(LID_ADD2, "Add"),
-        _ENTRY(LID_CAN1, "Cancel"),
-        _ENTRY(LID_EDT2, "Edit"),
-        _ENTRY(LID_OK01, "ok"),
-        _ENTRY(LID_NM01, "Name:"),
-        _ENTRY(LID_IP01, "IP:"),
+        DEFAULT_LOC_ENTRIES
+#undef _ENTRY
+#define _ENTRY(ID, STR) {false, ID, STR}
         _ENTRY(0xffff, "")
     };
+#undef _ENTRY
+
+
     static int count = 0;
 
     extern char primary[128];
 
 
-    bool dumpLocalisationFile()
+    bool dumpLocalisationFile(char * fileName = "localisation02-default")
     {
         LOGS("Writing localisation file");
 
-        std::ofstream of("localisation02");
+        std::ofstream of(fileName);
         if (of.is_open()) {
 #define _WRITE(X) of.write(X, strlen(X))
             _WRITE("# n02 Localisation file\n");
@@ -89,8 +75,8 @@ namespace n02 {
             _WRITE("# Also allowed is \"font.\" Example:\n");
             _WRITE("# font=SimSun\n");
             _WRITE("# ID numbers are available from https://okai.svn.sourceforge.net/svnroot/okai/n02/src/ui/locid.h\n");
-            _WRITE("# Their Corresponding strings are available from https://okai.svn.sourceforge.net/svnroot/okai/n02/src/ui/localisation.cpp\n");
             _WRITE("# Remember to save files as UTF8\n");
+			_WRITE("# Rename this to plain \"localisation02\" (no extensions) for it to work");
             _WRITE("\n");
 
             if (strlen(primary) > 0) {
@@ -117,8 +103,6 @@ namespace n02 {
 
 
 
-#undef _ENTRY
-
 
     localisationEntry & getLocalisationEntry(int id)
     {
@@ -142,12 +126,12 @@ namespace n02 {
         return entries[count];
     }
 
-    static void loadLocalisationFile() {
+    static void loadLocalisationFile(char * fileName = "localisation02") {
 
         LOGS(Loading Localisation File);
 
         std::ifstream of;
-        of.open("localisation02");
+        of.open(fileName);
 
         if (of.is_open()) {
             char xxx[2048];
@@ -177,8 +161,8 @@ namespace n02 {
             }
             of.close();
         } else {
-            LOGS(No Localisation file present);
-            //dumpLocalisationFile();
+            LOGS(No Localisation file present Dumping localisation script);
+            dumpLocalisationFile();
         }
     }
 

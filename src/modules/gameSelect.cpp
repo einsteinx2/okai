@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -29,7 +29,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "gameSelect.h"
+#include "juceModHelpers.h"
 #include "juceGameSelect.h"
 #include "GamesList.h"
 #include "juceAbortableStatusWindow.h"
@@ -48,7 +48,8 @@ namespace n02 {
 
     char * getSelectedGame(Component* parent)
 	{
-		TRACE();
+		TRACE(); const MessageManagerLock ml;
+		TRACE(); require(ml.lockWasGained());
         if (GamesList::getCount() > 0) {
 			TRACE(); selectedGameIndex = -1;
             TRACE(); int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
@@ -64,15 +65,18 @@ namespace n02 {
         }
     }
 
-    int  GameSelectLB::getNumRows () {
+    int  GameSelectLB::getNumRows ()
+	{
         return GamesList::getCount();
     }
 
-    void GameSelectLB::selectedRowsChanged (int lastRowSelected) {
+    void GameSelectLB::selectedRowsChanged (int lastRowSelected)
+	{
         selectedIndex = lastRowSelected;
     }
 
-    void  GameSelectLB::paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected) {
+    void  GameSelectLB::paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected)
+	{
         if (rowIsSelected) {
             g.fillAll (Colour(0xdd,0xdd,0xff));
         }
@@ -81,7 +85,8 @@ namespace n02 {
         g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
     }
 
-	void  GameSelectLB::listBoxItemClicked (int row, const MouseEvent &e){
+	void  GameSelectLB::listBoxItemClicked (int row, const MouseEvent &e)
+	{
         GamesList::selectByIndex(selectedIndex = selectedGameIndex = row);
 
         juce::String status;
@@ -94,19 +99,22 @@ namespace n02 {
         newCmp->updateGameInfo(status);
     }
 
-    void  GameSelectLB::listBoxItemDoubleClicked (int row, const MouseEvent &e){
+    void  GameSelectLB::listBoxItemDoubleClicked (int row, const MouseEvent &e)
+	{
         selectedIndex = selectedGameIndex = row;
         newCmp->closeUp();
     }
 
-	void  GameSelectLB::returnKeyPressed (int lastRowSelected){
+	void  GameSelectLB::returnKeyPressed (int lastRowSelected)
+	{
         selectedIndex = selectedGameIndex = lastRowSelected;
         newCmp->closeUp();
     }
 
 
 
-    void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay) {
+    void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay)
+	{
         cmbRun->clear();
         cmbDelay->clear();
         if ((client->app.attributes & APP_ATTRIBUTES_AUTORUN) != 0) {
@@ -202,7 +210,5 @@ namespace n02 {
     {
         delete CancelableStatusWindow::window;
     }
-
-
 };
 

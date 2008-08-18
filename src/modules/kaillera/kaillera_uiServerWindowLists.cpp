@@ -36,7 +36,7 @@ SOFTWARE.
 #include "clientgui.h"
 #include "juceKailleraServerConnection.h"
 #include "juceKailleraServerGame.h"
-#include "gameSelect.h"
+#include "juceModHelpers.h"
 #include "kaillera_ClientCore.h"
 
 namespace n02 {

@@ -96,6 +96,13 @@ SOFTWARE.
 			window->centreAroundComponent (c, W, H + window->getTitleBarHeight());	\
 			window->setVisible (true);										\
 		}																	\
+		static void addToAsChild(Component * c) {							\
+			c->addChildComponent(window, -1);								\
+			window->centreAroundComponent (c, W, H + window->getTitleBarHeight());\
+		}																	\
+		static void removeFromAsChild(Component * c) {						\
+			c->removeChildComponent(window);								\
+		}																	\
 		static void createAndShowModal() {									\
 			window = new Name();											\
 			window->centreWithSize (W, H + window->getTitleBarHeight());	\

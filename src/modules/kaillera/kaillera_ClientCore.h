@@ -85,6 +85,7 @@ namespace n02 {
         void coreJoin(const unsigned int id);
         void coreCreate(const char * name);
         void coreLeave();
+		void coreLeaveForce();
         void coreStart();
 
     };

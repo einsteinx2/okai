@@ -20,7 +20,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "gameSelect.h"
+#include "juceModHelpers.h"
 //[/Headers]
 
 #include "juceKailleraServerGame.h"
@@ -136,10 +136,6 @@ juceKailleraServerGame::juceKailleraServerGame ()
 	lstPlayers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstPlayers->setOutlineThickness (1);
 
-	// chat
-	txtChatInput->addListener(&chatInput);
-	textLength = 0;
-
 	//autorun items
 	updateAutorunItems();
 
@@ -151,11 +147,10 @@ juceKailleraServerGame::juceKailleraServerGame ()
 		chkRecord->setEnabled(false);
 	}
 
-	//host
-	if (!n02::kaillera::hosting) {
-		btnStartGame->setEnabled(false);
-		btnKick->setEnabled(false);
-	}
+	clearText();
+
+	txtChatInput->addListener(&chatInput);
+
     //[/Constructor]
 }
 
@@ -283,8 +278,10 @@ void juceKailleraServerGame::updateAutorunItems() {
 }
 
 void juceKailleraServerGame::clearText() {
-			textLength = 0;
-			txtChat->setText("", false);
+	textLength = 0;
+	txtChat->setText("", false);
+	btnStartGame->setEnabled(n02::kaillera::hosting);
+	btnKick->setEnabled(n02::kaillera::hosting);
 }
 void juceKailleraServerGame::handleCommandMessage(int  commandId) {
 	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);
@@ -305,6 +302,7 @@ void juceKailleraServerGame::handleCommandMessage(int  commandId) {
 			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
 			if (this != 0 && txtChat != 0) {
 				TRACE();
+				s->append(T("\r"), 2);
 				txtChat->setHighlightedRegion(textLength, 0);
 				txtChat->insertTextAtCursor (*s);
 				textLength += s->length();

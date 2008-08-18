@@ -31,7 +31,6 @@ SOFTWARE.
 
 #include "jucep2pSelect.h"
 #include "modP2P.h"
-#include "addEditIP.h"
 #include "p2p_uiSession.h"
 
 namespace n02 {

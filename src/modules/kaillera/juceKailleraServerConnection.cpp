@@ -22,6 +22,7 @@
 //[Headers] You can add your own extra header files here...
 #include "common.h"
 using namespace n02;
+#include "locid.h"
 //[/Headers]
 
 #include "juceKailleraServerConnection.h"
@@ -78,21 +79,20 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 
     //[Constructor] You can add your own custom stuff here..
 	TRACE();
-
 	// Users List
-	lstUsers->getHeader()->addColumn("Nick", 1, 80, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn("Ping", 2, 30, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn("C.S.", 3, 30, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn("Status", 4, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WN), 1, 80, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP), 2, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WC), 3, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 30, 30, -1, TableHeaderComponent::notSortable);
 
 	lstUsers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstUsers->setOutlineThickness (1);
 
-	lstGames->getHeader()->addColumn("Game", 1, 320, 30, -1, TableHeaderComponent::notSortable);
-	lstGames->getHeader()->addColumn("App", 2, 180, 30, -1, TableHeaderComponent::notSortable);
-	lstGames->getHeader()->addColumn("Owner", 3, 110, 30, -1, TableHeaderComponent::notSortable);
-	lstGames->getHeader()->addColumn("Status", 4, 55, 30, -1, TableHeaderComponent::notSortable);
-	lstGames->getHeader()->addColumn("Players", 5, 50, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WG), 1, 320, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WA), 2, 180, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WO), 3, 110, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 55, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP2), 5, 50, 30, -1, TableHeaderComponent::notSortable);
 
 	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstGames->setOutlineThickness (1);
@@ -102,6 +102,9 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 	textLength = 0;
 
 	TRACE();
+
+	n02::kaillera::uiGameWindowCreateCallback();
+
     //[/Constructor]
 }
 
@@ -198,6 +201,7 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 			String * s = reinterpret_cast<String*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
 			if (this != 0 && txtChat != 0) {
 				TRACE();
+				s->append(T("\r"), 2);
 				txtChat->setHighlightedRegion(textLength, 0);
 				txtChat->insertTextAtCursor (*s);
 				textLength += s->length();
@@ -207,12 +211,12 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 			TRACE();
 			char * s = reinterpret_cast<char*>(reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId)->body.user);
 			String title;
-			title << "Connected to " << s;
+			title << LUTF16(LID_KAILLERA_C2) << s;
 			n02::kaillera::uiSetTitleCallback(title);
 		} else if (last == LISTCMD_SHOWGAME) {
-			n02::kaillera::uiGameWindowShowCallback();
+			TRACE(); n02::kaillera::uiGameWindowShowCallback();
 		} else if (last == LISTCMD_HIDEGAME) {
-			n02::kaillera::uiGameWindowHideCallback();
+			TRACE(); n02::kaillera::uiGameWindowHideCallback();
 		}
 	}
 	TRACE();

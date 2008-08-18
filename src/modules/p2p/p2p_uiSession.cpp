@@ -30,7 +30,7 @@ SOFTWARE.
 ******************************************************************************/
 #include "jucep2pSession.h"
 #include "p2p_Core.h"
-#include "gameSelect.h"
+#include "juceModHelpers.h"
 
 namespace n02 {
     namespace p2p {

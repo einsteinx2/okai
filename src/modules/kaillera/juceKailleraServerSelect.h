@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  5 Jul 2008 5:29:20 pm
+  Creation date:  18 Aug 2008 2:10:08 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
-#define __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
+#ifndef __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_8071AC4F__
+#define __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_8071AC4F__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "juce02.h"
@@ -104,6 +104,7 @@ private:
     TextButton* btnConnect;
     TextButton* btnPing;
     TextButton* btnMastersList;
+    HyperlinkButton* hlnkWebsite;
     Path internalPath1;
 
     //==============================================================================
@@ -113,4 +114,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_17CB935__
+#endif   // __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_8071AC4F__

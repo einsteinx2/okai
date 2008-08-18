@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_849595E4__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce02.h"
+#include "clientgui.h"
 #include "kaillera_uiServerWindowLists.h"
 
 namespace n02 {

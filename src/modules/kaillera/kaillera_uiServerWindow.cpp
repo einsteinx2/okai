@@ -35,13 +35,18 @@ SOFTWARE.
 #include "clientgui.h"
 #include "juceKailleraServerConnection.h"
 #include "juceKailleraServerGame.h"
-#include "gameSelect.h"
+#include "juceModHelpers.h"
 #include "kaillera_ClientCore.h"
 #include "kaillera_uiServerWindowLists.h"
+#include "locid.h"
 
 namespace n02 {
 
     namespace kaillera {
+
+		/************************************************************
+        ** global vars
+        *******************************/
 
         extern char uiUsername[32];
         extern char uiQuitMessage[128];
@@ -54,6 +59,7 @@ namespace n02 {
         bool hosting;
         unsigned short lastSelectedUserId;
         bool gameRunning;
+		static bool gameWindowVisible = false;
 
 
         /************************************************************
@@ -74,7 +80,7 @@ namespace n02 {
         }
 
         bool isGameWindowActive() {
-            return KailleraServerGame::window != 0;
+            return gameWindowVisible;
         }
 
         // start button callback
@@ -107,8 +113,8 @@ namespace n02 {
 
         SIMPLEWINDOW(KailleraServerConnection, "Connecting...", Colours::whitesmoke, DocumentWindow::allButtons, juceKailleraServerConnection, 750, 500);
         void KailleraServerConnection::OnClose() {
-            if (KailleraServerGame::window != 0) {
-
+            if (gameWindowVisible) {
+				
             } else  {
                 KailleraServerConnection::getCurrentlyModalComponent()->exitModalState(0);
                 KailleraServerConnection::window->setVisible(false);
@@ -185,17 +191,21 @@ namespace n02 {
 
             TRACE();
         }
+
         static void N02CCNV serverUserJoin (const char * nick, const int ping, const unsigned short id, const char connectionSetting)
         {
             TRACE();
             serverUserAdd(nick, ping, id, connectionSetting, 1);
 
             char txt[256];
-            sprintf_s(txt, 255, "* %s joined the partyline\r", nick);
+			sprintf_s(txt, 255, LUTF8(LID_KAILLERA_J), nick);
             sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
             TRACE();
         }
+
+
+
         static void N02CCNV serverUserLeave (const char * nick, const char * /*quitMessage*/, const unsigned short id)
         {
             TRACE();
@@ -206,7 +216,7 @@ namespace n02 {
             sendCommand(LISTCMD_REMUSER, user);
 
             char txt[256];
-            sprintf_s(txt, 255, "* %s left the partyline\r", nick);
+            sprintf_s(txt, 255, LUTF8(LID_KAILLERA_L), nick);
             sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
             TRACE();
@@ -216,7 +226,7 @@ namespace n02 {
             TRACE();
 
             char txt[512];
-            sprintf_s(txt, 511, "<%s> %s\r", userName, message);
+            sprintf_s(txt, 511, "<%s> %s", userName, message);
             sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
             TRACE();
@@ -226,7 +236,7 @@ namespace n02 {
             TRACE();
 
             char txt[512];
-            sprintf_s(txt, 511, "<%s> %s\r", userName, message);
+            sprintf_s(txt, 511, "<%s> %s", userName, message);
             sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
             modHelper.chatReceived(userName, message);
 
@@ -237,7 +247,7 @@ namespace n02 {
             TRACE();
 
             char txt[256];
-            sprintf_s(txt, 255, "- %s\r", message);
+            sprintf_s(txt, 255, "- %s", message);
             sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
             TRACE();
@@ -247,15 +257,16 @@ namespace n02 {
             TRACE();
 
             char txt[256];
-            sprintf_s(txt, 255, "%s\r", msg);
+            sprintf_s(txt, 255, "%s", msg);
             sendCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
 
             TRACE();
         }
+		
         static void N02CCNV loggedIn ()
         {
             TRACE();
-            clientLoginStatusChange("Logged in");
+            clientLoginStatusChange(LUTF8(LID_KAILLERA_LI));
 
             sendCommand(LISTCMD_SETTITLE, uiLastIP);
 
@@ -308,14 +319,13 @@ namespace n02 {
         }
 		
 		void uiGameWindowCreateCallback() {
-			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
-			KailleraServerGame::window->setVisible(false);
+			TRACE(); KailleraServerGame::createAndShow();
+			TRACE(); KailleraServerGame::window->setVisible(false);
 		}
 
 		void uiGameWindowCreateCloseCallback() {
 			if (KailleraServerGame::window != 0) {
 				MessageManagerLock ml;
-				KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
 				KailleraServerGame::window->setVisible(false);
 				KailleraServerGame::window->removeFromDesktop();
 				delete KailleraServerGame::window;
@@ -324,11 +334,16 @@ namespace n02 {
 		}
 
 		void uiGameWindowShowCallback() {
-			KailleraServerGame::window->setVisible(true);
+			TRACE(); KailleraServerGame::addToAsChild(KailleraServerConnection::window);
+			TRACE(); KailleraServerGame::window->setVisible(true);
+			gameWindowVisible = true;
+			KailleraServerGame::cmponnt->clearText();
 		}
 
 		void uiGameWindowHideCallback() {
-			KailleraServerGame::window->setVisible(false);
+			TRACE(); KailleraServerGame::removeFromAsChild(KailleraServerConnection::window);
+			TRACE(); KailleraServerGame::window->setVisible(false);
+			gameWindowVisible = false;
 		}
 
         static void N02CCNV gameClosed ()
@@ -357,7 +372,7 @@ namespace n02 {
         static void N02CCNV gameKicked ()
         {
             TRACE();
-            sendCommand(LISTCMD_APPEND, new String("* You have been kicked out of the game\r"));
+            sendCommand(LISTCMD_APPEND, new String(LUTF8(LID_KAILLERA_K)));
             TRACE();
         }
         static void N02CCNV gamePlayerAdd (char *name, int ping, unsigned short id, char connectionSetting)
@@ -384,7 +399,7 @@ namespace n02 {
 
                 if (isGameWindowActive()) {
                     char txt[256];
-                    sprintf_s(txt, 255, "* %s joined the game\r", username);
+                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GJ), username);
                     sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
                 }
             }
@@ -402,7 +417,7 @@ namespace n02 {
 
                 if (isGameWindowActive()) {
                     char txt[256];
-                    sprintf_s(txt, 255, "* %s left the game\r", username);
+                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GL), username);
                     sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
                 }
 
@@ -415,7 +430,7 @@ namespace n02 {
                 TRACE();
                 if (isGameWindowActive()) {
                     char txt[256];
-                    sprintf_s(txt, 255, "* %s (Player %i) dropped\r", username, gdpl);
+                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_PD), username, gdpl);
                     sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
                 }
                 TRACE();
@@ -426,7 +441,7 @@ namespace n02 {
             if (KailleraServerGame::window != 0) {
                 String text;
                 if (isGameWindowActive()) {
-                    sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8("Game started\r")));
+                    sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GS)));
                 }
                 modHelper.startGame(lastGame, playerNo, numPlayers);
 
@@ -439,7 +454,7 @@ namespace n02 {
                 gameRunning = false;
                 if (KailleraServerGame::window != 0) {
                     if (isGameWindowActive()) {
-                        sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8("Game ended\r")));
+                        sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GE)));
                     }
                 }
             }
@@ -471,15 +486,11 @@ namespace n02 {
         };
 
 
-
         // game chat input callback
-
         void KailleraGameChatInput::textEditorReturnKeyPressed (TextEditor &editor) {
             String text = editor.getText();
             if (text.equalsIgnoreCase(T("/close"))) {
-                coreLeave();
-                gameClosed();
-                return;
+				coreLeaveForce();
             } else {
                 sendChat(text.toUTF8());
             }
@@ -492,7 +503,7 @@ namespace n02 {
         *******************************/
         void ConnectCallback() {
 
-            KailleraServerGame::window = 0;
+			gameWindowVisible = false;
 
             if (strlen(uiUsername) == 0)
                 strcpy(uiUsername, "Ape");
@@ -520,7 +531,7 @@ namespace n02 {
                     if (coreConnect(toConnect)) {
                         {
                             char stat[256];
-                            sprintf_s(stat, 255, "Connecting to %s", toConnect.toString());
+                            sprintf_s(stat, 255, LUTF8(LID_KAILLERA_CT), toConnect.toString());
                             clientLoginStatusChange(stat);
                         }
 
@@ -535,10 +546,10 @@ namespace n02 {
                     delete KailleraServerConnection::window;
 					KailleraServerConnection::window = 0;
                 } else {
-                    AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Error initializing core");
+                    AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF8(LID_ERR1), LUTF16(LID_KAILLERA_EI));
                 }
             } else {
-                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Unable to parse IP address");
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF8(LID_ERR1), LUTF16(LID_KAILLERA_EP));
             }
 
 

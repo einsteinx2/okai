@@ -891,6 +891,12 @@ namespace n02 {
             updateState(ACTION_LEAVE);
         }
 
+		void coreLeaveForce()
+		{
+			coreLeave();
+			updateState(RECVED_GAMRLEAV);
+		}
+
         // start game
         void coreStart()
         {

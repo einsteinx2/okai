@@ -45,8 +45,6 @@ namespace n02 {
         //GUI
         SIMPLEWINDOW(ModDefStressTestWindow, "Deferment Stress Testing", Colours::whitesmoke, DocumentWindow::closeButton, juceModDefStressTest, 450, 145);
 
-        volatile int guiIsRunning = 0;
-        static PosixThread * guiThread = 0;
         volatile int running = 0;
         volatile int frame = 0;
         int delay = 0;

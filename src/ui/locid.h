@@ -52,4 +52,82 @@ SOFTWARE.
 #define LID_OK01 25
 #define LID_NM01 26
 #define LID_IP01 27
+#define LID_UCON 28
+#define LID_UCO1 29
+
+#define LID_KAILLERA_C 300
+#define LID_KAILLERA_J 301
+#define LID_KAILLERA_L 302
+#define LID_KAILLERA_LI 303
+#define LID_KAILLERA_K 304
+#define LID_KAILLERA_GJ 305
+#define LID_KAILLERA_GL 306
+#define LID_KAILLERA_GS 307
+#define LID_KAILLERA_GE 308
+#define LID_KAILLERA_CT 309
+#define LID_KAILLERA_EI 310
+#define LID_KAILLERA_EP 311
+#define LID_KAILLERA_PD 312
+#define LID_KAILLERA_WN 313
+#define LID_KAILLERA_WP 314
+#define LID_KAILLERA_WC 315
+#define LID_KAILLERA_WS 316
+#define LID_KAILLERA_WG 317
+#define LID_KAILLERA_WA 318
+#define LID_KAILLERA_WO 319
+#define LID_KAILLERA_WP2 321
+#define LID_KAILLERA_C2 322
+
+// make sure these are sorted by ID
+
+#define DEFAULT_LOC_ENTRIES \
+	_ENTRY(LID_NAME, "Open Kaillera") \
+	_ENTRY(LID_DEL1, "Delete item") \
+	_ENTRY(LID_DEL2, "Do you want to delete the seleted item") \
+	_ENTRY(LID_YES1, "Yes") \
+	_ENTRY(LID_NO01, "No") \
+	_ENTRY(LID_ADD1, "Add Item") \
+	_ENTRY(LID_EDT1, "Edit Item") \
+	_ENTRY(LID_SELG, "Select game") \
+	_ENTRY(LID_ERR1, "Error") \
+	_ENTRY(LID_NGOL, "No games in list") \
+	_ENTRY(LID_PLRS, "%i players") \
+	_ENTRY(LID_STS1, ", states") \
+	_ENTRY(LID_FRMP, "+%i frames") \
+	_ENTRY(LID_ADD2, "Add") \
+	_ENTRY(LID_CAN1, "Cancel") \
+	_ENTRY(LID_EDT2, "Edit") \
+	_ENTRY(LID_OK01, "ok") \
+	_ENTRY(LID_NM01, "Name:") \
+	_ENTRY(LID_IP01, "IP:") \
+	_ENTRY(LID_UCON, "Placeholder") \
+	_ENTRY(LID_UCO1, "This feature has not been implemented yet") \
+	\
+	\
+	\
+	_ENTRY(LID_KAILLERA_C, "Connecting...") \
+	_ENTRY(LID_KAILLERA_J, "* %s joined the partyline") \
+	_ENTRY(LID_KAILLERA_L, "* %s left the partyline") \
+	_ENTRY(LID_KAILLERA_LI, "Logged in") \
+	_ENTRY(LID_KAILLERA_K, "* You have been kicked out of the game") \
+	_ENTRY(LID_KAILLERA_GJ, "* %s joined the game") \
+	_ENTRY(LID_KAILLERA_GL, "* %s left the game") \
+	_ENTRY(LID_KAILLERA_GS, "Game started") \
+	_ENTRY(LID_KAILLERA_GE, "Game ended") \
+	_ENTRY(LID_KAILLERA_CT, "Connecting to %s") \
+	_ENTRY(LID_KAILLERA_EI, "Error initializing core") \
+	_ENTRY(LID_KAILLERA_EP, "Unable to parse IP address") \
+	_ENTRY(LID_KAILLERA_PD, "* %s (Player %i) dropped") \
+	_ENTRY(LID_KAILLERA_WN, "Nick") \
+	_ENTRY(LID_KAILLERA_WP, "Ping") \
+	_ENTRY(LID_KAILLERA_WC, "C.S.") \
+	_ENTRY(LID_KAILLERA_WS, "Status") \
+	_ENTRY(LID_KAILLERA_WG, "Game") \
+	_ENTRY(LID_KAILLERA_WA, "App") \
+	_ENTRY(LID_KAILLERA_WO, "Owner") \
+	_ENTRY(LID_KAILLERA_WP2, "Players") \
+	_ENTRY(LID_KAILLERA_C2, "Connected to ")
+
+
+
 

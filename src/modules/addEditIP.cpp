@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -29,7 +29,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ******************************************************************************/
 
-#include "addEditIP.h"
+#include "juceModHelpers.h"
 #include "common.h"
 #include "juceAddEditIPDialog.h"
 #include "clientgui.h"
@@ -43,38 +43,35 @@ namespace n02 {
         char ip[128];
     };
 
-    bool AddNewIP(Component * parent) {
-		TRACE();
-		// lock the message thread in case its being called form an outside thread
-		const MessageManagerLock ml;
-		// set returnvalue to 0
-        addedit::returnValue = 0;
-		// show the dialog box
-        juceAddEditIPDialog * newCmp;
-		DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-		TRACE();
-		//delete the allocated content component
-		delete newCmp;
-		TRACE();
-        return addedit::returnValue == 1;
+    bool AddNewIP(Component * parent)
+	{
+		TRACE(); const MessageManagerLock ml;
+		require(ml.lockWasGained());
+        TRACE(); addedit::returnValue = 0;
+        TRACE(); juceAddEditIPDialog * newCmp;
+		TRACE(); DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
+		TRACE(); delete newCmp;
+		TRACE(); return addedit::returnValue == 1;
     }
-    bool EditIP(Component * parent, char * NAME, char * IP) {
-		TRACE();
-		const MessageManagerLock ml;
-        strcpy(addEditGetIP(), IP);
-        strcpy(addEditGetName(), NAME);
-        addedit::returnValue = 1;
-        juceAddEditIPDialog * newCmp;
-		DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-		TRACE();
-        delete newCmp;
-		TRACE();
-        return addedit::returnValue == 1;
+
+    bool EditIP(Component * parent, char * NAME, char * IP)
+	{
+		TRACE(); const MessageManagerLock ml;
+		require(ml.lockWasGained());
+        TRACE(); strcpy(addEditGetIP(), IP);
+        TRACE(); strcpy(addEditGetName(), NAME);
+        TRACE(); addedit::returnValue = 1;
+        TRACE(); juceAddEditIPDialog * newCmp;
+		TRACE(); DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
+		TRACE(); delete newCmp;
+		TRACE(); return addedit::returnValue == 1;
     }
-    char * addEditGetIP() {
+    char * addEditGetIP()
+	{
         return addedit::ip;
     }
-    char * addEditGetName() {
+    char * addEditGetName()
+	{
         return addedit::name;
     }
 };

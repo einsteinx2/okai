@@ -1,11 +1,11 @@
 /******************************************************************************
-          .d8888b.   .d8888b.  
-         d88P  Y88b d88P  Y88b 
-         888    888        888 
-88888b.  888    888      .d88P 
-888 "88b 888    888  .od888P"  
-888  888 888    888 d88P"      
-888  888 Y88b  d88P 888"       
+>         .d8888b.   .d8888b.                                                 <
+>        d88P  Y88b d88P  Y88b                                                <
+>        888    888        888                                                <
+88888b.  888    888      .d88P                                                <
+888 "88b 888    888  .od888P"                                                 <
+888  888 888    888 d88P"                                                     <
+888  888 Y88b  d88P 888"                                                      <
 888  888  "Y8888P"  888888888              Open Kaillera Arcade Netplay Library
 *******************************************************************************
 Copyright (c) Open Kaillera Team 2003-2008
@@ -34,19 +34,13 @@ SOFTWARE.
 #include "common.h"
 #include "clientgui.h"
 #include "juceKailleraServerSelect.h"
-#include "addEditIP.h"
+#include "juceModHelpers.h"
 #include "kaillera_ClientCore.h"
+#include "locid.h"
 
 namespace n02 {
 
     namespace kaillera {
-
-
-        /************************************************************
-        ** Global sync vars
-        *******************************/
-        volatile int guiIsRunning = 0;
-        PosixThread * gui = 0;
 
         /************************************************************
         ** vars
@@ -66,22 +60,22 @@ namespace n02 {
         ** Config Table
         *******************************/
         CONFIG_START(kailleraConfig)
-        CONFIG_STRVAR("nick", uiUsername, 32, "Ape")
-        CONFIG_STRVAR("qmsg", uiQuitMessage, 128, "Ape Escaped!")
-        CONFIG_STRVAR("ip", uiLastIP, 128, "127.0.0.1:27888")
-        CONFIG_INTVAR("connection", uiConnectionSetting, 1)
-        CONFIG_INTVAR("record", recordingEnabled, 1)
-        CONFIG_STRLIST("servers_ip", uiServersIP, 128)
-		CONFIG_STRLIST("servers_name", uiServersName, 128)
-		CONFIG_END;
+            CONFIG_STRVAR("nick", uiUsername, 32, "Ape")
+            CONFIG_STRVAR("qmsg", uiQuitMessage, 128, "Ape Escaped!")
+            CONFIG_STRVAR("ip", uiLastIP, 128, "127.0.0.1:27888")
+            CONFIG_INTVAR("connection", uiConnectionSetting, 1)
+            CONFIG_INTVAR("record", recordingEnabled, 1)
+            CONFIG_STRLIST("servers_ip", uiServersIP, 128)
+            CONFIG_STRLIST("servers_name", uiServersName, 128)
+            CONFIG_END;
 
-		/************************************************************
-		** Misc Prototypes
-		*******************************/
-		// after copying IP to uiLastIP, call this to proceed for connecting
-		void ConnectCallback();
+        /************************************************************
+        ** Misc Prototypes
+        *******************************/
+        // after copying IP to uiLastIP, call this to proceed for connecting
+        void ConnectCallback();
 
-		/************************************************************
+        /************************************************************
         ** GUI Window
         *******************************/
 
@@ -90,13 +84,13 @@ namespace n02 {
         // Close button press
         void ModKailleraServerSelect::OnClose(){
             ModKailleraServerSelect::cmponnt->saveConfig();
-			Component::getCurrentlyModalComponent()->exitModalState(0);
+            Component::getCurrentlyModalComponent()->exitModalState(0);
         }
 
         // Mod changing
         void uiModChangeCallback(int index) {
             modHelper.activeTransportByIndex(index);
-			ModKailleraServerSelect::window->waitNotifyAndCloseNotify();
+            ModKailleraServerSelect::window->waitNotifyAndCloseNotify();
         }
 
 
@@ -112,12 +106,12 @@ namespace n02 {
 
         // Ping button press
         void uibtnPingCallback(){
-            AlertWindow::showMessageBox(AlertWindow::InfoIcon, "Callback", "Ping");
+			AlertWindow::showMessageBox(AlertWindow::InfoIcon, LUTF16(LID_UCON), LUTF16(LID_UCO1));
         }
 
         // Masters list button press
         void uibtnMastersListCallback(){
-            AlertWindow::showMessageBox(AlertWindow::InfoIcon, "Callback", "List");
+            AlertWindow::showMessageBox(AlertWindow::InfoIcon, LUTF16(LID_UCON), LUTF16(LID_UCO1));
         }
 
         // add server button press
@@ -144,7 +138,7 @@ namespace n02 {
         // delete server button press
         void uiDeleteServer(int index){
             if (index >= 0 && index < uiServersName.itemsCount()) {
-                if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, "Delete server", "Do you want to delete the seleted item", "Yes", "No")) {
+                if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, LUTF16(LID_DEL1), LUTF16(LID_DEL2), LUTF16(LID_YES1), LUTF16(LID_NO01))) {
                     uiServersName.removeIndex(index);
                     uiServersIP.removeIndex(index);
                 }
@@ -162,24 +156,24 @@ namespace n02 {
         static void N02CCNV activete(){}
 
 
-		static WaitableEvent * waitable = 0;
+        static WaitableEvent * waitable = 0;
 
         // GUI Entry point
         static void N02CCNV activeteGui()
-		{
-			TRACE(); 
-			if (GuiIsJuceThread()) {
-				TRACE(); ConfigurationManager config(kailleraConfig);
-				TRACE(); config.load("kaillera");
-				
-				TRACE(); ModKailleraServerSelect::createAndShowModal();
-				TRACE(); ModKailleraServerSelect::deleteAndZeroWindow();
+        {
+            TRACE(); 
+            if (GuiIsJuceThread()) {
+                TRACE(); ConfigurationManager config(kailleraConfig);
+                TRACE(); config.load("kaillera");
 
-				TRACE(); config.save("kaillera");
-			} else {
-				GuiJUCEThreadCallbackLock(activeteGui);
-			}
-		}
+                TRACE(); ModKailleraServerSelect::createAndShowModal();
+                TRACE(); ModKailleraServerSelect::deleteAndZeroWindow();
+
+                TRACE(); config.save("kaillera");
+            } else {
+                GuiJUCEThreadCallbackLock(activeteGui);
+            }
+        }
 
         // etc...
         static int  N02CCNV getSelectedAutorunIndex()
@@ -207,21 +201,18 @@ namespace n02 {
         *******************************/
         int  ServersListListboxModel::getNumRows()
         {
-			TRACE();
             return uiServersIP.itemsCount();
         }
         void  ServersListListboxModel::paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected)
         {
-			TRACE();
             if (rowIsSelected)
                 g.fillAll (Colour(0xdd,0xdd,0xff));
         }
         void  ServersListListboxModel::paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
         {
-			TRACE();
             g.setColour (Colours::black);
             if (columnId == 2) {
-				const String text (FROMUTF8(uiServersIP.getItem(rowNumber)));
+                const String text (FROMUTF8(uiServersIP.getItem(rowNumber)));
                 g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
             } else {
                 const String text (FROMUTF8(uiServersName.getItem(rowNumber)));
@@ -232,7 +223,6 @@ namespace n02 {
         }
         void  ServersListListboxModel::cellClicked (int rowNumber, int columnId, const MouseEvent &e)
         {
-			TRACE();
             if (uiServersIP.itemsCount() > rowNumber) {
                 String xxx(uiServersIP.getItem(rowNumber));
                 ModKailleraServerSelect::cmponnt->updateIP(xxx);
@@ -240,18 +230,15 @@ namespace n02 {
         }
         void  ServersListListboxModel::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
         {
-			TRACE();
             ServersListListboxModel::returnKeyPressed(rowNumber);
         }
         void  ServersListListboxModel::deleteKeyPressed (int lastRowSelected)
         {
-			TRACE();
             uiDeleteServer(lastRowSelected);
             ModKailleraServerSelect::cmponnt->updateLV();
         }
         void  ServersListListboxModel::returnKeyPressed (int lastRowSelected)
         {
-			TRACE();
             if (lastRowSelected >= 0 && uiServersIP.itemsCount() > lastRowSelected) {
                 String xxx(uiServersIP.getItem(lastRowSelected));
                 ModKailleraServerSelect::cmponnt->updateIP(xxx);

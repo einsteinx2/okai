@@ -35,16 +35,29 @@ SOFTWARE.
 #include "clientgui.h"
 
 namespace n02 {
-
+	/*
+	show select game screen
+	*/
     char * getSelectedGame(Component*);
-
+	/*
+	helper for setting up ui autorun parameters
+	*/
     void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay);
-
-    void showCancelable();
-    bool updateCancelable(char * status);
-    bool isCancelableCanceled();
-    void hideCancelable();
-
-
+	/*
+	Will show an add item dialog. Will return true if user doesn't cancel
+	*/
+    bool AddNewIP(Component * parent);
+	/*
+	Will show an edit item dialog. Will return true if user doesn't cancel
+	*/
+    bool EditIP(Component * parent, char * name, char * IP);
+	/*
+	Will return pointer to the last item IP user put into the add or edit dialog
+	*/
+    char * addEditGetIP();
+	/*
+	Will return pointer to the last item name user put into the add or edit dialog
+	*/
+    char * addEditGetName();
 };
 
