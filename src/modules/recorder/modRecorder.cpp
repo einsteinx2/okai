@@ -173,7 +173,7 @@ namespace n02 {
                 sprintf(filename, "records%s%08x_%02i_%02i.krec", PATH_SEPERATOR, fileHeader.time, fileHeader.playerNo, fileHeader.totalPlayers);
 
                 {
-                    juce::File fl("records");
+                    juce::File fl(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName());
                     fl.createDirectory();
                 }
 
@@ -203,7 +203,7 @@ namespace n02 {
                 TRACE();
 
                 {
-                    juce::File fl("records");
+                    juce::File fl(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName());
                     fl.createDirectory();
                 }
 

@@ -203,11 +203,13 @@ namespace n02 {
     }
     juce_wchar * getLocalisedUTF16(int id)
     {
+		TRACE();
         static juce_wchar allocated[4][1024];
         static int count = 0;
         count = ((++count) % 4);
         char * u = getLocalisationEntry(id).string;
         String::fromUTF8((juce::uint8*)u, strlen(u)+1).copyToBuffer(allocated[count], 1024);
+		TRACE();
         return allocated[count];
     }
 };

@@ -86,7 +86,7 @@ namespace n02 {
     STDMODULE(modGameList, "gamelist", "gamelist", gameListInterface, 0, 0, MOD02_STATUS_WORKING, "Module for working with game list");
 
     static ModuleAbstraction02 * N02CCNV modulesHandlerGetByName(const char * name){
-        LOG (%s, name);
+        //LOG (%s, name);
         if (name && strlen(name) > 0 && modules.itemsCount() > 0) {
             for (int x = 0; x < modules.itemsCount();  x++) {
                 if (strcmp(modules[x].name, name)==0) {
@@ -97,7 +97,7 @@ namespace n02 {
         return 0;
     }
     static ModuleAbstraction02 * N02CCNV modulesHandlerGetByIndex(const int index){
-        LOG (%i/%i, index, modules.itemsCount());
+        //LOG (%i/%i, index, modules.itemsCount());
         if (index >= 0 && index < modules.itemsCount()) {
             return &modules[index];
         }
@@ -117,7 +117,7 @@ namespace n02 {
     }
     ModuleAbstraction02 * N02CCNV modulesHandlerFind(char * type){
         if (type && strlen(type) > 0 && modules.itemsCount() > 0) {
-            LOG(%s, type);
+            //LOG(%s, type);
             for (int x = 0; x < modules.itemsCount();  x++) {
                 if (strcmp(modules[x].type, type)==0) {
                     return &modules[x];
@@ -128,7 +128,7 @@ namespace n02 {
     }
     ModuleAbstraction02 * N02CCNV modulesHandlerFindNext(ModuleAbstraction02 * current){
         if (current && current->type && strlen(current->type) > 0 && modules.itemsCount() > current->index + 1) {
-            LOG(%s, current->type);
+            //LOG(%s, current->type);
             for (int x = current->index + 1; x < modules.itemsCount();  x++) {
                 if (strcmp(modules[x].type, current->type)==0) {
                     return &modules[x];

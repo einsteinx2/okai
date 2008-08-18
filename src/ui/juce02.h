@@ -32,7 +32,6 @@ SOFTWARE.
 
 #include "common.h"
 
-//#define JUCE_DLL
 
 #ifdef linux
 
@@ -46,15 +45,19 @@ SOFTWARE.
 
 #else
 
-#ifdef JUCE_DLL
-#pragma comment(lib, "..\\..\\juce\\bin\\JUCE.lib")
-#else
-#pragma comment(lib, "..\\..\\juce\\bin\\jucelib_static_Win32.lib")
-#endif
+//#ifdef JUCE_DLL
+//#pragma comment(lib, "..\\..\\juce\\bin\\JUCE.lib")
+//#else
+//#ifndef JUCE_DEBUG
+//#pragma comment(lib, "..\\..\\juce\\bin\\jucelib_static_Win32.lib")
+//#else
+//#pragma comment(lib, "..\\..\\juce\\bin\\jucelib_static_Win32_debug.lib")
+//#endif
+//#endif
 
 #endif /* linux */
 
-#include "juce.h"
+#include "juce_amalgamated.h"
 
 // support header for using juce inside this program
 
@@ -107,6 +110,14 @@ SOFTWARE.
 			delete syncThread;												\
 			syncThread = 0;													\
 		}																	\
+        static void deleteAndZeroWindow() {									\
+            if (window != 0) {												\
+				window->setVisible(false);									\
+				window->removeFromDesktop();								\
+				delete window;												\
+                window = 0;													\
+            }																\
+        }																	\
 		static void OnClose();												\
 		static volatile bool running;										\
 		static PosixThread * syncThread;									\

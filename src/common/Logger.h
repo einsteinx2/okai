@@ -81,7 +81,7 @@ namespace n02 {
     defaultLogger.logprintf(__FUNCTION__ ## "(" #X ")" , __VA_ARGS__)
 
 #define LOGS(X) \
-    defaultLogger.logLine(#X)
+    defaultLogger.logprintf(__FUNCTION__ ## "(%s)", #X)
 
 #define LOGBASIC(X, ...) \
     defaultLogger.logprintf(X, __VA_ARGS__)

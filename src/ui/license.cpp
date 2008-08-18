@@ -84,6 +84,7 @@ namespace n02 {
         ConfigurationManager config(licenseConfig);
         config.load("license");
 
+#ifdef N02_WIN32
         if (licenseNotAccepted) {
             JUCEApplication::main(0, argv, new OpenKailleraLicenseApp);
 			
@@ -109,6 +110,10 @@ namespace n02 {
 			TRACE();
 #endif
 		}
+#else
+		// Having double juce apps on linux messes up the second juce app copy graphics for some reason
+		licenseNotAccepted = 0;
+#endif
         config.save("license");
 
         return licenseNotAccepted;

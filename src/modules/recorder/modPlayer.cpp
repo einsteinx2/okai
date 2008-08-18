@@ -15,7 +15,7 @@ namespace n02 {
 		SIMPLEWINDOW(PlayerPlayer, "Playback", Colours::whitesmoke, DocumentWindow::allButtons, jucePlayerPlayer, 424, 176);
 
 		void ModPlayerPlaylist::OnClose() {
-			
+			Component::getCurrentlyModalComponent()->exitModalState(0);
 		}
 
 		void uiModChangeCallback(int index) {
@@ -106,7 +106,8 @@ namespace n02 {
 										PlayerPlayer::window->runModalLoop();
 										PlayerPlayer::window->setVisible(false);
 										PlayerPlayer::window->removeFromDesktop();
-										GuiJUCEDisposeObject(PlayerPlayer::window);
+										delete PlayerPlayer::window;
+
 										ModPlayerPlaylist::window->setVisible(true);
 									} else {
 										AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "Replay file is too small");
@@ -301,13 +302,20 @@ namespace n02 {
 		{
 			require(false);
 		}
+		
 		// <gui>
+
+		static WaitableEvent * waitable = 0;
+
 		static void N02CCNV activeteGui()
 		{
-			ModPlayerPlaylist::createAndShow();
-			ModPlayerPlaylist::waitForClose();
-                        ModPlayerPlaylist::window->setVisible(false);
-                        GuiJUCEDisposeObject(ModPlayerPlaylist::window);
+			if (GuiIsJuceThread()) {
+				// draw our window
+				TRACE(); ModPlayerPlaylist::createAndShowModal();
+				TRACE(); ModPlayerPlaylist::deleteAndZeroWindow();
+			} else {
+				GuiJUCEThreadCallbackLock(activeteGui);
+			}
 		}
 		static int  N02CCNV getSelectedAutorunIndex()
 		{
@@ -374,7 +382,7 @@ namespace n02 {
 
 		void PlayListBoxModel::playBrowse()
 		{
-			FileChooser fc("Select a file to play", File("records"), "*.krec");
+			FileChooser fc("Select a file to play", File(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName()), "*.krec");
 			if (fc.browseForFileToOpen()) {
 				File f = fc.getResult();
 				playFile(f);
@@ -385,7 +393,8 @@ namespace n02 {
 		{
 			list.clearItems();
 			names.clearItems();
-			File records("records");
+			
+			File records(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName());
 			records.createDirectory();
 			DirectoryIterator di(records, false);
 			while (di.next()) {

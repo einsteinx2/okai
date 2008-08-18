@@ -75,7 +75,8 @@ namespace n02 {
 #define LISTCMD_LISTSLIMIT 20
 #define LISTCMD_APPEND 50
 #define LISTCMD_SETTITLE 51
-
+#define LISTCMD_SHOWGAME 52
+#define LISTCMD_HIDEGAME 53
 
 		typedef struct {
 			int command;

@@ -175,6 +175,90 @@
 				CommandLine=""
 			/>
 		</Configuration>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="..\..\..\temp\deb"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/EHsc-"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\..\juce;..\..\interface;..\..\common;..\..\modules;..\..\ui;..\win32"
+				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;N02_EXPORTS;N02_WIN32;JUCE_DEBUG"
+				ExceptionHandling="0"
+				RuntimeLibrary="1"
+				EnableFunctionLevelLinking="true"
+				WarningLevel="4"
+				DebugInformationFormat="0"
+				DisableSpecificWarnings="4996;4100"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="..\win32\zlib.lib"
+				OutputFile="..\..\..\release\$(ProjectName).dll"
+				IgnoreAllDefaultLibraries="false"
+				ModuleDefinitionFile="$(InputDir)..\..\interface\PSENet.def"
+				GenerateDebugInformation="true"
+				AssemblyDebug="1"
+				GenerateMapFile="false"
+				MapExports="false"
+				SubSystem="2"
+				OptimizeReferences="1"
+				EnableCOMDATFolding="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -416,6 +500,14 @@
 			</File>
 			<File
 				RelativePath="..\..\ui\juce02.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\juce\juce_amalgamated.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\juce\juce_amalgamated.h"
 				>
 			</File>
 			<File

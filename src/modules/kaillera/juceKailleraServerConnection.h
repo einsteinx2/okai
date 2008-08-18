@@ -48,6 +48,10 @@ namespace n02 {
 		};
 		void uiNewGameCallback();
 		void uiSetTitleCallback(String & text);
+		void uiGameWindowCreateCallback();
+		void uiGameWindowCreateCloseCallback();
+		void uiGameWindowShowCallback();
+		void uiGameWindowHideCallback();
 	};
 };
 //[/Headers]

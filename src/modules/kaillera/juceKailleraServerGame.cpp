@@ -310,6 +310,8 @@ void juceKailleraServerGame::handleCommandMessage(int  commandId) {
 				textLength += s->length();
 			}
 			delete s;
+		} else if (last == LISTCMD_SHOWGAME) {
+			clearText();
 		}
 	}
 	TRACE();

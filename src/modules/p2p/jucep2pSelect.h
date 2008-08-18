@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  29 Jul 2008 12:58:05 pm
+  Creation date:  17 Aug 2008 6:51:13 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_CD3ADC9C__
-#define __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_CD3ADC9C__
+#ifndef __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_4F97FC86__
+#define __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_4F97FC86__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "juce02.h"
@@ -81,6 +81,7 @@ private:
     TextButton* btnAdd;
     TextButton* btnEdit;
     TextButton* btnDelete;
+    Path internalPath1;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
@@ -89,4 +90,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_CD3ADC9C__
+#endif   // __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_4F97FC86__

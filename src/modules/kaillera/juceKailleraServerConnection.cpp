@@ -108,7 +108,8 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 juceKailleraServerConnection::~juceKailleraServerConnection()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-	TRACE();
+	TRACE(); n02::kaillera::uiGameWindowCreateCloseCallback();
+	TRACE(); 
     //[/Destructor_pre]
 
     deleteAndZero (lstUsers);
@@ -208,6 +209,10 @@ void juceKailleraServerConnection::handleCommandMessage(int  commandId) {
 			String title;
 			title << "Connected to " << s;
 			n02::kaillera::uiSetTitleCallback(title);
+		} else if (last == LISTCMD_SHOWGAME) {
+			n02::kaillera::uiGameWindowShowCallback();
+		} else if (last == LISTCMD_HIDEGAME) {
+			n02::kaillera::uiGameWindowHideCallback();
 		}
 	}
 	TRACE();

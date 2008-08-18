@@ -53,7 +53,7 @@ namespace n02 {
         static n02AutorunInterface * autorun = 0;
 
 
-        class : public Timer {
+        class DefStressTestTimer: public Timer {
             void timerCallback() {
 
                 static int prevFrame = 0;
@@ -72,69 +72,75 @@ namespace n02 {
                     prevTime = GlobalTimer::getTime();
                 }
             }
-        } timer;
+        } * timer = 0;
 
 
         void uiStartGame(const char * gameName) {
             if (running != 0) {
                 AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "A game is already running.", "ok");
-            } else {
-                if (strlen(gameName) > 0) {
-                    modHelper.startGame(gameName, 1, 1);
-                    timer.startTimer(2000);
-                }
-            }
-        }
-        void uiStopGame() {
-            running = 0;
-            timer.stopTimer();
-        }
+			} else {
+				if (strlen(gameName) > 0) {
+					modHelper.startGame(gameName, 1, 1);
+					if (timer != 0)
+						timer->stopTimer();
+					delete timer;
+					timer = new DefStressTestTimer;
+					timer->startTimer(2000);
+				}
+			}
+		}
+		void uiStopGame() {
+			running = 0;
+			if (timer != 0)
+				timer->stopTimer();
+			delete timer;
+			timer = 0;
+		}
 
-        void uiModChangeCallback(int index) {
-            uiStopGame();
-            modHelper.activeTransportByIndex(index);
+		void uiModChangeCallback(int index) {
+			uiStopGame();
+			modHelper.activeTransportByIndex(index);
 			ModDefStressTestWindow::window->waitNotifyAndCloseNotify();
-        }
+		}
 
-        void ModDefStressTestWindow::OnClose() {
-            uiStopGame();
-        }
+		void ModDefStressTestWindow::OnClose() {
+			uiStopGame();
+		}
 
-        static void N02CCNV initialize()
-        {
-            delay = 0;
-            frame = 0;
-            running = 0;
+		static void N02CCNV initialize()
+		{
+			delay = 0;
+			frame = 0;
+			running = 0;
 
-            autorun = reinterpret_cast<n02AutorunInterface*>(modHelper.getExtendedInterface(client, INTERFACE_AUTORUN));
+			autorun = reinterpret_cast<n02AutorunInterface*>(modHelper.getExtendedInterface(client, INTERFACE_AUTORUN));
 
-        }
-        static void N02CCNV terminate()
-        {
-            delay = 0;
-            frame = 0;
-            running = 0;
+		}
+		static void N02CCNV terminate()
+		{
+			delay = 0;
+			frame = 0;
+			running = 0;
 
-        }
-        static void N02CCNV activete()
-        {
-        }
-        static int  N02CCNV step()
-        {
-            return 0;
-        }
-        static int  N02CCNV synchronizeGame(void * syncData, int len)
-        {
-            running = 1;
-            frame = 0;
-            delay = 1;
-            return len;
-        }
+		}
+		static void N02CCNV activete()
+		{
+		}
+		static int  N02CCNV step()
+		{
+			return 0;
+		}
+		static int  N02CCNV synchronizeGame(void * syncData, int len)
+		{
+			running = 1;
+			frame = 0;
+			delay = 1;
+			return len;
+		}
 
-        static void N02CCNV endGame()
-        {
-            running = 0;
-            timer.stopTimer();
+		static void N02CCNV endGame()
+		{
+			uiStopGame();
         }
         static void N02CCNV sendAsyncData(const void *, const int, const int)
         {
@@ -166,16 +172,13 @@ namespace n02 {
         /* <gui> */
         static void N02CCNV activeteGui()
         {
-            guiIsRunning = 1;
-            ModDefStressTestWindow::createAndShow();
-
-			ModDefStressTestWindow::waitForClose();
-
-			ModDefStressTestWindow::window->setVisible(false);
-			ModDefStressTestWindow::window->removeFromDesktop();
-			GuiJUCEDisposeObject(ModDefStressTestWindow::window);
-
-            guiThread = 0;
+			TRACE(); 
+			if (GuiIsJuceThread()) {
+				TRACE(); ModDefStressTestWindow::createAndShowModal();
+				TRACE(); ModDefStressTestWindow::deleteAndZeroWindow();
+			} else {
+				TRACE(); GuiJUCEThreadCallbackLock(activeteGui);
+			}
         }
         static int  N02CCNV getSelectedAutorunIndex();
 

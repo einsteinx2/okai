@@ -38,7 +38,7 @@ namespace n02 {
 
     static int selectedGameIndex;
     static int gamesCount;
-    static juceGameSelect * newCmp;
+    static juceGameSelect * newCmp = 0;
 
     namespace gamelistSel {
         int selectedIndex;
@@ -46,20 +46,20 @@ namespace n02 {
 
     using namespace gamelistSel;
 
-    char * getSelectedGame(Component* parent) {
+    char * getSelectedGame(Component* parent)
+	{
+		TRACE();
         if (GamesList::getCount() > 0) {
-            selectedGameIndex = -1;
-
-            int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
-            
-			GuiJUCEDisposeObject(newCmp);
-
-            if (r==0 || selectedIndex == -1)
-                return 0;
-            else
-                return GamesList::current(&selectedIndex);
+			TRACE(); selectedGameIndex = -1;
+            TRACE(); int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
+			TRACE(); delete newCmp;
+			if (r==0 || selectedIndex == -1) {
+                TRACE(); return 0;
+			} else {
+                TRACE(); return GamesList::current(&selectedIndex);
+			}
         } else {
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "No games in list");
+            TRACE(); AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "No games in list");
             return 0;
         }
     }
@@ -80,7 +80,8 @@ namespace n02 {
         String text(GamesList::current(&selectedGameIndex));
         g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
     }
-    void  GameSelectLB::listBoxItemClicked (int row, const MouseEvent &e){
+
+	void  GameSelectLB::listBoxItemClicked (int row, const MouseEvent &e){
         GamesList::selectByIndex(selectedIndex = selectedGameIndex = row);
 
         juce::String status;
@@ -97,7 +98,8 @@ namespace n02 {
         selectedIndex = selectedGameIndex = row;
         newCmp->closeUp();
     }
-    void  GameSelectLB::returnKeyPressed (int lastRowSelected){
+
+	void  GameSelectLB::returnKeyPressed (int lastRowSelected){
         selectedIndex = selectedGameIndex = lastRowSelected;
         newCmp->closeUp();
     }

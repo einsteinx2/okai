@@ -4,3 +4,5 @@ Since this project comes under MIT License, it should be GPL compatible. Well
 thats what I read.
 
 version 1.46 of juce is used
+
+Since revision 45, only 2 juce files are needed. juce_amalgamated.h and juce_amalgamated.cpp

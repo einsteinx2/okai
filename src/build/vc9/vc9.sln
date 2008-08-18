@@ -5,10 +5,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "n02", "vc9.vcproj", "{83FF6
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
 		Development|Win32 = Development|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{83FF6B3F-25AC-4173-B86D-9307EEA39C8E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{83FF6B3F-25AC-4173-B86D-9307EEA39C8E}.Debug|Win32.Build.0 = Debug|Win32
 		{83FF6B3F-25AC-4173-B86D-9307EEA39C8E}.Development|Win32.ActiveCfg = Development|Win32
 		{83FF6B3F-25AC-4173-B86D-9307EEA39C8E}.Development|Win32.Build.0 = Development|Win32
 		{83FF6B3F-25AC-4173-B86D-9307EEA39C8E}.Release|Win32.ActiveCfg = Release|Win32

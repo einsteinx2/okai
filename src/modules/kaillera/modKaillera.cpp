@@ -90,6 +90,7 @@ namespace n02 {
         // Close button press
         void ModKailleraServerSelect::OnClose(){
             ModKailleraServerSelect::cmponnt->saveConfig();
+			Component::getCurrentlyModalComponent()->exitModalState(0);
         }
 
         // Mod changing
@@ -160,30 +161,25 @@ namespace n02 {
         static void N02CCNV terminate(){}
         static void N02CCNV activete(){}
 
+
+		static WaitableEvent * waitable = 0;
+
         // GUI Entry point
         static void N02CCNV activeteGui()
-        {
+		{
+			TRACE(); 
+			if (GuiIsJuceThread()) {
+				TRACE(); ConfigurationManager config(kailleraConfig);
+				TRACE(); config.load("kaillera");
+				
+				TRACE(); ModKailleraServerSelect::createAndShowModal();
+				TRACE(); ModKailleraServerSelect::deleteAndZeroWindow();
 
-            // Load config
-            ConfigurationManager config(kailleraConfig);
-            config.load("kaillera");
-
-            // set up synchronization stuff
-            guiIsRunning = 1;
-
-            // draw our window
-            ModKailleraServerSelect::createAndShow();
-
-            // well this is preety much it... wait till we're done
-			ModKailleraServerSelect::waitForClose();
-
-            ModKailleraServerSelect::window->setVisible(false);
-            GuiJUCEDisposeObject (ModKailleraServerSelect::window);
-
-            // Save config
-            config.save("kaillera");
-
-        }
+				TRACE(); config.save("kaillera");
+			} else {
+				GuiJUCEThreadCallbackLock(activeteGui);
+			}
+		}
 
         // etc...
         static int  N02CCNV getSelectedAutorunIndex()
@@ -211,15 +207,18 @@ namespace n02 {
         *******************************/
         int  ServersListListboxModel::getNumRows()
         {
+			TRACE();
             return uiServersIP.itemsCount();
         }
         void  ServersListListboxModel::paintRowBackground (Graphics &g, int rowNumber, int width, int height, bool rowIsSelected)
         {
+			TRACE();
             if (rowIsSelected)
                 g.fillAll (Colour(0xdd,0xdd,0xff));
         }
         void  ServersListListboxModel::paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
         {
+			TRACE();
             g.setColour (Colours::black);
             if (columnId == 2) {
 				const String text (FROMUTF8(uiServersIP.getItem(rowNumber)));
@@ -233,6 +232,7 @@ namespace n02 {
         }
         void  ServersListListboxModel::cellClicked (int rowNumber, int columnId, const MouseEvent &e)
         {
+			TRACE();
             if (uiServersIP.itemsCount() > rowNumber) {
                 String xxx(uiServersIP.getItem(rowNumber));
                 ModKailleraServerSelect::cmponnt->updateIP(xxx);
@@ -240,15 +240,18 @@ namespace n02 {
         }
         void  ServersListListboxModel::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
         {
+			TRACE();
             ServersListListboxModel::returnKeyPressed(rowNumber);
         }
         void  ServersListListboxModel::deleteKeyPressed (int lastRowSelected)
         {
+			TRACE();
             uiDeleteServer(lastRowSelected);
             ModKailleraServerSelect::cmponnt->updateLV();
         }
         void  ServersListListboxModel::returnKeyPressed (int lastRowSelected)
         {
+			TRACE();
             if (lastRowSelected >= 0 && uiServersIP.itemsCount() > lastRowSelected) {
                 String xxx(uiServersIP.getItem(lastRowSelected));
                 ModKailleraServerSelect::cmponnt->updateIP(xxx);

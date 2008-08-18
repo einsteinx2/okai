@@ -44,24 +44,31 @@ namespace n02 {
     };
 
     bool AddNewIP(Component * parent) {
+		TRACE();
+		// lock the message thread in case its being called form an outside thread
+		const MessageManagerLock ml;
+		// set returnvalue to 0
         addedit::returnValue = 0;
+		// show the dialog box
         juceAddEditIPDialog * newCmp;
 		DialogWindow::showModalDialog(LUTF16(LID_ADD1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-		GuiJUCEDisposeObject(newCmp);
+		TRACE();
+		//delete the allocated content component
+		delete newCmp;
+		TRACE();
         return addedit::returnValue == 1;
     }
     bool EditIP(Component * parent, char * NAME, char * IP) {
+		TRACE();
+		const MessageManagerLock ml;
         strcpy(addEditGetIP(), IP);
         strcpy(addEditGetName(), NAME);
-
         addedit::returnValue = 1;
-
         juceAddEditIPDialog * newCmp;
-
 		DialogWindow::showModalDialog(LUTF16(LID_EDT1), newCmp = new juceAddEditIPDialog, parent, Colours::whitesmoke, true);
-
-        GuiJUCEDisposeObject(newCmp);
-
+		TRACE();
+        delete newCmp;
+		TRACE();
         return addedit::returnValue == 1;
     }
     char * addEditGetIP() {

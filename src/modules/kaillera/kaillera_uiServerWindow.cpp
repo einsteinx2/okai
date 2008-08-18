@@ -292,10 +292,13 @@ namespace n02 {
         {
             TRACE();
 
-            activeGameCaps = modHelper.gameList->getCaps(lastGame);
-            lastSelectedUserId = 0xFFFF;
-            hosting = true;
-            KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
+			activeGameCaps = modHelper.gameList->getCaps(lastGame);
+			lastSelectedUserId = 0xFFFF;
+			hosting = true;
+
+			{
+				sendCommand(LISTCMD_SHOWGAME, 0);
+			}
 
             sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
 
@@ -303,15 +306,35 @@ namespace n02 {
 
             TRACE();
         }
+		
+		void uiGameWindowCreateCallback() {
+			KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
+			KailleraServerGame::window->setVisible(false);
+		}
+
+		void uiGameWindowCreateCloseCallback() {
+			if (KailleraServerGame::window != 0) {
+				MessageManagerLock ml;
+				KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
+				KailleraServerGame::window->setVisible(false);
+				KailleraServerGame::window->removeFromDesktop();
+				delete KailleraServerGame::window;
+				KailleraServerGame::window = 0;
+			}
+		}
+
+		void uiGameWindowShowCallback() {
+			KailleraServerGame::window->setVisible(true);
+		}
+
+		void uiGameWindowHideCallback() {
+			KailleraServerGame::window->setVisible(false);
+		}
+
         static void N02CCNV gameClosed ()
         {
             TRACE();
-            if (KailleraServerGame::window != 0) {
-                KailleraServerGame::window->setVisible(false);
-                KailleraServerConnection::window->removeChildComponent(KailleraServerGame::window);
-                GuiJUCEDisposeObject (KailleraServerGame::window);
-                KailleraServerGame::window = 0;
-            }
+			sendCommand(LISTCMD_HIDEGAME, 0);
             TRACE();
         }
         static void N02CCNV gameJoined ()
@@ -321,7 +344,10 @@ namespace n02 {
             activeGameCaps = modHelper.gameList->getCaps(lastGame);	
             lastSelectedUserId = 0xFFFF;
             hosting = false;
-            KailleraServerGame::createAndShowChild(static_cast<Component*>(KailleraServerConnection::window));
+
+			{
+				sendCommand(LISTCMD_SHOWGAME, 0);
+			}
 
             sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
 
@@ -500,16 +526,14 @@ namespace n02 {
 
                         KailleraServerConnection::window->runModalLoop();
 
-                        LOGS(======================================================================);
-
                         coreDisconnect(uiQuitMessage);
                     }
                     coreTerminte();
 
                     KailleraServerConnection::window->setVisible(false);
                     KailleraServerConnection::window->removeFromDesktop();
-                    GuiJUCEDisposeObject(KailleraServerConnection::window);
-
+                    delete KailleraServerConnection::window;
+					KailleraServerConnection::window = 0;
                 } else {
                     AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Error initializing core");
                 }

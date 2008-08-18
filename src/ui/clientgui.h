@@ -32,6 +32,7 @@ SOFTWARE.
 
 #include "juce02.h"
 #include "localisation.h"
+#include "n02.h"
 
 namespace n02 {
 
@@ -39,5 +40,12 @@ namespace n02 {
     void GuiCleanup();
     int GuiStartSync();
     int GuiShowLicenseDialog();
-    void GuiJUCEDisposeObject(void * object);
+
+	bool GuiIsJuceThread();
+
+	typedef void (N02CCNV * clientGuiCallbackPointerType) (void);
+
+	void GuiJUCEThreadCallbackLock(clientGuiCallbackPointerType ptr);
+
+
 };
