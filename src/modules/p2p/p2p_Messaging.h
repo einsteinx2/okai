@@ -132,7 +132,7 @@ namespace n02 {
                 defaultAddress = lastAddress;
             }
 
-            void sendSSRV(const char*c, const int len, const SocketAddress & addr)
+            void sendSSRV(const char * c, const int len, const SocketAddress & addr)
             {
                 StaticBuffer<1024> message;
                 void * top = message.getCurrentBinaryPtr();

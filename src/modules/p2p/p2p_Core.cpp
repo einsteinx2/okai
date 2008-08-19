@@ -558,8 +558,9 @@ namespace n02 {
                 };
             }
 
-            void ssrvCallback(char *, int)
+            void ssrvCallback(char * c, int l)
             {
+				callbacks.SSRV(c, l);
             }
         };
 
@@ -818,6 +819,18 @@ namespace n02 {
                 callbacks.statusUpdate("Noone to send chat to");
             }
         }
+
+
+
+
+		void coreSendSSRV(const char * buffer, const int len, const SocketAddress & address)
+		{
+			core::connection.sendSSRV(buffer, len, address);
+		}
+
+
+
+
     };
 };
 

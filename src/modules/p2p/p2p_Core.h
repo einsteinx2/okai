@@ -76,5 +76,7 @@ namespace n02 {
 		void coreChangeGameReleaseChange(char*);
 		void coreChangeGameReleaseNoChange();
 
+		void coreSendSSRV(const char * buffer, const int len, const SocketAddress & address);
+
 	};
 };

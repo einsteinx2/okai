@@ -32,6 +32,8 @@ SOFTWARE.
 #include "p2p_Core.h"
 #include "juceModHelpers.h"
 
+#define DEFAULT_SSRV_IP "209.40.202.72:27887"
+
 namespace n02 {
     namespace p2p {
 
@@ -41,7 +43,6 @@ namespace n02 {
 			coreDisconnect();
             getCurrentlyModalComponent()->exitModalState(0);
         }
-
 
 
 		void ChatInput::textEditorReturnKeyPressed(class juce::TextEditor & t) {
@@ -65,20 +66,15 @@ namespace n02 {
 
 		char game[128];
 
-
-
-
 		static void N02CCNV statusUpdate(char * status) {
 			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(status)));
-
-
 		}
 
 
 
 		static void N02CCNV SSRV (const char * a, const int b)
 		{
-
+			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(a)));
 		}
 
 		static void N02CCNV chatReceived (const char * src, const char * msg)
@@ -93,6 +89,7 @@ namespace n02 {
 		{
 			*game = 0;
 		}
+
 		static void N02CCNV changeGameLocked ()
 		{
 			ModP2PSessionWindow::cmponnt->sendMessage(MSG_CGLOCK);
@@ -176,7 +173,9 @@ namespace n02 {
         }
         void uiGetIP()
         {
-			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("Not implemented")));
+			SocketAddress s(DEFAULT_SSRV_IP);
+			coreSendSSRV("WHATISMYIP", 11, s);
+			//ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("Not implemented")));
         }
         void uiDrop()
         {

@@ -141,7 +141,7 @@ namespace n02 {
 
         //}
 
-		unsigned char buffer[257];
+	/*	unsigned char buffer[257];
 		char buf[257];
 		buffer[0] = 0x00;
 		buffer[1] = 0x00;
@@ -155,7 +155,7 @@ namespace n02 {
 		LOG(encoded %s=%i, buf, strlen(buf));
 		memset(buffer, 0, sizeof(buffer));
 		StringUtils::base64decode(buffer, buf);
-		LOGBUFFER("x", buffer, 7);
+		LOGBUFFER("x", buffer, 7);*/
 
 
 

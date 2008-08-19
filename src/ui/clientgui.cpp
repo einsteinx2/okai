@@ -102,7 +102,6 @@ namespace n02 {
 
 		TRACE(); while (!waitable->wait(10000));
 		TRACE(); delete waitable;
-		TRACE(); waitable = 0;
 	}
 
 

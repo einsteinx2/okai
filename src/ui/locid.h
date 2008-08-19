@@ -31,7 +31,12 @@ SOFTWARE.
 
 #pragma once
 
-// 10-1000. Helper objects related ids
+// 10-233. Helper objects and misc related ids
+// 300-499. Kaillera specific
+// 500-699. P2P specific
+// 700-899. SC specific
+// 900-1099. zsnesnet specific
+// 1100-1299. Player specific
 
 #define LID_NAME 1
 #define LID_DEL1 10
