@@ -20,6 +20,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "locid.h"
 //[/Headers]
 
 #include "juceGameSelect.h"
@@ -65,6 +66,9 @@ juceGameSelect::juceGameSelect ()
 
 
     //[UserPreSize]
+	btnOk->setButtonText (n02::LUTF16(LID_OK01));
+	btnCancel->setButtonText (n02::LUTF16(LID_CAN1));
+
     //[/UserPreSize]
 
     setSize (600, 400);

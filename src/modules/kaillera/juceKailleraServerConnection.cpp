@@ -73,6 +73,7 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 
 
     //[UserPreSize]
+	btnNewGame->setButtonText(n02::LUTF16(LID_KAILLERA_NWG));
     //[/UserPreSize]
 
     setSize (750, 500);

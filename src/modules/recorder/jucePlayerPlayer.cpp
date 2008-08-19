@@ -59,6 +59,8 @@ jucePlayerPlayer::jucePlayerPlayer ()
     //[Constructor] You can add your own custom stuff here..
 	textLength = 0;
 	pbProgress->setPercentageDisplay(true);
+	pbProgress->setVisible(false);
+	pbProgress->setVisible(true);
     //[/Constructor]
 }
 
@@ -107,6 +109,13 @@ void jucePlayerPlayer::handleCommandMessage (int commandId)
 			textLength += s->length();
 		}
 		delete s;
+	} else {
+		double d = n02::playback::progress * 100.0;
+		pbProgress->setTextToDisplay(String(d));
+
+		txtStatus->setHighlightedRegion(textLength, 0);
+		txtStatus->insertTextAtCursor ("x");
+		textLength += 1;
 	}
     //[/UserCode_handleCommandMessage]
 }

@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEPPSELECT_JUCEPPSELECT_4F97FC86__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce02.h"
+#include "clientgui.h"
 #include "p2p_uiSelect.h"
 //[/Headers]
 

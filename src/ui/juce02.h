@@ -125,6 +125,9 @@ SOFTWARE.
                 window = 0;													\
             }																\
         }																	\
+		static void setTitle(String & title) {								\
+			window->setName(title);											\
+		}																	\
 		static void OnClose();												\
 		static volatile bool running;										\
 		static PosixThread * syncThread;									\

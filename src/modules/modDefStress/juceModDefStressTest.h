@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEMODDEFSTRESSTEST_JUCEMODDEFSTRESSTEST_69EA81C8__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce02.h"
+#include "clientgui.h"
 //[/Headers]
 
 

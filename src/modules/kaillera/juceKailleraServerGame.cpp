@@ -21,6 +21,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "juceModHelpers.h"
+#include "locid.h"
 //[/Headers]
 
 #include "juceKailleraServerGame.h"
@@ -123,16 +124,22 @@ juceKailleraServerGame::juceKailleraServerGame ()
 
 
     //[UserPreSize]
+
+	btnStartGame->setButtonText (n02::LUTF16(LID_KAILLERA_STA));
+	btnLeaveGame->setButtonText (n02::LUTF16(LID_KAILLERA_LEA));
+	btnKick->setButtonText (n02::LUTF16(LID_KAILLERA_KIC));
+	chkRecord->setButtonText (n02::LUTF16(LID_KAILLERA_REC));
+	
     //[/UserPreSize]
 
     setSize (650, 250);
 
     //[Constructor] You can add your own custom stuff here..
 	// Players LB
-	lstPlayers->getHeader()->addColumn("Nick", 1, 110, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayers->getHeader()->addColumn("Ping", 2, 40, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayers->getHeader()->addColumn("C.S.", 3, 40, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayers->getHeader()->addColumn("Delay", 4, 60, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_WN), 1, 110, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_WP), 2, 40, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_CSS), 3, 40, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_DEL), 4, 60, 30, -1, TableHeaderComponent::notSortable);
 	lstPlayers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstPlayers->setOutlineThickness (1);
 

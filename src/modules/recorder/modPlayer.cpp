@@ -6,17 +6,14 @@
 #include "jucePlayerPlayer.h"
 #include <time.h>
 #include "zlib.h"
+#include "locid.h"
 
 namespace n02 {
 	namespace playback {
 #include "krec.h"
 
 		SIMPLEWINDOW(ModPlayerPlaylist, "Recorded games", Colours::whitesmoke, DocumentWindow::allButtons, jucePlaylist, 700, 400);
-		SIMPLEWINDOW(PlayerPlayer, "Playback", Colours::whitesmoke, DocumentWindow::allButtons, jucePlayerPlayer, 424, 176);
-
-		void ModPlayerPlaylist::OnClose() {
-			Component::getCurrentlyModalComponent()->exitModalState(0);
-		}
+		SIMPLEWINDOW(PlayerPlayer, "Playback", Colours::whitesmoke, DocumentWindow::closeButton, jucePlayerPlayer, 424, 176);
 
 		void uiModChangeCallback(int index) {
 			modHelper.activeTransportByIndex(index);
@@ -29,14 +26,26 @@ namespace n02 {
 		static short defaultValueLen = 0;
 		static int numPlayers = 0;
 		double progress;
+		bool playerActive = false;
+
+		void ModPlayerPlaylist::OnClose() {
+			if (!playerActive)
+				Component::getCurrentlyModalComponent()->exitModalState(0);
+		}
 
 		void uiEndGame() {
 			playbackBuffer.seek(playbackBuffer.getSpaceLeft() -1);
 			PlayerPlayer::window->getCurrentlyModalComponent()->exitModalState(0);
 		}
 
+		void PlayerPlayer::OnClose()
+		{
+			uiEndGame();
+		}
+
 		void krc1BeginPlayback (File & f)
 		{
+			playerActive = true;
 			FileInputStream * fis = f.createInputStream();
 
 			if (defaultValue != 0)
@@ -65,7 +74,7 @@ namespace n02 {
 
 							if (strcmp(ver, client->app.version) ==0 || (length = 1) == 1) {
 								if (length == 1) {
-									if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, "Playback error", "Application version mismatch. Do you want to continue?", "Yes", "No")) {
+									if (AlertWindow::showOkCancelBox(AlertWindow::WarningIcon, LUTF16(LID_PLAYER_PBE), LUTF16(LID_PLAYER_AVMM), LUTF16(LID_YES1), LUTF16(LID_NO01))) {
 										length = 0;
 									}
 								}
@@ -95,38 +104,42 @@ namespace n02 {
 										LOG(Setting buffer to %i, length);
 
 										ModPlayerPlaylist::window->setVisible(false);
+										//ModPlayerPlaylist::cmponnt->setEnabled(false);
 										PlayerPlayer::createAndShow();
+										//PlayerPlayer::addToAsChild(ModPlayerPlaylist::window);
+										
 
 										//AlertWindow::showMessageBox(AlertWindow::InfoIcon, "Play File", f.getFullPathName());
 
-										PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String("Loading game")));
+										PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String(LUTF16(LID_PLAYER_LG))));
 
 										modHelper.startGame(head.game, head.playerNo, numPlayers = head.totalPlayers);
 
 										PlayerPlayer::window->runModalLoop();
-										PlayerPlayer::window->setVisible(false);
-										PlayerPlayer::window->removeFromDesktop();
-										delete PlayerPlayer::window;
+										
+										//PlayerPlayer::removeFromAsChild(ModPlayerPlaylist::window);
+										PlayerPlayer::deleteAndZeroWindow();
 
 										ModPlayerPlaylist::window->setVisible(true);
+										//ModPlayerPlaylist::cmponnt->setEnabled(true);
 									} else {
-										AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "Replay file is too small");
+										AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF16(LID_PLAYER_PBE), LUTF16(LID_PLAYER_FTS));
 									}
 								}
 							}
 						} else {
-							AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "Record application name mismatch");								
+							AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF16(LID_PLAYER_PBE), LUTF16(LID_PLAYER_ANM));								
 						}
 					} else {
-						AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "File version is not supported");
+						AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF16(LID_PLAYER_PBE), LUTF16(LID_PLAYER_FVNS));
 					}
 				} else {
-					AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Playback error", "Could not read header from file");
+					AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF16(LID_PLAYER_PBE), LUTF16(LID_PLAYER_CNRH));
 				}
 
 				delete fis;
 			}
-
+			playerActive = false;
 		}
 
 		static void N02CCNV initialize()
@@ -145,7 +158,7 @@ namespace n02 {
 		static int  N02CCNV synchronizeGame(void * syncData, int len)
 		{
 			//printf("[s%i left]", playbackBuffer.getSpaceLeft());
-			PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String("Game loaded")));
+			PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String(LUTF16(LID_PLAYER_GL))));
 			if (oldEncoderUsed)
 				return 0;
 			else {
@@ -157,7 +170,7 @@ namespace n02 {
 					//LOG(head.size %i, head.size);
 					playbackBuffer.readBytes(workingBuffer, head.size);
 
-					progress = (playbackBuffer.getFilledSize() / playbackBuffer.getTotalSize()) * 100;
+					progress = (playbackBuffer.getFilledSize() / playbackBuffer.getTotalSize());
 
 					switch (head.type) {
 					case RDATA_SDATA:
@@ -190,7 +203,7 @@ namespace n02 {
 						if (head.size > 0) {
 							memcpy(syncData, workingBuffer, head.size);
 						}
-						PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String("Playing game")));	
+						PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String(LUTF16(LID_PLAYER_PLG))));	
 						return head.size;
 						break;
 					case RDATA_DEFDATA:
@@ -218,6 +231,7 @@ namespace n02 {
 		{
 			//require(false);
 		}
+
 		static int  N02CCNV recvSyncData(void * value, const int len)
 		{
 			//printf("[r%i left]", playbackBuffer.getSpaceLeft());
@@ -231,7 +245,7 @@ namespace n02 {
 				if (playbackBuffer.getSpaceLeft() >= head.size) {
 					playbackBuffer.readBytes(workingBuffer, head.size);
 
-					progress = (playbackBuffer.getFilledSize() / playbackBuffer.getTotalSize());
+					progress = (double)((double)playbackBuffer.getFilledSize() / (double)playbackBuffer.getTotalSize());
 
 					switch (head.type) {
 					case RDATA_SDATA:
@@ -341,13 +355,6 @@ namespace n02 {
 
 
 
-		void PlayerPlayer::OnClose()
-		{
-			uiEndGame();
-		}
-
-
-
 		void playFile(File & f)
 		{
 			if (f.existsAsFile()) {
@@ -373,7 +380,7 @@ namespace n02 {
 				s.printf(T("records%hs%s"),PATH_SEPERATOR, names[lastRowSelected].value);
 				File f(s);
 
-				FileChooser fc("Save record", f, "*.krec");
+				FileChooser fc(LUTF16(LID_PLAYER_SR), f, "*.krec");
 				if (fc.browseForFileToSave(true)) {
 					f.copyFileTo(fc.getResult());
 				}
@@ -382,7 +389,7 @@ namespace n02 {
 
 		void PlayListBoxModel::playBrowse()
 		{
-			FileChooser fc("Select a file to play", File(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName()), "*.krec");
+			FileChooser fc(LUTF16(LID_PLAYER_SEL), File(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName()), "*.krec");
 			if (fc.browseForFileToOpen()) {
 				File f = fc.getResult();
 				playFile(f);

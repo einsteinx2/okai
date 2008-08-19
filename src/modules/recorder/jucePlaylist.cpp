@@ -21,7 +21,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "module.h"
-
+#include "locid.h"
 namespace n02 {
     namespace playback {
 		void uiModChangeCallback(int index);
@@ -86,6 +86,12 @@ jucePlaylist::jucePlaylist ()
 
 
     //[UserPreSize]
+	btnBrowse->setButtonText (n02::LUTF16(LID_PLAYER_BR));
+	btnPlay->setButtonText (n02::LUTF16(LID_PLAYER_PL));
+	btnSave->setButtonText (n02::LUTF16(LID_PLAYER_SV));
+	btnRefresh->setButtonText (n02::LUTF16(LID_PLAYER_RE));
+	btnDelete->setButtonText (n02::LUTF16(LID_PLAYER_DE));
+	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
     //[/UserPreSize]
 
     setSize (700, 400);
@@ -100,12 +106,12 @@ jucePlaylist::jucePlaylist ()
 		}
 	}
 
-	lstPlayback->getHeader()->addColumn("Game", 1, 250, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayback->getHeader()->addColumn("App/ver", 2, 120, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayback->getHeader()->addColumn("Time", 3, 80, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayback->getHeader()->addColumn("Size", 4, 60, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayback->getHeader()->addColumn("Comments", 5, 100, 30, -1, TableHeaderComponent::notSortable);
-	lstPlayback->getHeader()->addColumn("File", 6, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_GA), 1, 250, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_AP), 2, 120, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_TI), 3, 80, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_SI), 4, 60, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_CO), 5, 100, 30, -1, TableHeaderComponent::notSortable);
+	lstPlayback->getHeader()->addColumn(n02::LUTF16(LID_PLAYER_FI), 6, 30, 30, -1, TableHeaderComponent::notSortable);
 
 	lstPlayback->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstPlayback->setOutlineThickness (1);

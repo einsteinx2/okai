@@ -33,6 +33,7 @@ SOFTWARE.
 #include "juceGameSelect.h"
 #include "GamesList.h"
 #include "juceAbortableStatusWindow.h"
+#include "locid.h"
 
 namespace n02 {
 
@@ -52,7 +53,7 @@ namespace n02 {
 		TRACE(); require(ml.lockWasGained());
         if (GamesList::getCount() > 0) {
 			TRACE(); selectedGameIndex = -1;
-            TRACE(); int r = DialogWindow::showModalDialog(T("Select game"), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
+            TRACE(); int r = DialogWindow::showModalDialog(LUTF16(LID_SELG), newCmp = new juceGameSelect, parent, Colours::whitesmoke, true);
 			TRACE(); delete newCmp;
 			if (r==0 || selectedIndex == -1) {
                 TRACE(); return 0;
@@ -60,7 +61,7 @@ namespace n02 {
                 TRACE(); return GamesList::current(&selectedIndex);
 			}
         } else {
-            TRACE(); AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "No games in list");
+            TRACE(); AlertWindow::showMessageBox(AlertWindow::WarningIcon, LUTF16(LID_ERR1), LUTF16(LID_NGOL));
             return 0;
         }
     }
@@ -91,10 +92,10 @@ namespace n02 {
 
         juce::String status;
 
-        status.printf(T("%i players"), GamesList::selectedMaxPlayers());
+        status.printf(LUTF16(LID_PLRS), GamesList::selectedMaxPlayers());
 
         if (GamesList::selectedCaps() & GCAPS_STATES)
-            status.append(T(", states"), 42);
+            status.append(LUTF16(LID_STS1), 42);
 
         newCmp->updateGameInfo(status);
     }
@@ -117,6 +118,11 @@ namespace n02 {
 	{
         cmbRun->clear();
         cmbDelay->clear();
+
+		lblDelay->setText(LUTF16(LID_DELA), true);
+		lblRun->setText(LUTF16(LID_MODE), true);
+
+
         if ((client->app.attributes & APP_ATTRIBUTES_AUTORUN) != 0) {
             cmbRun->setEnabled(true);
             lblRun->setEnabled(true);
@@ -141,7 +147,7 @@ namespace n02 {
 
             for (int x = 0; x < 9; x++) {
                 String xx;				
-                xx.printf(T("+%i frames"), x);
+                xx.printf(LUTF16(LID_FRMP), x);
                 cmbDelay->addItem(xx, x+1);
             }
             cmbDelay->setSelectedId(1);

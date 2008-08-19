@@ -20,6 +20,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "locid.h"
 //[/Headers]
 
 #include "jucep2pSelect.h"
@@ -144,6 +145,7 @@ jucep2pSelect::jucep2pSelect ()
 
 
     //[UserPreSize]
+	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
     //[/UserPreSize]
 
     setSize (600, 344);

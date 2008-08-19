@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_4EDE2455__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce02.h"
+#include "clientgui.h"
 
 namespace n02 {
 

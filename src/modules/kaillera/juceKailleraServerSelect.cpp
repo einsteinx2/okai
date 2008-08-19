@@ -23,6 +23,7 @@
 #include "module.h"
 #include "common.h"
 using namespace n02;
+#include "locid.h"
 //[/Headers]
 
 #include "juceKailleraServerSelect.h"
@@ -183,6 +184,29 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 
 
     //[UserPreSize]
+	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
+	btnAdd->setButtonText (n02::LUTF16(LID_ADD2));
+	btnEdit->setButtonText (n02::LUTF16(LID_EDT2));
+	btnDelete->setButtonText (n02::LUTF16(LID_DEL3));
+	label->setText(n02::LUTF16(LID_KAILLERA_NIK), true);
+	label2->setText(n02::LUTF16(LID_KAILLERA_CSS), true); 
+
+	cmbConnection->clear(true);
+	cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_LAN), 1);
+    cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_EXC), 2);
+    cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_GOO), 3);
+    cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_AVG), 4);
+    cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_BAD), 5);
+    cmbConnection->addItem (n02::LUTF16(LID_KAILLERA_LOW), 6);
+
+    label3->setText(n02::LUTF16(LID_KAILLERA_IPP), true);
+    label4->setText(n02::LUTF16(LID_KAILLERA_FAV), true);
+
+    btnConnect->setButtonText (n02::LUTF16(LID_KAILLERA_CON));
+    btnPing->setButtonText (n02::LUTF16(LID_KAILLERA_PIN));
+    btnMastersList->setButtonText (n02::LUTF16(LID_KAILLERA_MSL));
+
+	hlnkWebsite->setButtonText(n02::LUTF16(LID_KAILLERA_WST));
     //[/UserPreSize]
 
     setSize (580, 330);
@@ -206,8 +230,8 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 	txtNick->setText(FROMUTF8(uiUsername));
 
 	// List
-	lstServers->getHeader()->addColumn("Server", 1, 482/2, 30, -1, TableHeaderComponent::notSortable);
-	lstServers->getHeader()->addColumn("IP Address", 2, 482/2 - 20, 30, -1, TableHeaderComponent::notSortable);
+	lstServers->getHeader()->addColumn(n02::LUTF8(LID_KAILLERA_SRV), 1, 482/2, 30, -1, TableHeaderComponent::notSortable);
+	lstServers->getHeader()->addColumn(n02::LUTF8(LID_KAILLERA_IPA), 2, 482/2 - 20, 30, -1, TableHeaderComponent::notSortable);
 
 	lstServers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstServers->setOutlineThickness (1);

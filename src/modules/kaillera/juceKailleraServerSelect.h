@@ -23,7 +23,7 @@
 #define __JUCER_HEADER_JUCEKAILLERASERVERSELECT_JUCEKAILLERASERVERSELECT_8071AC4F__
 
 //[Headers]     -- You can add your own extra header files here --
-#include "juce02.h"
+#include "clientgui.h"
 namespace n02 {
 	namespace kaillera {
 		class ServersListListboxModel

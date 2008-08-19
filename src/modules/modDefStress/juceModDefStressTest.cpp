@@ -22,6 +22,7 @@
 //[Headers] You can add your own extra header files here...
 #include "module.h"
 using namespace n02;
+#include "locid.h"
 //[/Headers]
 
 #include "juceModDefStressTest.h"
@@ -123,6 +124,7 @@ juceModDefStressTest::juceModDefStressTest ()
 
 
     //[UserPreSize]
+	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
     //[/UserPreSize]
 
     setSize (450, 145);
