@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 5:18:42 pm
+  Creation date:  20 Aug 2008 4:33:37 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -113,7 +113,7 @@ juceKailleraServerConnection::~juceKailleraServerConnection()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
 	TRACE(); n02::kaillera::uiGameWindowCreateCloseCallback();
-	TRACE(); 
+	TRACE();
     //[/Destructor_pre]
 
     deleteAndZero (lstUsers);
@@ -141,10 +141,10 @@ void juceKailleraServerConnection::paint (Graphics& g)
 
 void juceKailleraServerConnection::resized()
 {
-    lstUsers->setBounds (getWidth() - 6 - 192, 8, 192, proportionOfHeight (0.6720f));
-    txtChat->setBounds (8, 8, getWidth() - 206, (proportionOfHeight (0.6720f)) - 24);
-    txtChatInput->setBounds (8, (8) + (proportionOfHeight (0.6720f)) - 24, getWidth() - 278, 24);
-    btnNewGame->setBounds (getWidth() - 270, (8) + (proportionOfHeight (0.6720f)) - 24, 71, 24);
+    lstUsers->setBounds (getWidth() - 6 - 208, 8, 208, proportionOfHeight (0.6720f));
+    txtChat->setBounds (8, 8, getWidth() - 222, (proportionOfHeight (0.6720f)) - 24);
+    txtChatInput->setBounds (8, (8) + (proportionOfHeight (0.6720f)) - 24, getWidth() - 294, 24);
+    btnNewGame->setBounds (getWidth() - 286, (8) + (proportionOfHeight (0.6720f)) - 24, 72, 24);
     lstGames->setBounds (8, (8) + (proportionOfHeight (0.6720f)), getWidth() - 14, proportionOfHeight (0.3040f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -247,19 +247,19 @@ BEGIN_JUCER_METADATA
                  initialHeight="500">
   <BACKGROUND backgroundColour="ffffffff"/>
   <GENERICCOMPONENT name="new component" id="8b78dd76054f6a1a" memberName="lstUsers"
-                    virtualName="" explicitFocusOrder="0" pos="6Rr 8 192 67.2%" class="TableListBox"
+                    virtualName="" explicitFocusOrder="0" pos="6Rr 8 208 67.2%" class="TableListBox"
                     params="T(&quot;usersList&quot;), &amp;kailleraUsers"/>
   <TEXTEDITOR name="new text editor" id="84ef9fa8765d7afd" memberName="txtChat"
-              virtualName="" explicitFocusOrder="0" pos="8 8 206M 24M" posRelativeH="8b78dd76054f6a1a"
+              virtualName="" explicitFocusOrder="0" pos="8 8 222M 24M" posRelativeH="8b78dd76054f6a1a"
               tooltip="chat messages appear here" initialText="" multiline="1"
               retKeyStartsLine="0" readonly="1" scrollbars="1" caret="1" popupmenu="1"/>
   <TEXTEDITOR name="new text editor" id="5d7f853814619b93" memberName="txtChatInput"
-              virtualName="" explicitFocusOrder="0" pos="8 24R 278M 24" posRelativeY="8b78dd76054f6a1a"
+              virtualName="" explicitFocusOrder="0" pos="8 24R 294M 24" posRelativeY="8b78dd76054f6a1a"
               tooltip="type here and press return to send chat messages" initialText=""
               multiline="0" retKeyStartsLine="0" readonly="0" scrollbars="1"
               caret="1" popupmenu="1"/>
   <TEXTBUTTON name="new button" id="ca7fb394f3815c91" memberName="btnNewGame"
-              virtualName="" explicitFocusOrder="0" pos="270R 24R 71 24" posRelativeY="8b78dd76054f6a1a"
+              virtualName="" explicitFocusOrder="0" pos="286R 24R 72 24" posRelativeY="8b78dd76054f6a1a"
               tooltip="create a game on the server" buttonText="new game" connectedEdges="3"
               needsCallback="1" radioGroupId="0"/>
   <GENERICCOMPONENT name="new component" id="9340b1da010dd5f9" memberName="lstGames"

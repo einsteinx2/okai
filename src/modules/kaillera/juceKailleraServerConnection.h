@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 5:18:42 pm
+  Creation date:  20 Aug 2008 4:33:37 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_849595E4__
-#define __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_849595E4__
+#ifndef __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_1CA874D0__
+#define __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_1CA874D0__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "clientgui.h"
@@ -112,4 +112,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_849595E4__
+#endif   // __JUCER_HEADER_JUCEKAILLERASERVERCONNECTION_JUCEKAILLERASERVERCONNECTION_1CA874D0__
