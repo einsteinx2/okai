@@ -309,6 +309,7 @@ namespace n02 {
 
 			{
 				sendCommand(LISTCMD_SHOWGAME, 0);
+				gameWindowVisible = true;
 			}
 
             sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
@@ -336,20 +337,19 @@ namespace n02 {
 		void uiGameWindowShowCallback() {
 			TRACE(); KailleraServerGame::addToAsChild(KailleraServerConnection::window);
 			TRACE(); KailleraServerGame::window->setVisible(true);
-			gameWindowVisible = true;
 			KailleraServerGame::cmponnt->clearText();
 		}
 
 		void uiGameWindowHideCallback() {
 			TRACE(); KailleraServerGame::removeFromAsChild(KailleraServerConnection::window);
 			TRACE(); KailleraServerGame::window->setVisible(false);
-			gameWindowVisible = false;
 		}
 
         static void N02CCNV gameClosed ()
         {
             TRACE();
 			sendCommand(LISTCMD_HIDEGAME, 0);
+			gameWindowVisible = false;
             TRACE();
         }
         static void N02CCNV gameJoined ()
@@ -362,6 +362,7 @@ namespace n02 {
 
 			{
 				sendCommand(LISTCMD_SHOWGAME, 0);
+				gameWindowVisible = true;
 			}
 
             sendGameCommand(LISTCMD_REMALLPLAYERS, 0);
@@ -394,69 +395,56 @@ namespace n02 {
         static void N02CCNV gamePlayerJoined (char * username, int ping, unsigned short uid, char connset)
         {
             TRACE();
-            if (KailleraServerGame::window != 0) {
+            if (isGameWindowActive()) {
                 gamePlayerAdd(username, ping, uid, connset);
-
-                if (isGameWindowActive()) {
-                    char txt[256];
-                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GJ), username);
-                    sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
-                }
+				char txt[256];
+				sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GJ), username);
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
             }
-
             TRACE();
         }
         static void N02CCNV gamePlayerLeft (char * username, unsigned short id)
         {
-            if (KailleraServerGame::window != 0) {
-                TRACE();
-                KailleraPlayerT * player = new KailleraPlayerT;
-                player->id = id;
+			if (isGameWindowActive()) {
+				TRACE();
+				KailleraPlayerT * player = new KailleraPlayerT;
+				player->id = id;
 
-                sendGameCommand(LISTCMD_REMPLAYER, player);
+				sendGameCommand(LISTCMD_REMPLAYER, player);
 
-                if (isGameWindowActive()) {
-                    char txt[256];
-                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GL), username);
-                    sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
-                }
-
-                TRACE();
-            }
-        }
+				char txt[256];
+				sprintf_s(txt, 255, LUTF8(LID_KAILLERA_GL), username);
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
+				TRACE();
+			}
+		}
         static void N02CCNV gamePlayerDropped (char * username, int gdpl)
         {
-            if (KailleraServerGame::window != 0) {
-                TRACE();
-                if (isGameWindowActive()) {
-                    char txt[256];
-                    sprintf_s(txt, 255, LUTF8(LID_KAILLERA_PD), username, gdpl);
-                    sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
-                }
-                TRACE();
-            }
+			TRACE();
+			if (isGameWindowActive()) {
+				char txt[256];
+				sprintf_s(txt, 255, LUTF8(LID_KAILLERA_PD), username, gdpl);
+				sendGameCommand(LISTCMD_APPEND, new String(FROMUTF8(txt)));
+				if (gameRunning == true) {
+					modHelper.playerDropped(username, gdpl);
+				}
+			}
+			TRACE();
         }
         static void N02CCNV gameStart (int playerNo, int numPlayers)
         {
-            if (KailleraServerGame::window != 0) {
-                String text;
-                if (isGameWindowActive()) {
-                    sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GS)));
-                }
-                modHelper.startGame(lastGame, playerNo, numPlayers);
-
-                gameRunning = true;
-            }
+			if (isGameWindowActive()) {
+				String text;
+				sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GS)));
+				modHelper.startGame(lastGame, playerNo, numPlayers);
+				gameRunning = true;
+			}
         }
         static void N02CCNV gameEnded ()
         {
-            if (gameRunning) {
+			if (isGameWindowActive()) {
                 gameRunning = false;
-                if (KailleraServerGame::window != 0) {
-                    if (isGameWindowActive()) {
-                        sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GE)));
-                    }
-                }
+				sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GE)));
             }
         }
 

@@ -615,6 +615,12 @@ namespace n02 {
                         TRACE();
                         unsigned int id = ki.readUnsignedInt32();
                         callbacks.serverGameClose(id);
+						if (state <= RUNNING || state == INGAME) {
+							if (userInfo.gameId == id) {
+								// Hack!
+								updateState(RECVED_GAMRLEAV);
+							}
+						}
                         break;
                     }
                 case GAMRJOIN:
@@ -644,6 +650,7 @@ namespace n02 {
                         unsigned short id = ki.readSignedInt16();
                         callbacks.gamePlayerLeft(ki.user, id);
                         if (id==userInfo.userId) {
+							flags.LEAVE_REQUESTED = 1;
                             updateState(RECVED_GAMRLEAV);
                         }
                         break;
@@ -709,12 +716,8 @@ namespace n02 {
                     break;
                 case GAMRDROP:
                     {
-                        //						int gdpl = ki.readSignedInt8();
-                        //						callbacks.gamePlayerDropped(ki.user, gdpl);
-                        //						if (gamePlayerNo == gdpl) {
-                        //							stopGame();
-                        //							callbacks.gameEnded();
-                        //						}
+						int gdpl = ki.readSignedInt8();
+						callbacks.gamePlayerDropped(ki.user, gdpl);
                     }
                     break;
                 case GAMRSRDY:
