@@ -230,8 +230,8 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 	txtNick->setText(FROMUTF8(uiUsername));
 
 	// List
-	lstServers->getHeader()->addColumn(n02::LUTF8(LID_KAILLERA_SRV), 1, 482/2, 30, -1, TableHeaderComponent::notSortable);
-	lstServers->getHeader()->addColumn(n02::LUTF8(LID_KAILLERA_IPA), 2, 482/2 - 20, 30, -1, TableHeaderComponent::notSortable);
+	lstServers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_SRV), 1, 482/2, 30, -1, TableHeaderComponent::notSortable);
+	lstServers->getHeader()->addColumn(n02::LUTF16(LID_KAILLERA_IPA), 2, 482/2 - 20, 30, -1, TableHeaderComponent::notSortable);
 
 	lstServers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstServers->setOutlineThickness (1);

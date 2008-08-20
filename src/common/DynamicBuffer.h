@@ -66,6 +66,7 @@ namespace n02 {
         /* constructor */
         DynamicBuffer(const unsigned char * sourceBuffer, const int length)
         {
+			ptr = end = begin = body = 0;
             presetBufferPtr(sourceBuffer, length);
         }
 
