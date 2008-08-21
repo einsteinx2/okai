@@ -376,6 +376,7 @@ void jucep2pSelect::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_btnAdd] -- add your button handler code here..
 		n02::p2p::uiAddServer();
 		lstStored->updateContent();
+		lstStored->repaint();
         //[/UserButtonCode_btnAdd]
     }
     else if (buttonThatWasClicked == btnEdit)
@@ -405,11 +406,16 @@ void jucep2pSelect::saveConfig()
 {
 	strncpy(n02::p2p::ip, txtIP->getText().toUTF8(), 127);
 	strncpy(n02::p2p::nick, txtNick->getText().toUTF8(), 31);
-        n02::p2p::port = common_min(common_max(txtPort->getText().getIntValue(), 0), 655634);
+    n02::p2p::port = common_min(common_max(txtPort->getText().getIntValue(), 0), 655634);
 }
 void jucep2pSelect::handleCommandMessage(int  commandId) {
-	char * x = reinterpret_cast<char*>(commandId);
-	txtIP->setText(FROMUTF8(x));
+	lstStored->selectRow(1);
+	lstStored->updateContent();
+	lstStored->repaint();
+}
+void jucep2pSelect::setIP(const String & s)
+{
+	txtIP->setText(s);
 	saveConfig();
 }
 //[/MiscUserCode]

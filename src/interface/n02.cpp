@@ -369,7 +369,7 @@ namespace n02 {
         commonTerminate();
 
         if (client->internal0 != 0)
-            delete client->internal0;
+            delete reinterpret_cast<DynamicArray<ClientInterfaceExtension, 8>*>(client->internal0);
         client->internal0 = 0;
 
         return 0;

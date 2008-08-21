@@ -54,13 +54,11 @@ namespace n02 {
         ConfigurationManager config(juceFontConfig);
         config.load("font");
 
-        SystemStats system;
-
-        LOG(Juce version %s, system.getJUCEVersion().toUTF8());
+		LOG(Juce version %s, SystemStats::getJUCEVersion().toUTF8());
 
         String stat;
-        stat.printf(T(", %i cpus %imhz"), system.getNumCpus(), system.getCpuSpeedInMegaherz());
-        LOG(%s %s, system.getCpuVendor().toUTF8(), stat.toUTF8());
+        stat.printf(T(", %i cpus %imhz"), SystemStats::getNumCpus(), SystemStats::getCpuSpeedInMegaherz());
+        LOG(%s %s, SystemStats::getCpuVendor().toUTF8(), stat.toUTF8());
 
         initializeLocalisation();
 
@@ -81,7 +79,7 @@ namespace n02 {
 		void  handleMessage (const Message & message)
 		{
 			if (message.pointerParameter != 0) {
-				clientGuiCallbackPointerType cb = reinterpret_cast<clientGuiCallbackPointerType>(message.pointerParameter);
+				clientGuiCallbackPointerType * cb = reinterpret_cast<clientGuiCallbackPointerType*>(message.pointerParameter);
 				cb();
 				WaitableEvent * waitable = reinterpret_cast<WaitableEvent*>(message.intParameter2);
 				if (waitable != 0)
@@ -93,14 +91,14 @@ namespace n02 {
 
 
 
-	void GuiJUCEThreadCallbackLock(clientGuiCallbackPointerType ptr)
+	void GuiJUCEThreadCallbackLock(clientGuiCallbackPointerType * ptr)
 	{
 		TRACE(); WaitableEvent * waitable = new WaitableEvent;
 		
-		if (caller != 0)
-			caller->postMessage(new Message(10, reinterpret_cast<int>(waitable), 30, ptr));
-
-		TRACE(); while (!waitable->wait(10000));
+		if (caller != 0) {
+			caller->postMessage(new Message(0, reinterpret_cast<int>(waitable), 0, ptr));
+			TRACE(); while (!waitable->wait(10000));
+		}
 		TRACE(); delete waitable;
 	}
 

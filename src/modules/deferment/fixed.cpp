@@ -96,10 +96,7 @@ namespace n02 {
             //LOG(Receiving);
             void * rsBuf = getReserveInput();
             int r = transport.recvSyncData(rsBuf, inputLength);
-            if (r == -1) {
-                //modHelper.endGame();
-                return;
-            } else if (r==0) {
+            if (r==0) {
                 TRACE(); recorder.addSyncData(rsBuf, numPlayers * inputLength);
                 delay++;
                 for (int x = 0; x < numPlayers; x++) {
@@ -110,7 +107,7 @@ namespace n02 {
                 TRACE(); recorder.addSyncData(rsBuf, r);
                 if (delay == (frame - 1)) {
                     delayAdjusted = common_max(0, delay - delayParam);
-                    for (int x = 0; x <	delay; x++) {
+                    for (int x = 0; x <	delayAdjusted; x++) {
                         TRACE(); autorun->callbackSaveState(x);
                         for (int y = 0; y < numPlayers; y++) {
                             TRACE(); autorun->callbackSetPlayerInput(getInput(x, y), y);

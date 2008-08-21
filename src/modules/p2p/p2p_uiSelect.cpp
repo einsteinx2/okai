@@ -92,13 +92,13 @@ namespace n02 {
 			sessionRun(true);
 			ModP2PSelectWindow::window->setVisible(true);
 		}
+
 		void uiHost()
 		{
 			ModP2PSelectWindow::window->setVisible(false);
 			sessionRun(false);
 			ModP2PSelectWindow::window->setVisible(true);
 		}
-
 
 
 		CONFIG_START(p2pConfig)
@@ -163,26 +163,21 @@ namespace n02 {
 		void  StoredListListboxModel::cellClicked (int rowNumber, int columnId, const MouseEvent &e)
 		{
 			if (ips.itemsCount() > rowNumber) {
-				ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[rowNumber]));
+				ModP2PSelectWindow::cmponnt->setIP(ips[rowNumber]);
 			}
 		}
 		void  StoredListListboxModel::cellDoubleClicked (int rowNumber, int columnId, const MouseEvent &e)
 		{
-			//ServersListListboxModel::returnKeyPressed(rowNumber);
+			StoredListListboxModel::returnKeyPressed(rowNumber);
 		}
 		void  StoredListListboxModel::deleteKeyPressed (int lastRowSelected)
 		{
-			//uiDeleteServer(lastRowSelected);
-			//ModKailleraServerSelect::cmponnt->updateLV();
 		}
 		void  StoredListListboxModel::returnKeyPressed (int lastRowSelected)
 		{
 			if (lastRowSelected >= 0 && ips.itemsCount() > lastRowSelected) {
-				ModP2PSelectWindow::window->postCommandMessage(reinterpret_cast<int>(ips[lastRowSelected]));
-				// String xxx(uiServersIP.getItem(lastRowSelected));
-				//ModKailleraServerSelect::cmponnt->updateIP(xxx);
-				//ModKailleraServerSelect::cmponnt->saveConfig();
-				//uibtnConnectCallback();
+				ModP2PSelectWindow::cmponnt->setIP(ips[lastRowSelected]);
+				uiConnect();
 			}
 		}
 	};

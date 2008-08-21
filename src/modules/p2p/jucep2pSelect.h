@@ -50,6 +50,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void saveConfig();
 	void handleCommandMessage(int  commandId);
+	void setIP(const String & s);
     //[/UserMethods]
 
     void paint (Graphics& g);

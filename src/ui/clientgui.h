@@ -43,9 +43,9 @@ namespace n02 {
 
 	bool GuiIsJuceThread();
 
-	typedef void (N02CCNV * clientGuiCallbackPointerType) (void);
+	typedef void (N02CCNV clientGuiCallbackPointerType) (void);
 
-	void GuiJUCEThreadCallbackLock(clientGuiCallbackPointerType ptr);
+	void GuiJUCEThreadCallbackLock(clientGuiCallbackPointerType * ptr);
 
 
 };

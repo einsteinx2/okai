@@ -230,13 +230,12 @@ namespace n02 {
 									shocker.setPort(27886);
 								coreAddIP(shocker);
 								ModP2PSessionWindow::window->runModalLoop();
-								ModP2PSessionWindow::deleteAndZeroWindow();
 							}
 						}
 					} else {
 						ModP2PSessionWindow::window->runModalLoop();
-						ModP2PSessionWindow::deleteAndZeroWindow();
 					}
+					ModP2PSessionWindow::deleteAndZeroWindow();
 					coreTerminte();
 				}
 			}

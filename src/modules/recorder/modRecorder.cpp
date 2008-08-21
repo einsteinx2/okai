@@ -170,7 +170,14 @@ namespace n02 {
                 LOGS(Writing to file);
 
                 char filename[1024];
-                sprintf(filename, "records%s%08x_%02i_%02i.krec", PATH_SEPERATOR, fileHeader.time, fileHeader.playerNo, fileHeader.totalPlayers);
+
+				time_t tx = fileHeader.time;
+				tm * t = localtime(&tx);
+
+                sprintf(filename, "records%s%i%02i%02i_%02i%02i%02i_%i.krec", PATH_SEPERATOR, 
+					1900 + t->tm_year, t->tm_mon + 1, t->tm_mday,
+					t->tm_hour, t->tm_min, t->tm_sec,
+					fileHeader.playerNo);
 
                 {
                     juce::File fl(File::getCurrentWorkingDirectory().getChildFile("records").getFullPathName());
@@ -208,7 +215,14 @@ namespace n02 {
                 }
 
                 char filename[1024];
-                sprintf(filename, "records%s%08x_%02i_%02i.krec", PATH_SEPERATOR, fileHeader.time, fileHeader.playerNo, fileHeader.totalPlayers);
+
+				time_t tx = fileHeader.time;
+				tm * t = localtime(&tx);
+
+                sprintf(filename, "records%s%i%02i%02i_%02i%02i%02i_%i.krec", PATH_SEPERATOR, 
+					1900 + t->tm_year, t->tm_mon + 1, t->tm_mday,
+					t->tm_hour, t->tm_min, t->tm_sec,
+					fileHeader.playerNo);
 
 				std::ofstream of (filename, std::ios_base::out | std::ios_base::binary);
 

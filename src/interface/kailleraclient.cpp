@@ -37,8 +37,8 @@ your builds if it ever conflicts with kaillera's interests
 #include "n02.h"
 #define KAILLERA_DLL
 #include "kailleraclient.h"
-#include "trace.h"
 
+#include "common.h"
 using namespace n02;
 
 namespace kaillera {
@@ -96,7 +96,7 @@ namespace kaillera {
 
 			char * gl = infos.gameList;
 
-			while (strlen(gl) > 0) {
+			while (strlen(gl) != 0) {
 				kaillera.games.add(gl, 8);
 				gl += strlen(gl) + 1;
 			}

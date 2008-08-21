@@ -225,7 +225,7 @@ namespace n02 {
 		}
 		static void N02CCNV sendAsyncData(const void * value, const int len, const int module)
 		{
-			require(false);
+			//require(false);
 		}
 		static void N02CCNV sendSyncData(const void * value, const int len)
 		{
@@ -285,7 +285,7 @@ namespace n02 {
 						PlayerPlayer::cmponnt->postCommandMessage(reinterpret_cast<int>(new String(workingBuffer)));						
 						break;
 					case RDATA_GSDATA:
-						require(false);
+						//require(false);
 						break;
 					case RDATA_DEFDATA:
 						if (defaultValue != 0)
@@ -314,7 +314,7 @@ namespace n02 {
 		}
 		static void N02CCNV sendChat (const char * message)
 		{
-			require(false);
+			//require(false);
 		}
 		
 		// <gui>
