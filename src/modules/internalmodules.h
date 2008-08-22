@@ -13,7 +13,7 @@
 	MODULE(modDefStress) \
 	MODULE(modDefStressRun) \
 	\
-	\
+	MODULE(modOptions) \
 	\
 	MODULE(modRecorder) \
 	\

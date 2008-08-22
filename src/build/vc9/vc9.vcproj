@@ -866,6 +866,30 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="options"
+				>
+				<File
+					RelativePath="..\..\modules\juceModOptions.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceModOptions.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceModOptionsPage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\juceModOptionsPage.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\modules\modOptions.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="misc"
