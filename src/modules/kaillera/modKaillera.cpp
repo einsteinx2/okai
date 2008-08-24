@@ -50,8 +50,6 @@ namespace n02 {
         char uiLastIP[128];
         int uiConnectionSetting;
         int recordingEnabled;
-        int selectedAutorunIndex;
-        int selectedDelayParam;
         DynamicOrderedArray<char*> uiServersIP;
         DynamicOrderedArray<char*> uiServersName;
 
@@ -88,8 +86,7 @@ namespace n02 {
         }
 
         // Mod changing
-        void uiModChangeCallback(int index) {
-            modHelper.activeTransportByIndex(index);
+        void N02CCNV uiModChangeCallback(void) {
             ModKailleraServerSelect::window->waitNotifyAndCloseNotify();
         }
 
@@ -154,6 +151,7 @@ namespace n02 {
         static void N02CCNV initialize(){}
         static void N02CCNV terminate(){}
         static void N02CCNV activete(){}
+		static void N02CCNV end(){}
 
 
         static WaitableEvent * waitable = 0;
@@ -166,6 +164,7 @@ namespace n02 {
                 TRACE(); ConfigurationManager config(kailleraConfig);
                 TRACE(); config.load("kaillera");
 
+				TRACE(); setSwitchModeCB(uiModChangeCallback);
                 TRACE(); ModKailleraServerSelect::createAndShowModal();
                 TRACE(); ModKailleraServerSelect::deleteAndZeroWindow();
 
@@ -175,14 +174,19 @@ namespace n02 {
             }
         }
 
+		static void N02CCNV  endGui()
+		{
+
+		}
+
         // etc...
         static int  N02CCNV getSelectedAutorunIndex()
         {
-            return selectedAutorunIndex;
+            return autoUiSelectedMode();
         }
         static int  N02CCNV getSelectedAutorunDelay()
         {
-            return selectedDelayParam;
+			return autoUiSelectedModeParam();
         }
         static int  N02CCNV isRecordingEnabled()
         {

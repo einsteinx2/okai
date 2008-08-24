@@ -145,6 +145,7 @@ public:
 	void (N02CCNV *initialize)();
 	void (N02CCNV *terminate)();
 	void (N02CCNV *activete)();
+	void (N02CCNV *end)();
 	int  (N02CCNV *step)();
 	int  (N02CCNV *synchronizeGame)(void * syncData, int len);
 	void (N02CCNV *endGame)();
@@ -156,6 +157,7 @@ public:
 	void (N02CCNV *sendChat) (const char * message);
 	/* <gui> */
 	void (N02CCNV *activeteGui)();
+	void (N02CCNV *endGui)();
 	int  (N02CCNV *getSelectedAutorunIndex)();
 	int  (N02CCNV *getSelectedAutorunDelay)();
 	int  (N02CCNV *isRecordingEnabled)();

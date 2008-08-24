@@ -125,6 +125,10 @@ namespace n02 {
 		static void N02CCNV activete()
 		{
 		}
+		static void N02CCNV  end()
+		{
+
+		}
 		static int  N02CCNV step()
 		{
 			return 0;
@@ -179,6 +183,10 @@ namespace n02 {
 				TRACE(); GuiJUCEThreadCallbackLock(activeteGui);
 			}
         }
+		static void N02CCNV  endGui()
+		{
+
+		}
         static int  N02CCNV getSelectedAutorunIndex();
 
         static int  N02CCNV getSelectedAutorunDelay()

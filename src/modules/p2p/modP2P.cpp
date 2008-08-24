@@ -61,6 +61,11 @@ namespace n02 {
 		static void N02CCNV  reserved(int, int)
 		{
 		}
+		static void N02CCNV  end()
+		{
+
+		}
+
 	};
 	// Transport module definition
     STDTRANSPORTDEFNNMS(trModP2P, p2p);

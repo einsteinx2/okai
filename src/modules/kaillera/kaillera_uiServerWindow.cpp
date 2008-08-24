@@ -51,11 +51,7 @@ namespace n02 {
         extern char uiUsername[32];
         extern char uiQuitMessage[128];
         extern char uiLastIP[128];
-        char lastGame[128];
         extern int uiConnectionSetting;
-        extern int selectedAutorunIndex;
-        extern int selectedDelayParam;
-        int activeGameCaps;
         bool hosting;
         unsigned short lastSelectedUserId;
         bool gameRunning;
@@ -147,10 +143,8 @@ namespace n02 {
         ** new game button
         *******************************/
         void uiNewGameCallback() {
-            char * c = getSelectedGame(KailleraServerConnection::window);
-            if (c) {
-                strcpy(lastGame, c);
-                coreCreate(c);
+			if (gameSelectChangeToNew(KailleraServerConnection::window)) {
+                coreCreate(gameSelectGetSelectedName());
             }
         }
 
@@ -303,7 +297,6 @@ namespace n02 {
         {
             TRACE();
 
-			activeGameCaps = modHelper.gameList->getCaps(lastGame);
 			lastSelectedUserId = 0xFFFF;
 			hosting = true;
 
@@ -356,7 +349,6 @@ namespace n02 {
         {
 
             TRACE();
-            activeGameCaps = modHelper.gameList->getCaps(lastGame);	
             lastSelectedUserId = 0xFFFF;
             hosting = false;
 
@@ -436,7 +428,7 @@ namespace n02 {
 			if (isGameWindowActive()) {
 				String text;
 				sendGameCommand(LISTCMD_APPEND, new String(LUTF16(LID_KAILLERA_GS)));
-				modHelper.startGame(lastGame, playerNo, numPlayers);
+				modHelper.startGame(gameSelectGetSelectedName(), playerNo, numPlayers);
 				gameRunning = true;
 			}
         }

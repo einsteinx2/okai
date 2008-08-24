@@ -44,11 +44,20 @@ namespace n02 {
     {
         LOGS(0);
     }
+	static void N02CCNV  defaultTransportEnd()
+{
+
+}
     static void N02CCNV defaultTransportActiveteGUI()
     {
         LOGS(0);
 
     }
+
+	static void N02CCNV  defaultTransportEndGui()
+{
+
+}
     static int N02CCNV defaultTransportIdleStep()
     {
         LOGS(0);
@@ -127,6 +136,7 @@ namespace n02 {
         defaultTransportInitialize,
         defaultTransportTerminate,
         defaultTransportActivete,
+		defaultTransportEnd,
         defaultTransportIdleStep,
         defaultTransportSynchronizeGame,
         defaultTransportEndGame,
@@ -137,6 +147,7 @@ namespace n02 {
         defaultTransportSyncDataCheck,
         defaultTransportSendChat,
         defaultTransportActiveteGUI,
+		defaultTransportEndGui,
         defaultTransportGetSelectedAutorunAlgorithm,
         defaultTransportGetSelectedAutorunSmoothing,
         defaultTransportIsRecordingEnabled,
@@ -151,7 +162,7 @@ namespace n02 {
     static char activeModName[32];
 
     CONFIG_START(transportConfig)
-    CONFIG_STRVAR("active", activeModName, 32, "")
+    CONFIG_STRVAR("active", activeModName, 32, "n02.kaillera")
     CONFIG_END;
 
     void transportReset() {

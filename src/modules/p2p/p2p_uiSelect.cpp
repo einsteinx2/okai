@@ -43,8 +43,7 @@ namespace n02 {
 			Component::getCurrentlyModalComponent()->exitModalState(0);
 		}
 
-		void uiModChangeCallback(int index) {
-			modHelper.activeTransportByIndex(index);
+		void N02CCNV uiModChangeCallback(void) {
 			ModP2PSelectWindow::window->waitNotifyAndCloseNotify();
 		}
 
@@ -117,6 +116,7 @@ namespace n02 {
 				TRACE(); ConfigurationManager config(p2pConfig);
 				TRACE(); config.load("p2p");
 
+				TRACE(); setSwitchModeCB(uiModChangeCallback);
 				TRACE(); ModP2PSelectWindow::createAndShowModal();
 				TRACE(); ModP2PSelectWindow::deleteAndZeroWindow();
 
@@ -125,13 +125,17 @@ namespace n02 {
 				GuiJUCEThreadCallbackLock(activeteGui);
 			}
 		}
+		void N02CCNV  endGui()
+		{
+
+		}
 		int  N02CCNV getSelectedAutorunIndex()
 		{
-			return selectedAutorunIndex;
+			return autoUiSelectedMode();
 		}
 		int  N02CCNV getSelectedAutorunDelay()
 		{
-			return selectedDelayParam;
+			return autoUiSelectedModeParam();
 		}
 		int  N02CCNV isRecordingEnabled()
 		{

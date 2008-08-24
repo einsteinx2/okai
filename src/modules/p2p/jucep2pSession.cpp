@@ -154,7 +154,7 @@ jucep2pSession::jucep2pSession ()
 
     //[Constructor] You can add your own custom stuff here..
 
-	updateAutorunItems();
+	n02::autoUiSetActiveItems(cmbRun, cmbDelay, lblRun, lblDelay);
 
 	// recorder
 	if (n02::modHelper.isRecorderLoaded()) {
@@ -183,6 +183,7 @@ jucep2pSession::jucep2pSession ()
 jucep2pSession::~jucep2pSession()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+	n02::autoUiUnset();
     //[/Destructor_pre]
 
     deleteAndZero (txtChat);
@@ -202,6 +203,7 @@ jucep2pSession::~jucep2pSession()
     deleteAndZero (btnCpr);
 
     //[Destructor]. You can add your own custom destruction code here..
+	
     //[/Destructor]
 }
 
@@ -323,9 +325,7 @@ void jucep2pSession::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void jucep2pSession::updateAutorunItems() {
-	n02::setupAutorunUIItems(n02::p2p::activeGameCaps, cmbRun, cmbDelay, lblRun, lblDelay);
-	n02::p2p::selectedAutorunIndex = cmbRun->getSelectedId();
-	n02::p2p::selectedDelayParam = cmbDelay->getSelectedId() - 1;
+	n02::autoUiUpdateItems();
 }
 
 void jucep2pSession::appendText(String * s) {

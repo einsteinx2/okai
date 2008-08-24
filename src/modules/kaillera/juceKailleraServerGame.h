@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 3:06:03 pm
+  Creation date:  24 Aug 2008 2:17:04 am
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,8 +19,8 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__
-#define __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__
+#ifndef __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_58BED1A2__
+#define __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_58BED1A2__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "juce02.h"
@@ -47,9 +47,6 @@ namespace n02 {
 			void  textEditorFocusLost (TextEditor &editor){}
 		};
 
-		extern int activeGameCaps;
-		extern int selectedAutorunIndex;
-		extern int selectedDelayParam;
 		extern int recordingEnabled;
 		extern bool hosting;
 
@@ -121,4 +118,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_27E06946__
+#endif   // __JUCER_HEADER_JUCEKAILLERASERVERGAME_JUCEKAILLERASERVERGAME_58BED1A2__

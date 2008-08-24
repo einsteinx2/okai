@@ -37,6 +37,8 @@ SOFTWARE.
 
 #include "clientgui.h"
 
+#include "juceModHelpers.h"
+
 namespace n02 {
 
     char primary[128];
@@ -150,13 +152,17 @@ namespace n02 {
         }
 
 		caller = new CallbackHandler;
-    }
 
-    void ThreadJuice::OpenKailleraJUCEApp::shutdown()
+
+		uiHelpersInitialize();
+
+	}
+
+	void ThreadJuice::OpenKailleraJUCEApp::shutdown()
 	{
-        juceThread.juceInitialized = 0;
-    }
-
+		juceThread.juceInitialized = 0;
+		uiHelpersTerminate();
+	}
 
     class GuiThread: public PosixThread {
     public:

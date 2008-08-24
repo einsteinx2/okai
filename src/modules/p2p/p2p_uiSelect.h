@@ -40,6 +40,7 @@ namespace n02 {
 		int  N02CCNV getSelectedAutorunIndex();
 		int  N02CCNV getSelectedAutorunDelay();
 		int  N02CCNV isRecordingEnabled();
+		void N02CCNV endGui();
 
 
 		void uiModChangeCallback(int index);

@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 3:06:03 pm
+  Creation date:  24 Aug 2008 2:17:04 am
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -90,7 +90,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
     cmbRun->setEditableText (false);
     cmbRun->setJustificationType (Justification::centredLeft);
     cmbRun->setTextWhenNothingSelected (String::empty);
-    cmbRun->setTextWhenNoChoicesAvailable (T("(no choices)"));
+    cmbRun->setTextWhenNoChoicesAvailable (String::empty);
     cmbRun->addListener (this);
 
     addAndMakeVisible (lblRun = new Label (T("new label"),
@@ -106,7 +106,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
     cmbDelay->setEditableText (false);
     cmbDelay->setJustificationType (Justification::centredLeft);
     cmbDelay->setTextWhenNothingSelected (String::empty);
-    cmbDelay->setTextWhenNoChoicesAvailable (T("(no choices)"));
+    cmbDelay->setTextWhenNoChoicesAvailable (String::empty);
     cmbDelay->addListener (this);
 
     addAndMakeVisible (lblDelay = new Label (T("new label"),
@@ -129,7 +129,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
 	btnLeaveGame->setButtonText (n02::LUTF16(LID_KAILLERA_LEA));
 	btnKick->setButtonText (n02::LUTF16(LID_KAILLERA_KIC));
 	chkRecord->setButtonText (n02::LUTF16(LID_KAILLERA_REC));
-	
+
     //[/UserPreSize]
 
     setSize (650, 250);
@@ -144,7 +144,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
 	lstPlayers->setOutlineThickness (1);
 
 	//autorun items
-	updateAutorunItems();
+	n02::autoUiSetActiveItems(cmbRun, cmbDelay, lblRun, lblDelay);
 
 	//recorder
 	if (n02::modHelper.isRecorderLoaded()) {
@@ -164,6 +164,7 @@ juceKailleraServerGame::juceKailleraServerGame ()
 juceKailleraServerGame::~juceKailleraServerGame()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+	n02::autoUiUnset();
     //[/Destructor_pre]
 
     deleteAndZero (txtChat);
@@ -254,13 +255,11 @@ void juceKailleraServerGame::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if (comboBoxThatHasChanged == cmbRun)
     {
         //[UserComboBoxCode_cmbRun] -- add your combo box handling code here..
-		n02::kaillera::selectedAutorunIndex = cmbRun->getSelectedId();
         //[/UserComboBoxCode_cmbRun]
     }
     else if (comboBoxThatHasChanged == cmbDelay)
     {
         //[UserComboBoxCode_cmbDelay] -- add your combo box handling code here..
-		n02::kaillera::selectedDelayParam = cmbDelay->getSelectedId() -1;
         //[/UserComboBoxCode_cmbDelay]
     }
 
@@ -279,9 +278,7 @@ void juceKailleraServerGame::appendText(String & text) {
 }
 
 void juceKailleraServerGame::updateAutorunItems() {
-	n02::setupAutorunUIItems(n02::kaillera::activeGameCaps, cmbRun, cmbDelay, lblRun, lblDelay);
-	n02::kaillera::selectedAutorunIndex = cmbRun->getSelectedId();
-	n02::kaillera::selectedDelayParam = cmbDelay->getSelectedId() - 1;
+	n02::autoUiUpdateItems();
 }
 
 void juceKailleraServerGame::clearText() {
@@ -293,7 +290,7 @@ void juceKailleraServerGame::clearText() {
 }
 void juceKailleraServerGame::handleCommandMessage(int  commandId) {
 	TRACE(); n02::kaillera::KailleraListsCommand * cmd = reinterpret_cast<n02::kaillera::KailleraListsCommand*>(commandId);
-	TRACE(); int last = cmd->command;	
+	TRACE(); int last = cmd->command;
 
 	if (last <= LISTCMD_LISTSLIMIT) {
 		TRACE();
@@ -366,7 +363,7 @@ BEGIN_JUCER_METADATA
               buttonText="kick" connectedEdges="5" needsCallback="1" radioGroupId="0"/>
   <COMBOBOX name="new combo box" id="19e29820f9b5e74b" memberName="cmbRun"
             virtualName="" explicitFocusOrder="0" pos="392 216 104 24" tooltip="switch between different running modes"
-            editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+            editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems=""/>
   <LABEL name="new label" id="6e270a333381e674" memberName="lblRun" virtualName=""
          explicitFocusOrder="0" pos="344 216 48 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Mode:" editableSingleClick="0" editableDoubleClick="0"
@@ -374,7 +371,7 @@ BEGIN_JUCER_METADATA
          bold="0" italic="0" justification="33"/>
   <COMBOBOX name="new combo box" id="ac49a7cfb8110296" memberName="cmbDelay"
             virtualName="" explicitFocusOrder="0" pos="552 216 88 24" tooltip="select the additional delay parameter for the selected running mode"
-            editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+            editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems=""/>
   <LABEL name="new label" id="2c62b0ee329fcd39" memberName="lblDelay"
          virtualName="" explicitFocusOrder="0" pos="504 216 48 24" edTextCol="ff000000"
          edBkgCol="0" labelText="Delay:" editableSingleClick="0" editableDoubleClick="0"

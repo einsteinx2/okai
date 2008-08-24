@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 7:34:06 am
+  Creation date:  23 Aug 2008 10:09:18 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -19,14 +19,13 @@
   ==============================================================================
 */
 
-#ifndef __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_4EDE2455__
-#define __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_4EDE2455__
+#ifndef __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_F29AEF94__
+#define __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_F29AEF94__
 
 //[Headers]     -- You can add your own extra header files here --
 #include "clientgui.h"
 
 namespace n02 {
-
 	class GameSelectLB: public ListBoxModel {
 		int  getNumRows ();
 		void  paintListBoxItem (int rowNumber, Graphics &g, int width, int height, bool rowIsSelected);
@@ -34,9 +33,7 @@ namespace n02 {
 		void  listBoxItemDoubleClicked (int row, const MouseEvent &e);
 		void  returnKeyPressed (int lastRowSelected);
 		void selectedRowsChanged (int lastRowSelected);
-
 	};
-
 };
 
 //[/Headers]
@@ -56,7 +53,7 @@ class juceGameSelect  : public Component,
 {
 public:
     //==============================================================================
-    juceGameSelect ();
+    juceGameSelect (int selectedGame);
     ~juceGameSelect();
 
     //==============================================================================
@@ -91,4 +88,4 @@ private:
 };
 
 
-#endif   // __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_4EDE2455__
+#endif   // __JUCER_HEADER_JUCEGAMESELECT_JUCEGAMESELECT_F29AEF94__

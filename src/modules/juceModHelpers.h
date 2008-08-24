@@ -35,14 +35,18 @@ SOFTWARE.
 #include "clientgui.h"
 
 namespace n02 {
-	/*
-	show select game screen
-	*/
-    char * getSelectedGame(Component*);
-	/*
-	helper for setting up ui autorun parameters
-	*/
-    void setupAutorunUIItems(int currentGameCaps, ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay);
+
+	/* Autorun UI management */
+	namespace autorunUiManagement {
+		void autoUiSetActiveItems(ComboBox * cmbRun, ComboBox * cmbDelay, Label * lblRun, Label * lblDelay);
+		void autoUiUpdateItems();
+		void autoUiUnset();
+		int autoUiSelectedMode();
+		int autoUiSelectedModeParam();
+	};
+
+	using namespace autorunUiManagement;
+
 	/*
 	Will show an add item dialog. Will return true if user doesn't cancel
 	*/
@@ -59,5 +63,39 @@ namespace n02 {
 	Will return pointer to the last item name user put into the add or edit dialog
 	*/
     char * addEditGetName();
+
+
+
+	/* game seelection */
+	namespace gameListSelect {
+		void gameSelectInitialize();
+		void gameSelectTerminate();
+		bool gameSelectChangeToNew(Component* parent);
+		bool gameSelectChange(const char * game);
+		char * gameSelectGetSelectedName();
+		int gameSelectGetSelectedCaps();
+		int gameSelectGetSelectedPlayers();
+	};
+
+	using namespace gameListSelect;
+
+
+	typedef void (N02CCNV modSwitchedCBType)(void);
+
+	void initSwitchModeCB(ComboBox * cmbSwitch);
+	void setSwitchModeCB(modSwitchedCBType * cb);
+
+
+
+
+
+
+
+
+
+	void uiHelpersInitialize();
+
+	void uiHelpersTerminate();
+
 };
 

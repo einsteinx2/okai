@@ -24,6 +24,7 @@
 #include "common.h"
 using namespace n02;
 #include "locid.h"
+#include "juceModHelpers.h"
 //[/Headers]
 
 #include "juceKailleraServerSelect.h"
@@ -184,7 +185,6 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 
 
     //[UserPreSize]
-	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
 	btnAdd->setButtonText (n02::LUTF16(LID_ADD2));
 	btnEdit->setButtonText (n02::LUTF16(LID_EDT2));
 	btnDelete->setButtonText (n02::LUTF16(LID_DEL3));
@@ -213,14 +213,7 @@ juceKailleraServerSelect::juceKailleraServerSelect ()
 
     //[Constructor] You can add your own custom stuff here..
 
-	{ // modes
-		ModuleAbstraction02 * mod = n02::modHelper.modHandler->find(MTYPE02_TRANSPORT);
-		if (mod != 0) {
-			do {
-				cmbModes->addItem(mod->name, mod->index);
-			} while ((mod = n02::modHelper.modHandler->findNext(mod))!=0);
-		}
-	}
+	n02::initSwitchModeCB(cmbModes);
 
 	// connection setting
 	uiConnectionSetting = common_max(common_min(uiConnectionSetting, 6), 1);
@@ -441,7 +434,6 @@ void juceKailleraServerSelect::comboBoxChanged (ComboBox* comboBoxThatHasChanged
     if (comboBoxThatHasChanged == cmbModes)
     {
         //[UserComboBoxCode_cmbModes] -- add your combo box handling code here..
-		n02::kaillera::uiModChangeCallback(cmbModes->getSelectedId());
         //[/UserComboBoxCode_cmbModes]
     }
     else if (comboBoxThatHasChanged == cmbConnection)

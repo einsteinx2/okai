@@ -64,7 +64,7 @@ namespace n02 {
 
         int activeGameCaps = 0;
 
-		char game[128];
+		static bool gameSelected = false;
 
 		static void N02CCNV statusUpdate(char * status) {
 			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(status)));
@@ -87,7 +87,7 @@ namespace n02 {
 
 		static void N02CCNV connected ()
 		{
-			*game = 0;
+			gameSelected = false;
 		}
 
 		static void N02CCNV changeGameLocked ()
@@ -111,24 +111,24 @@ namespace n02 {
 
 		void N02CCNV gameChanged (char*g)
 		{
-			strcpy(game, g);
 			char buf[512];
-			sprintf_s(buf, 512, "Game changed to %s", game);
+			sprintf_s(buf, 512, "Game changed to %s", g);
 			ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8(buf)));
 
-			if (modHelper.gameList->find(game)==0) {
-				ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("The game is not available on your list")));
+			if (gameSelectChange(g)) {
+				gameSelected = true;
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_UPDATE_CAPS, 0, modHelper.gameList->getCaps(g));
 			} else {
-				ModP2PSessionWindow::cmponnt->sendMessage(MSG_UPDATE_CAPS, 0, modHelper.gameList->getCaps(game));
+				gameSelected = false;
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("The game is not available on your list")));
 			}
-			
 		}
 
 		static bool gameIsRunning = false;
 
 		void N02CCNV gameStart (int playerNo, int numPlayers)
 		{
-			modHelper.startGame(game, playerNo, numPlayers);
+			modHelper.startGame(gameSelectGetSelectedName(), playerNo, numPlayers);
 			gameIsRunning = true;
 		}
 		void N02CCNV gameEnded ()
@@ -161,12 +161,8 @@ namespace n02 {
 
         void uiReadynessChange(bool ready)
         {
-			if (ready && modHelper.gameList->find(game) ==0) {
-				if (*game ==0)
-					ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("No game selected")));
-				else
-					ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("The selected game is not available on your list")));
-
+			if (ready && !gameSelected) {
+				ModP2PSessionWindow::cmponnt->sendMessage(MSG_APPEND, new String(FROMUTF8("Please change the gmae into a valid game")));
 				ModP2PSessionWindow::cmponnt->sendMessage(MSG_SET_READY, 0);
 			} else
 				coreSetReady(ready);
@@ -202,11 +198,11 @@ namespace n02 {
 
 		void uiChangeGameCallBack()
 		{
-			char * g = getSelectedGame(ModP2PSessionWindow::window);
-			if (g != 0)
-				coreChangeGameReleaseChange(g);
-			else
+			if (gameSelectChangeToNew(ModP2PSessionWindow::window)) {
+				coreChangeGameReleaseChange(gameSelectGetSelectedName());
+			} else {
 				coreChangeGameReleaseNoChange();
+			}
 
 		}
 

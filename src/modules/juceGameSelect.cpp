@@ -3,7 +3,7 @@
 
   This is an automatically generated file created by the Jucer!
 
-  Creation date:  6 Jul 2008 7:34:06 am
+  Creation date:  23 Aug 2008 10:09:18 pm
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
@@ -27,15 +27,11 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
-namespace n02 {
-	namespace gamelistSel {
-		extern int selectedIndex;
-	};
-}
+
 //[/MiscUserDefs]
 
 //==============================================================================
-juceGameSelect::juceGameSelect ()
+juceGameSelect::juceGameSelect (int selectedGame)
     : lstGames (0),
       btnOk (0),
       btnCancel (0),
@@ -68,7 +64,6 @@ juceGameSelect::juceGameSelect ()
     //[UserPreSize]
 	btnOk->setButtonText (n02::LUTF16(LID_OK01));
 	btnCancel->setButtonText (n02::LUTF16(LID_CAN1));
-
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -77,9 +72,12 @@ juceGameSelect::juceGameSelect ()
 	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstGames->setOutlineThickness (1);
 	lstGames->updateContent();
-	if (n02::gamelistSel::selectedIndex >= 0)
-		lstGames->scrollToEnsureRowIsOnscreen(n02::gamelistSel::selectedIndex);
-	n02::gamelistSel::selectedIndex = -1;
+
+	if (selectedGame >= 0) {
+		lstGames->scrollToEnsureRowIsOnscreen(selectedGame);
+		lstGames->selectRow(selectedGame);
+	}
+
     //[/Constructor]
 }
 
@@ -111,10 +109,10 @@ void juceGameSelect::paint (Graphics& g)
 
 void juceGameSelect::resized()
 {
-    lstGames->setBounds (16, 16, 568, 336);
-    btnOk->setBounds (448, 360, 72, 24);
-    btnCancel->setBounds (520, 360, 64, 24);
-    lblGameInfo->setBounds (16, 360, 400, 24);
+    lstGames->setBounds (16, 16, getWidth() - 32, proportionOfHeight (0.8400f));
+    btnOk->setBounds (getWidth() - 152, getHeight() - 40, 72, 24);
+    btnCancel->setBounds (getWidth() - 80, getHeight() - 40, 64, 24);
+    lblGameInfo->setBounds (16, getHeight() - 40, 400, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -127,9 +125,8 @@ void juceGameSelect::buttonClicked (Button* buttonThatWasClicked)
     if (buttonThatWasClicked == btnOk)
     {
         //[UserButtonCode_btnOk] -- add your button handler code here..
-		if (lstGames->getNumSelectedRows() == 0) 
-			n02::gamelistSel::selectedIndex = -1;
-		getCurrentlyModalComponent()->exitModalState(1);
+		if (lstGames->getNumSelectedRows() != 0)
+			getCurrentlyModalComponent()->exitModalState(lstGames->getSelectedRow() + 1);
         //[/UserButtonCode_btnOk]
     }
     else if (buttonThatWasClicked == btnCancel)
@@ -146,11 +143,8 @@ void juceGameSelect::buttonClicked (Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void juceGameSelect::closeUp() {
-	getCurrentlyModalComponent()->exitModalState(1);
-}
 void juceGameSelect::updateGameInfo(String & info) {
-	lblGameInfo->setText(info,false);	
+	lblGameInfo->setText(info,false);
 }
 //[/MiscUserCode]
 
@@ -164,21 +158,22 @@ void juceGameSelect::updateGameInfo(String & info) {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="juceGameSelect" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330000013"
-                 fixedSize="1" initialWidth="600" initialHeight="400">
+                 parentClasses="public Component" constructorParams="int selectedGame"
+                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
+                 overlayOpacity="0.330000013" fixedSize="1" initialWidth="600"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ffffffff"/>
   <GENERICCOMPONENT name="new component" id="a824b51affc5b10d" memberName="lstGames"
-                    virtualName="" explicitFocusOrder="0" pos="16 16 568 336" class="ListBox"
+                    virtualName="" explicitFocusOrder="0" pos="16 16 32M 84%" class="ListBox"
                     params="T(&quot;gamelist&quot;), &amp;gameListModel"/>
   <TEXTBUTTON name="new button" id="5e11079d5a885e20" memberName="btnOk" virtualName=""
-              explicitFocusOrder="0" pos="448 360 72 24" bgColOff="ffcaffbb"
+              explicitFocusOrder="0" pos="152R 40R 72 24" bgColOff="ffcaffbb"
               buttonText="ok" connectedEdges="2" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="new button" id="27fed7c0fb2584a1" memberName="btnCancel"
-              virtualName="" explicitFocusOrder="0" pos="520 360 64 24" bgColOff="ffffcebb"
+              virtualName="" explicitFocusOrder="0" pos="80R 40R 64 24" bgColOff="ffffcebb"
               buttonText="cancel" connectedEdges="1" needsCallback="1" radioGroupId="0"/>
   <LABEL name="new label" id="abfcb63fc5843c7" memberName="lblGameInfo"
-         virtualName="" explicitFocusOrder="0" pos="16 360 400 24" edTextCol="ff000000"
+         virtualName="" explicitFocusOrder="0" pos="16 40R 400 24" edTextCol="ff000000"
          edBkgCol="0" labelText="" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15"
          bold="0" italic="0" justification="33"/>

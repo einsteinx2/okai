@@ -90,6 +90,7 @@ TransportModule02 NAME = {							\
 	NAMESPACE::initialize,							\
 	NAMESPACE::terminate,							\
 	NAMESPACE::activete,							\
+	NAMESPACE::end,									\
 	NAMESPACE::step,								\
 	NAMESPACE::synchronizeGame,						\
 	NAMESPACE::endGame,								\
@@ -100,6 +101,7 @@ TransportModule02 NAME = {							\
 	NAMESPACE::syncDataCheck,						\
 	NAMESPACE::sendChat,							\
 	NAMESPACE::activeteGui,							\
+	NAMESPACE::endGui,								\
 	NAMESPACE::getSelectedAutorunIndex,				\
 	NAMESPACE::getSelectedAutorunDelay,				\
 	NAMESPACE::isRecordingEnabled,					\
@@ -127,6 +129,10 @@ static void N02CCNV terminate()
 
 }
 static void N02CCNV activete()
+{
+
+}
+static void N02CCNV  end()
 {
 
 }
@@ -169,6 +175,10 @@ static void N02CCNV sendChat (const char * message)
 }
 // <gui>
 static void N02CCNV activeteGui()
+{
+
+}
+static void N02CCNV  endGui()
 {
 
 }

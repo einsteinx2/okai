@@ -21,6 +21,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "locid.h"
+#include "juceModHelpers.h"
 //[/Headers]
 
 #include "jucep2pSelect.h"
@@ -145,21 +146,13 @@ jucep2pSelect::jucep2pSelect ()
 
 
     //[UserPreSize]
-	cmbModes->setTextWhenNothingSelected (n02::LUTF16(LID_SWIT));
     //[/UserPreSize]
 
     setSize (600, 344);
 
     //[Constructor] You can add your own custom stuff here..
 
-	{ // modes
-		ModuleAbstraction02 * mod = n02::modHelper.modHandler->find(MTYPE02_TRANSPORT);
-		if (mod != 0) {
-			do {
-				cmbModes->addItem(mod->name, mod->index);
-			} while ((mod = n02::modHelper.modHandler->findNext(mod))!=0);
-		}
-	}
+	n02::initSwitchModeCB(cmbModes);
 
 	txtIP->setText(FROMUTF8(n02::p2p::ip));
 	txtNick->setText(FROMUTF8(n02::p2p::nick));
@@ -345,7 +338,6 @@ void jucep2pSelect::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if (comboBoxThatHasChanged == cmbModes)
     {
         //[UserComboBoxCode_cmbModes] -- add your combo box handling code here..
-		n02::p2p::uiModChangeCallback(cmbModes->getSelectedId());
         //[/UserComboBoxCode_cmbModes]
     }
 

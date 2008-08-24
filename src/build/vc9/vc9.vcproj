@@ -225,7 +225,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="..\win32\zlib.lib"
 				OutputFile="..\..\..\release\$(ProjectName).dll"
-				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile="$(InputDir)..\..\interface\PSENet.def"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
@@ -835,14 +834,6 @@
 				</File>
 				<File
 					RelativePath="..\..\modules\gameSelect.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\juceAbortableStatusWindow.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\modules\juceAbortableStatusWindow.h"
 					>
 				</File>
 				<File

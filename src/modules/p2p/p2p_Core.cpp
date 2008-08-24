@@ -32,9 +32,11 @@ SOFTWARE.
 #include "p2p_Messaging.h"
 #include "n02version.h"
 #include "recorder.h"
+
 #define REJECT_VER 1
 #define REJECT_APP 3
 #define REJECT_APPVER 4
+
 namespace n02 {
     namespace p2p {
         namespace core {
@@ -489,16 +491,16 @@ namespace n02 {
                 {
                     Instruction lock(CHANGE, usersInfo.cgLocked? P2P_INSTF_CHANGE_LOCKFAIL: P2P_INSTF_CHANGE_LOCKED);
                     send(lock);
-                    callbacks.statusUpdate("Lock request");
+                    callbacks.statusUpdate("Game change lock requested");
                 } else if (instr.flags == P2P_INSTF_CHANGE_LOCKED && usersInfo.cgLocked) {
-                    callbacks.statusUpdate("Lock success");
+                    callbacks.statusUpdate("Game change lock successful");
                     callbacks.changeGameLocked();
                 } else if (instr.flags == P2P_INSTF_CHANGE_CHANGE) {
                     callbacks.gameChanged(instr.getCurrentStringPtr());
                     gameInfo.playerNo = 2;
                     resetLocalReadyness();
                 } else if (instr.flags == P2P_INSTF_CHANGE_LOCKFAIL) {
-                    callbacks.statusUpdate("Lock failed");
+                    callbacks.statusUpdate("Game change lock rejected, the other user is still changing game");
                 }
                 break;
             case READY:
@@ -626,6 +628,7 @@ namespace n02 {
         }
         void coreChangeGameLock()
         {
+			callbacks.statusUpdate("Requesting game change lock");
             usersInfo.cgLocked = true;
             Instruction lock(CHANGE, P2P_INSTF_CHANGE_LOCK);
             send(lock);
@@ -643,10 +646,10 @@ namespace n02 {
             gameInfo.playerNo = 1;
 
             callbacks.gameChanged(g);
-
         }
         void coreChangeGameReleaseNoChange()
         {
+			callbacks.statusUpdate("Releasing game change lock");
             require(usersInfo.cgLocked);
             usersInfo.cgLocked = false;
         }
@@ -734,20 +737,10 @@ namespace n02 {
                 }
 
                 if (gameInfo.frame + gameInfo.delay <= MASK_INITIAL_FRAMES) {
-                    //printf("M");
                     Instruction data(SYNC);
                     data.writeBytes(gameInfo.defaultInput, len);
                     send(data);
                     gameInfo.myBuffer.push(gameInfo.defaultInput, len);
-
-                    //printf("{%08x/",*reinterpret_cast<const int*>(value));
-                    //for (int x = 0; x < gameInfo.myBuffer.length(); x+=4) {
-                    //	printf("%08x", *(reinterpret_cast<int*>(gameInfo.myBuffer.front())+x/4));
-                    //}
-
-                    //printf(":%i}", gameInfo.myBuffer.length());
-
-
                     return;
                 }
 #endif
@@ -756,14 +749,6 @@ namespace n02 {
                 data.writeBytes(value, gameInfo.inputLength);
                 gameInfo.myBuffer.push(value, gameInfo.inputLength);
                 send(data);
-
-                //printf("{%08x/",*reinterpret_cast<const int*>(value));
-                //for (int x = 0; x < gameInfo.myBuffer.length(); x+=4) {
-                //	printf("%08x", *(reinterpret_cast<int*>(gameInfo.myBuffer.front())+x/4));
-                //}
-
-                //printf(":%i}", gameInfo.myBuffer.length());
-
             }
         }
 
