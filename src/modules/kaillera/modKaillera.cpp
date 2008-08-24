@@ -49,10 +49,8 @@ namespace n02 {
         char uiQuitMessage[128];
         char uiLastIP[128];
         int uiConnectionSetting;
-        int recordingEnabled;
         DynamicOrderedArray<char*> uiServersIP;
         DynamicOrderedArray<char*> uiServersName;
-
 
         /************************************************************
         ** Config Table
@@ -62,7 +60,6 @@ namespace n02 {
             CONFIG_STRVAR("qmsg", uiQuitMessage, 128, "Ape Escaped!")
             CONFIG_STRVAR("ip", uiLastIP, 128, "127.0.0.1:27888")
             CONFIG_INTVAR("connection", uiConnectionSetting, 1)
-            CONFIG_INTVAR("record", recordingEnabled, 1)
             CONFIG_STRLIST("servers_ip", uiServersIP, 128)
             CONFIG_STRLIST("servers_name", uiServersName, 128)
             CONFIG_END;
@@ -87,7 +84,7 @@ namespace n02 {
 
         // Mod changing
         void N02CCNV uiModChangeCallback(void) {
-            ModKailleraServerSelect::window->waitNotifyAndCloseNotify();
+            ModKailleraServerSelect::window->closeButtonPressed();
         }
 
 
@@ -190,7 +187,7 @@ namespace n02 {
         }
         static int  N02CCNV isRecordingEnabled()
         {
-            return recordingEnabled;
+            return recorderCBGetRecordingEnabled();
         }
         static int N02CCNV getGameplayType()
         {

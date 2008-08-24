@@ -41,7 +41,7 @@ namespace n02 {
 		extern int selectedDelayParam;
 		extern int selectedSmoothing;
 		extern int activeGameCaps;
-		extern int recordingEnabled;
+
 
 		void uiReadynessChange(bool ready);
 		void uiGetIP();

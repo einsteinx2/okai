@@ -17,7 +17,7 @@ namespace n02 {
 
 		void uiModChangeCallback(int index) {
 			modHelper.activeTransportByIndex(index);
-			ModPlayerPlaylist::window->waitNotifyAndCloseNotify();            
+			ModPlayerPlaylist::window->closeButtonPressed();            
 		}
 
 		DynamicBuffer<16> playbackBuffer;

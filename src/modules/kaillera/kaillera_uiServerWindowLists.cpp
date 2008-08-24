@@ -66,7 +66,7 @@ namespace n02 {
 		};
 
 		juce::tchar * userStatusTexts [] = {
-			T("Conneting"),
+			T("Playing"),
 			T("Idle"),
 			T("Playing")
 		};
@@ -154,6 +154,11 @@ namespace n02 {
 			TRACE();
 			if (rowIsSelected)
 				g.fillAll (Colour(0xdd,0xdd,0xff));
+			else if (rowNumber >= 0 && rowNumber < users.itemsCount()) {
+				if (users[rowNumber].status != 1) {
+					g.fillAll (Colour(0xee,0xee,0xee));					
+				}				
+			}
 			TRACE();
 		}
 		void  KailleraUsers::paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
@@ -170,7 +175,7 @@ namespace n02 {
 					case 2:
 						{
 							String text(k.ping);
-							g.drawText (text, 2, 0, width - 4, height, Justification::centredLeft, true);
+							g.drawText (text, 2, 0, width - 4, height, Justification::centredRight, true);
 						}
 						break;
 					case 3:
@@ -211,6 +216,10 @@ namespace n02 {
 		{
 			if (rowIsSelected)
 				g.fillAll (Colour(0xdd,0xdd,0xff));
+			else {
+				if (games[rowNumber].status != 0)
+					g.fillAll (Colour(0xee,0xee,0xee));
+			}
 		}
 		void  KailleraGames::paintCell (Graphics &g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 		{
@@ -260,14 +269,17 @@ namespace n02 {
 				case LISTCMD_ADDGAME:
 					{
 						KailleraGameT * g = cmd->body.game;
-						games.addItemPtr(g);
+						if (g->status == 0) {
+							games.insertItemPtr(g, 0);
+						} else {
+							games.addItemPtr(g);
+						}
 						delete g;
 					}
 					break;
 				case LISTCMD_REMGAME:
 					{
 						KailleraGameT * game = cmd->body.game;
-
 						for (int x = 0; x < games.itemsCount(); x++) {
 							register KailleraGameT * g = games.getItemPtr(x);
 							if (game->id == g->id) {
@@ -281,16 +293,43 @@ namespace n02 {
 				case LISTCMD_STATGAME:
 					{
 						KailleraGameT * game = cmd->body.game;
-
 						for (int x = 0; x < games.itemsCount(); x++) {
 							register KailleraGameT * g = games.getItemPtr(x);
 							if (game->id == g->id) {
+								int ps = g->status;
 								strcpy(g->players, game->players);
 								g->status = game->status;
+
+								if (ps != g->status) {
+									if (g->status != 0) {
+										KailleraGameT gx = *g;
+										games.removeIndex(x);
+										games.addItemPtr(&gx);
+									} else {
+										KailleraGameT gx = *g;
+										games.removeIndex(x);
+										games.insertItemPtr(&gx, 0);
+									}
+								}
+
 								break;
 							}
 						}
 						delete game;
+
+						////slow sort
+						//int sorted = 5;
+						//while (sorted > 1) {
+						//	sorted = 0;
+						//	for (int x = 0; x < games.itemsCount() -1; x++) {
+						//		if (games[x].status > games[x+1].status) {
+						//			KailleraGameT g = games[x];
+						//			games[x] = games[x+1];
+						//			games[x+1] = g;
+						//			sorted++;
+						//		}
+						//	}
+						//}
 					}
 					break;
 
@@ -300,7 +339,19 @@ namespace n02 {
 
 				case LISTCMD_ADDUSER:
 					{
+						/*KailleraUserT * u = cmd->body.user;
+						users.addItemPtr(u);
+						delete u;*/
+
 						KailleraUserT * u = cmd->body.user;
+
+						for (int x = 0; x < users.itemsCount(); x++) {
+							if (users[x].ping > u->ping) {
+								users.insertItemPtr(u, x);
+								delete u;
+								return;
+							}
+						}
 						users.addItemPtr(u);
 						delete u;
 					}

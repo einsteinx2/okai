@@ -76,12 +76,6 @@ SOFTWARE.
 		}																	\
 		void closeButtonPressed() {											\
 			OnClose();														\
-			running = false;												\
-			if (syncThread)													\
-				syncThread->notify();										\
-		}																	\
-		void waitNotifyAndCloseNotify() {									\
-			closeButtonPressed();											\
 		}																	\
 		static Name * window;												\
 		static _Component * cmponnt;										\
@@ -109,14 +103,6 @@ SOFTWARE.
 			window->setVisible (true);										\
 			window->runModalLoop();											\
 		}																	\
-		static void waitForClose() {										\
-			running = true;													\
-			syncThread = new PosixThread(true);								\
-			while (running)													\
-				syncThread->wait(100000);									\
-			delete syncThread;												\
-			syncThread = 0;													\
-		}																	\
         static void deleteAndZeroWindow() {									\
             if (window != 0) {												\
 				window->setVisible(false);									\
@@ -129,13 +115,10 @@ SOFTWARE.
 			window->setName(title);											\
 		}																	\
 		static void OnClose();												\
-		static volatile bool running;										\
-		static PosixThread * syncThread;									\
 	};																		\
 	Name * Name::window;													\
-	_Component * Name::cmponnt;												\
-	volatile bool Name::running;											\
-	PosixThread * Name::syncThread = 0
+	_Component * Name::cmponnt;												
+	//volatile bool Name::running;
 
 
 

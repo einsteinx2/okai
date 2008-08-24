@@ -59,7 +59,7 @@ namespace n02 {
         extern int port;
         int selectedAutorunIndex;
         int selectedDelayParam;
-        int recordingEnabled;
+
         int selectedSmoothing;
 
         int activeGameCaps = 0;

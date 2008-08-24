@@ -47,7 +47,6 @@ namespace n02 {
 			void  textEditorFocusLost (TextEditor &editor){}
 		};
 
-		extern int recordingEnabled;
 		extern bool hosting;
 
 	};

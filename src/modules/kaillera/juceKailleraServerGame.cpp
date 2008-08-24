@@ -124,12 +124,9 @@ juceKailleraServerGame::juceKailleraServerGame ()
 
 
     //[UserPreSize]
-
 	btnStartGame->setButtonText (n02::LUTF16(LID_KAILLERA_STA));
 	btnLeaveGame->setButtonText (n02::LUTF16(LID_KAILLERA_LEA));
 	btnKick->setButtonText (n02::LUTF16(LID_KAILLERA_KIC));
-	chkRecord->setButtonText (n02::LUTF16(LID_KAILLERA_REC));
-
     //[/UserPreSize]
 
     setSize (650, 250);
@@ -147,17 +144,11 @@ juceKailleraServerGame::juceKailleraServerGame ()
 	n02::autoUiSetActiveItems(cmbRun, cmbDelay, lblRun, lblDelay);
 
 	//recorder
-	if (n02::modHelper.isRecorderLoaded()) {
-		chkRecord->setToggleState(n02::kaillera::recordingEnabled!=0, false);
-	} else {
-		chkRecord->setToggleState((n02::kaillera::recordingEnabled=0)!=0, false);
-		chkRecord->setEnabled(false);
-	}
+	n02::recorderCBInitialize(chkRecord);
 
 	clearText();
 
 	txtChatInput->addListener(&chatInput);
-
     //[/Constructor]
 }
 
@@ -239,7 +230,6 @@ void juceKailleraServerGame::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == chkRecord)
     {
         //[UserButtonCode_chkRecord] -- add your button handler code here..
-		n02::kaillera::recordingEnabled = chkRecord->getToggleState()? 1:0;
         //[/UserButtonCode_chkRecord]
     }
 

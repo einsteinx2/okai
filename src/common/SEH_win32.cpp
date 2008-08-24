@@ -34,7 +34,7 @@ SOFTWARE.
 
 namespace n02 {
 
-    char * ExceptionCodeToStr(int code) {
+    static char * ExceptionCodeToStr(int code) {
 #define ExceptionCodeToStr_h(X) if (code==X) return #X;
         ExceptionCodeToStr_h(EXCEPTION_ACCESS_VIOLATION);
         ExceptionCodeToStr_h(EXCEPTION_ARRAY_BOUNDS_EXCEEDED);
@@ -61,7 +61,7 @@ namespace n02 {
         return ExceptionCodeToStr_t;
 #undef ExceptionCodeToStr_h
     }
-    //
+
     //LRESULT CALLBACK ErrorReporterDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     //	switch (uMsg) {
     //		case WM_INITDIALOG:
@@ -114,11 +114,14 @@ namespace n02 {
     //	return 0;
     //}
 
-    LONG CALLBACK seh_exception_filter_function(_EXCEPTION_POINTERS * /*ExceptionInfo*/) {
-        LOG(Exception %i, PosixThread::getCurrentThreadId());
+    LONG CALLBACK seh_exception_filter_function(_EXCEPTION_POINTERS * EI) {
+		LOGBASIC("Exception %i %s", PosixThread::getCurrentThreadId(), ExceptionCodeToStr(EI->ExceptionRecord->ExceptionCode));
+		LOGBASIC(" - flags = %i", EI->ExceptionRecord->ExceptionFlags);
+		LOGBASIC(" - address = %08x", EI->ExceptionRecord->ExceptionAddress);
+		LOGBASIC(" - info = %i", (EI->ExceptionRecord->ExceptionInformation!=0 && EI->ExceptionRecord->NumberParameters>0)? EI->ExceptionRecord->ExceptionInformation[0]:-1);
+		LOGBASIC(" - trace stack:");
         trace_log();
-        //DialogBoxParam(hx, (LPCTSTR)N02_ERRORDLG, 0, (DLGPROC)ErrorReporterDialogProc, (LPARAM)ExceptionInfo);
-        return EXCEPTION_EXECUTE_HANDLER;
+		return EXCEPTION_CONTINUE_EXECUTION;
     }
 
 
@@ -138,7 +141,7 @@ namespace n02 {
             "Other"
         };
 
-        LOG(%s %i.%i %s, WINDESCS[osvi.dwPlatformId], osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.szCSDVersion);
+		LOGBASIC("%s %i.%i %s", WINDESCS[osvi.dwPlatformId], osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.szCSDVersion);
     }
 
     void sehTerminate(){

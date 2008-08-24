@@ -82,9 +82,10 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 	TRACE();
 	// Users List
 	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WN), 1, 80, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP), 2, 30, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WC), 3, 30, 30, -1, TableHeaderComponent::notSortable);
-	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 30, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP), 2, 35, 30, -1, TableHeaderComponent::notSortable);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WC), 3, 35, 30, -1, TableHeaderComponent::notSortable);
+	//lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 35, 30, -1, TableHeaderComponent::notSortable & ~TableHeaderComponent::visible);
+	lstUsers->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 35, 30, -1, TableHeaderComponent::notSortable);
 
 	lstUsers->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstUsers->setOutlineThickness (1);
@@ -93,7 +94,7 @@ juceKailleraServerConnection::juceKailleraServerConnection ()
 	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WA), 2, 180, 30, -1, TableHeaderComponent::notSortable);
 	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WO), 3, 110, 30, -1, TableHeaderComponent::notSortable);
 	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WS), 4, 55, 30, -1, TableHeaderComponent::notSortable);
-	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP2), 5, 50, 30, -1, TableHeaderComponent::notSortable);
+	lstGames->getHeader()->addColumn(LUTF16(LID_KAILLERA_WP2), 5, 45, 30, -1, TableHeaderComponent::notSortable);
 
 	lstGames->setColour (TableListBox::outlineColourId, Colours::grey);
 	lstGames->setOutlineThickness (1);

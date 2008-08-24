@@ -98,7 +98,7 @@ namespace n02 {
 		void uiModChangeCallback(int index) {
 			uiStopGame();
 			modHelper.activeTransportByIndex(index);
-			ModDefStressTestWindow::window->waitNotifyAndCloseNotify();
+			ModDefStressTestWindow::window->closeButtonPressed();
 		}
 
 		void ModDefStressTestWindow::OnClose() {

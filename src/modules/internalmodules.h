@@ -5,23 +5,24 @@
 	\
 	\
 	\
-	MODULE(modP2P) \
 	MODULE(modKaillera) \
+	MODULE(modP2P) \
 	\
 	MODULE(modPlayer) \
+	MODULE(modAutoplay) \
+	MODULE(modRecorder) \
 	\
 	MODULE(modDefStress) \
 	MODULE(modDefStressRun) \
 	\
-	MODULE(modOptions) \
+	/*MODULE(modOptions)*/ \
 	\
-	MODULE(modRecorder) \
 	\
 	\
 	\
 	\
 	MODULE(modFixedDelay) \
-	MODULE(modTradDelay) \
-	MODULE(modAutoplay)
+	MODULE(modTradDelay)
+	
 	
 

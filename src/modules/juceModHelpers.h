@@ -82,19 +82,15 @@ namespace n02 {
 
 	typedef void (N02CCNV modSwitchedCBType)(void);
 
-	void initSwitchModeCB(ComboBox * cmbSwitch);
-	void setSwitchModeCB(modSwitchedCBType * cb);
+	void initSwitchModeCB(ComboBox *);
+	void setSwitchModeCB(modSwitchedCBType *);
 
 
-
-
-
-
-
+	void recorderCBInitialize(ToggleButton *);
+	int recorderCBGetRecordingEnabled();
 
 
 	void uiHelpersInitialize();
-
 	void uiHelpersTerminate();
 
 };

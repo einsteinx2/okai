@@ -157,12 +157,7 @@ jucep2pSession::jucep2pSession ()
 	n02::autoUiSetActiveItems(cmbRun, cmbDelay, lblRun, lblDelay);
 
 	// recorder
-	if (n02::modHelper.isRecorderLoaded()) {
-		chkRecord->setToggleState(n02::p2p::recordingEnabled!=0, false);
-	} else {
-		chkRecord->setToggleState((n02::p2p::recordingEnabled=0)!=0, false);
-		chkRecord->setEnabled(false);
-	}
+	n02::recorderCBInitialize(chkRecord);
 
 	for (int x = 0; x < 9; x++) {
 		String xx;				
@@ -254,7 +249,6 @@ void jucep2pSession::buttonClicked (Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == chkRecord)
     {
         //[UserButtonCode_chkRecord] -- add your button handler code here..
-		n02::p2p::recordingEnabled = chkRecord->getToggleState()? 1:0;
         //[/UserButtonCode_chkRecord]
     }
     else if (buttonThatWasClicked == btnDisconnect)

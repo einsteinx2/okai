@@ -44,7 +44,7 @@ namespace n02 {
 		}
 
 		void N02CCNV uiModChangeCallback(void) {
-			ModP2PSelectWindow::window->waitNotifyAndCloseNotify();
+			ModP2PSelectWindow::window->closeButtonPressed();
 		}
 
 		char nick[32];
@@ -52,7 +52,6 @@ namespace n02 {
 		int port;
 		DynamicOrderedArray<char*> ips;
 		DynamicOrderedArray<char*> names;
-		extern int recordingEnabled;
 
 		// add server button press
 		void uiAddServer(){
@@ -106,7 +105,6 @@ namespace n02 {
 			CONFIG_INTVAR("port", port, 27886)
 			CONFIG_STRLIST("ips", ips, 128)
 			CONFIG_STRLIST("names", names, 128)
-			CONFIG_INTVAR("record", recordingEnabled, 1)
 			CONFIG_END;
 
 		void N02CCNV activeteGui()
@@ -139,7 +137,7 @@ namespace n02 {
 		}
 		int  N02CCNV isRecordingEnabled()
 		{
-			return recordingEnabled;
+			return recorderCBGetRecordingEnabled();
 		}
 
 		int  StoredListListboxModel::getNumRows()

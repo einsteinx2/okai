@@ -154,8 +154,12 @@ namespace n02 {
 	*******************************************/
 
 
-	static class auiComboBoxListener: public ComboBoxListener {
+	static class auiComboBoxListener
+		: public ComboBoxListener,
+		public ButtonListener
+	{
 		void  comboBoxChanged (ComboBox *comboBoxThatHasChanged);
+		void buttonClicked (Button* button);
 	} * cmbListener;
 
 	namespace autorunUiManagement {
@@ -296,9 +300,30 @@ namespace n02 {
 
 
 
+	static int recordingEnabled = 1;
+	static ToggleButton * chkRecord;
 
 
+	void recorderCBInitialize(ToggleButton * chkRecorder)
+	{
+		chkRecord = chkRecorder;
+		chkRecord->setButtonText (n02::LUTF16(LID_KAILLERA_REC));
 
+		if (modHelper.isRecorderLoaded()) {
+			chkRecord->setToggleState(recordingEnabled!=0, false);
+		} else {
+			chkRecord->setToggleState((recordingEnabled=0)!=0, false);
+			chkRecord->setEnabled(false);
+		}
+
+		chkRecord->addButtonListener (cmbListener);
+
+	}
+
+
+	int recorderCBGetRecordingEnabled(){
+		return recordingEnabled;
+	}
 
 
 
@@ -318,12 +343,13 @@ namespace n02 {
 			endCB();			
 		}
 	}
-
-
-
-
-
-
+	void auiComboBoxListener::buttonClicked (Button* buttonThatWasClicked)
+	{
+		if (buttonThatWasClicked == chkRecord)
+		{
+			recordingEnabled = chkRecord->getToggleState()? 1:0;
+		}
+	}
 
 
 
