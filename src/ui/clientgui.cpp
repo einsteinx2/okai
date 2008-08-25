@@ -98,7 +98,7 @@ namespace n02 {
 		TRACE(); WaitableEvent * waitable = new WaitableEvent;
 		
 		if (caller != 0) {
-			caller->postMessage(new Message(0, reinterpret_cast<int>(waitable), 0, ptr));
+			caller->postMessage(new Message(0, reinterpret_cast<int>(waitable), 0, (void*)ptr));
 			TRACE(); while (!waitable->wait(10000));
 		}
 		TRACE(); delete waitable;
