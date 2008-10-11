@@ -121,6 +121,7 @@ namespace n02 {
 		LOGBASIC(" - info = %i", (EI->ExceptionRecord->ExceptionInformation!=0 && EI->ExceptionRecord->NumberParameters>0)? EI->ExceptionRecord->ExceptionInformation[0]:-1);
 		LOGBASIC(" - trace stack:");
         trace_log();
+		MessageBoxA(0, "See log file for more details", "Exception occured", 0);
 		return EXCEPTION_CONTINUE_EXECUTION;
     }
 
