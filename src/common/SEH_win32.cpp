@@ -122,7 +122,7 @@ namespace n02 {
 		LOGBASIC(" - trace stack:");
         trace_log();
 		MessageBoxA(0, "See log file for more details", "Exception occured", 0);
-		return EXCEPTION_CONTINUE_EXECUTION;
+		return EXCEPTION_EXECUTE_HANDLER;
     }
 
 
