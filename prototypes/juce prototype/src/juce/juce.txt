@@ -1,0 +1,5 @@
+JUCE is not our work and does not come under MIT license like the parts of the
+ programs written by us. Completely unmodified version of JUCE is being used in
+ this project. Juce is obtainable from http://www.rawmaterialsoftware.com/ or
+ from http://sourceforge.net/projects/juce/. Juce is (c) Julian Storer and
+ comes under GPL license.

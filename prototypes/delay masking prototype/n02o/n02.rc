@@ -1,0 +1,352 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+#include "core/p2p_core.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+ICON02                  ICON    DISCARDABLE     "n02.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+P2P_CDLG_HOST DIALOGEX 258, 217, 147, 76
+STYLE DS_NOIDLEMSG | WS_CHILD
+EXSTYLE WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    PUSHBUTTON      "whatismyip",IDC_SSERV_WHATSMYIP,3,62,39,11
+    CONTROL         "Enli&st in waiting games list",CHK_ENLIST,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,4,22,95,9
+    GROUPBOX        "Host:",IDC_HOSTT,0,0,147,76
+    LTEXT           "Smoothing:",IDC_SMOOTHING,7,9,39,9
+    COMBOBOX        CMB_DMODE,47,7,83,300,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Force Port",CHK_ENLISTF,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,4,31,47,9
+    PUSHBUTTON      "Eject peer",IDC_EJECT,107,50,39,12,NOT WS_VISIBLE
+    PUSHBUTTON      "Dont allow list",IDC_DONTALLOW,92,62,54,12,NOT 
+                    WS_VISIBLE
+    PUSHBUTTON      "Change Game",IDC_CHANGEGAME,3,50,53,11
+    CONTROL         "Dont allow incompatible clients",CHK_COMPATIBLEONLY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,4,40,127,9
+END
+
+P2P_ITEM_EDIT DIALOG DISCARDABLE  0, 0, 191, 47
+STYLE DS_MODALFRAME | DS_NOIDLEMSG | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "rodney zhao is a dumbshit wanker"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,134,7,50,13
+    PUSHBUTTON      "Cancel",IDCANCEL,134,24,50,12
+    LTEXT           "Name:",IDC_STATIC,7,7,22,8
+    EDITTEXT        IDC_NAME,34,7,98,12,ES_AUTOHSCROLL
+    LTEXT           "IP:",IDC_STATIC,19,26,10,8
+    EDITTEXT        IDC_IP,34,24,98,12,ES_AUTOHSCROLL
+END
+
+P2P_SDLG_WLIST DIALOG DISCARDABLE  0, 0, 472, 308
+STYLE DS_NOIDLEMSG | DS_CENTER | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "&Connect",BTN_CONNECT,59,290,50,11
+    PUSHBUTTON      "&Refresh",BTN_REFRESH,7,290,50,11
+    CONTROL         "List1",LV_SLIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | WS_BORDER | WS_TABSTOP,7,19,458,269
+    CONTROL         "Show all games",IND_INCDEAD,"Button",BS_AUTOCHECKBOX | 
+                    NOT WS_VISIBLE | WS_TABSTOP,115,291,82,10
+    LTEXT           "Waiting Games List",IDC_STATS,7,7,458,8
+END
+
+N02_ERRORDLG DIALOG DISCARDABLE  0, 0, 270, 151
+STYLE DS_ABSALIGN | DS_NOIDLEMSG | DS_SETFOREGROUND | DS_NOFAILCREATE | 
+    DS_CENTER | WS_CAPTION
+CAPTION "Exception"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",TXT_CHAT,"RICHEDIT",ES_MULTILINE | ES_AUTOHSCROLL | 
+                    WS_VSCROLL | WS_HSCROLL | WS_TABSTOP,7,7,256,121
+    PUSHBUTTON      "Report as bug",BTN_REPORT,7,130,56,14,NOT WS_VISIBLE
+    PUSHBUTTON      "Continue",BTN_CLOSE,213,130,50,14
+    PUSHBUTTON      "End Process",BTN_LEAVE,159,130,50,14
+END
+
+N02_STATSDLG DIALOGEX 0, 0, 230, 179
+STYLE DS_MODALFRAME | DS_NOIDLEMSG | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Stats"
+FONT 8, "Courier New", 0, 0, 0x1
+BEGIN
+    CONTROL         "",TXT_CHAT,"RICHEDIT",ES_MULTILINE | ES_AUTOHSCROLL | 
+                    WS_BORDER | WS_TABSTOP,7,7,216,149
+    PUSHBUTTON      "Reset",BTN_RESET,7,158,50,14
+    PUSHBUTTON      "Close",BTN_CLOSE,173,158,50,14
+END
+
+P2P_SDLG DIALOG DISCARDABLE  0, 0, 377, 239
+STYLE DS_NOIDLEMSG | DS_CENTER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | 
+    WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "keep your enemys close for better p2p"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",TCS_HOTTRACK,5,27,140,
+                    82
+    COMBOBOX        CMB_MODE,270,5,61,82,CBS_DROPDOWNLIST | 
+                    CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_USRNAME,28,6,83,13,ES_AUTOHSCROLL
+    LTEXT           "Nick:",IDC_STATIC,7,8,15,9
+    LTEXT           "Change Mode:",IDC_STATIC,219,7,47,9
+    PUSHBUTTON      "Set",BTN_SET,113,6,21,13,NOT WS_VISIBLE
+END
+
+P2P_SDLG_HOST DIALOGEX 6, 40, 323, 185
+STYLE DS_NOIDLEMSG | WS_CHILD
+EXSTYLE WS_EX_NOPARENTNOTIFY | WS_EX_TRANSPARENT
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_GAME,7,19,308,144,CBS_SIMPLE | CBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Ho&st",IDC_HOST,279,162,36,15
+    LTEXT           "To host, simply select a game and press host:",
+                    IDC_STATIC,7,7,179,8
+END
+
+P2P_SDLG_OPTIONS DIALOG DISCARDABLE  6, 40, 323, 185
+STYLE DS_NOIDLEMSG | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Options",IDC_STATIC,13,13,31,8
+    EDITTEXT        IDC_PORT,77,29,83,12,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Use random ports when not hosting",IDC_CLIENTRANDOM,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,28,125,11
+    LTEXT           "port for hosting:",IDC_STATIC,22,30,52,9
+    PUSHBUTTON      "Help",BTN_HELP,271,162,41,14
+    LTEXT           "Auto port forwarding tools:",ST_PORTS,26,98,83,8
+    COMBOBOX        IDC_PORTS,115,96,103,58,CBS_DROPDOWNLIST | WS_TABSTOP
+    PUSHBUTTON      "Activate",BTN_ACTIVATE,229,96,50,14
+END
+
+P2P_SDLG_CHAT DIALOG DISCARDABLE  5, 41, 238, 92
+STYLE DS_NOIDLEMSG | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "could not find modules\\okai_p2pchat.exe",ST_DELAY,7,7,
+                    225,8,NOT WS_VISIBLE
+    PUSHBUTTON      "Launch Chat",BTN_ACTIVATE,17,24,64,19,NOT WS_VISIBLE
+    PUSHBUTTON      "Resync",BTN_CONNECT,17,46,65,14
+END
+
+P2P_SDLG_CONNECT DIALOGEX 6, 40, 323, 185
+STYLE DS_NOIDLEMSG | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_IP,43,13,225,12,ES_AUTOHSCROLL
+    CONTROL         "List2",IDC_ULIST,"SysListView32",LVS_REPORT | 
+                    LVS_SINGLESEL | LVS_NOCOLUMNHEADER | WS_BORDER | 
+                    WS_TABSTOP,43,29,271,149
+    PUSHBUTTON      "Add",IDC_ADD,7,117,34,12
+    PUSHBUTTON      "Edit",IDC_EDIT,7,130,34,12
+    PUSHBUTTON      "Delete",IDC_DELETE,7,144,34,12
+    RTEXT           "Peer IP:",IDC_PIPL,9,15,27,9,0,WS_EX_TRANSPARENT
+    DEFPUSHBUTTON   "&Connect",IDC_CONNECT,271,13,43,14
+    RTEXT           "Stored:",IDC_STOREDL,9,31,24,9,0,WS_EX_TRANSPARENT
+END
+
+P2P_CDLG DIALOGEX 0, 0, 412, 300
+STYLE DS_NOIDLEMSG | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
+CAPTION "stay safe from aids this summer, use p2p"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_CHATI,7,204,397,12,ES_AUTOHSCROLL | NOT WS_BORDER
+    DEFPUSHBUTTON   "&Chat",IDC_CHAT,0,0,1,1,BS_FLAT
+    CONTROL         "click here when r&eady",IDC_READY,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,218,83,8
+    CONTROL         "&Record games when they start",CHK_REC,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,227,114,10
+    PUSHBUTTON      "cp&r",IDC_RETR,7,282,25,11
+    PUSHBUTTON      "ping",IDC_PING,34,282,25,11
+    PUSHBUTTON      "&drop",IDC_DROPGAME,61,282,29,11
+    CONTROL         "",IDC_RICHEDIT2,"RICHEDIT",ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL,7,17,397,186
+    LTEXT           "--------------------------",SA_PST,7,252,246,22
+    GROUPBOX        "Host:",IDC_HOSTT,258,217,147,76,NOT WS_VISIBLE
+    LTEXT           "Game: -------------------------------------------------------------------------------",
+                    IDC_GAME,7,7,397,9,0,WS_EX_STATICEDGE
+    PUSHBUTTON      "free money",BTN_ESCAPE,202,282,54,11
+    COMBOBOX        CMB_AGM,165,218,88,30,CBS_DROPDOWNLIST | CBS_SORT | NOT 
+                    WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
+END
+
+P2P_CDLG_HOST_CHANGEGAME DIALOG DISCARDABLE  0, 0, 307, 201
+STYLE DS_MODALFRAME | DS_NOIDLEMSG | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Game"
+FONT 8, "MS Sans Serif"
+BEGIN
+    COMBOBOX        IDC_GAME,6,6,294,175,CBS_SIMPLE | CBS_SORT | WS_VSCROLL | 
+                    WS_TABSTOP
+    DEFPUSHBUTTON   "Change",IDC_CHANGE,196,180,50,14
+    PUSHBUTTON      "Cancel",IDC_CANCEL,250,180,50,14
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "#include ""core/p2p_core.h""\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    P2P_ITEM_EDIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 184
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 40
+    END
+
+    P2P_SDLG_WLIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 465
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    N02_ERRORDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 263
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    N02_STATSDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 223
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 172
+    END
+
+    P2P_SDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 371
+        BOTTOMMARGIN, 237
+    END
+
+    P2P_SDLG_HOST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 316
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 178
+    END
+
+    P2P_SDLG_OPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 13
+        RIGHTMARGIN, 312
+        TOPMARGIN, 13
+        BOTTOMMARGIN, 176
+    END
+
+    P2P_SDLG_CHAT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        TOPMARGIN, 7
+    END
+
+    P2P_SDLG_CONNECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 314
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 178
+    END
+
+    P2P_CDLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 405
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 293
+    END
+
+    P2P_CDLG_HOST_CHANGEGAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 6
+        RIGHTMARGIN, 300
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 194
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
