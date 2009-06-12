@@ -289,39 +289,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\DynamicArray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\DynamicOrderedArray.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\common\DynamicStack.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\ListGenerics.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\common\StaticAllocator.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StaticArray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StaticOrderedArray.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StaticQueue.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StaticStack.h"
 					>
 				</File>
 			</Filter>
@@ -333,11 +305,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\DynamicBuffer.h"
+					RelativePath="..\..\common\StringUtils.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\common\StaticBuffer.h"
+					RelativePath="..\..\common\StringUtils.h"
 					>
 				</File>
 			</Filter>
@@ -386,14 +358,6 @@
 				</File>
 				<File
 					RelativePath="..\..\common\Logger.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StringUtils.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\common\StringUtils.h"
 					>
 				</File>
 				<File
