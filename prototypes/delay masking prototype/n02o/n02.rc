@@ -198,7 +198,7 @@ BEGIN
     GROUPBOX        "Host:",IDC_HOSTT,258,217,147,76,NOT WS_VISIBLE
     LTEXT           "Game: -------------------------------------------------------------------------------",
                     IDC_GAME,7,7,397,9,0,WS_EX_STATICEDGE
-    PUSHBUTTON      "free money",BTN_ESCAPE,202,282,54,11
+    //PUSHBUTTON      "free money",BTN_ESCAPE,202,282,54,11
     COMBOBOX        CMB_AGM,165,218,88,30,CBS_DROPDOWNLIST | CBS_SORT | NOT 
                     WS_VISIBLE | WS_VSCROLL | WS_TABSTOP
 END

@@ -656,7 +656,7 @@ int CALLBACK P2P_CDLGDialogProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lPar
 				HWND hxx = GetDlgItem(hDlg, CMB_AGM);
 				SendMessage(hxx, CB_ADDSTRING, 0, (LPARAM)"Traditional delay");
 				SendMessage(hxx, CB_ADDSTRING, 0, (LPARAM)"Zero delay/Fixed resim");
-				SendMessage(hxx, CB_ADDSTRING, 0, (LPARAM)"Zero delay/Variable resim");
+				//SendMessage(hxx, CB_ADDSTRING, 0, (LPARAM)"Zero delay/Variable resim");
 				SendMessage(hxx, CB_SETCURSEL, p2p_option_agm, 0);
 
 				if ((okai->appCaps & (OAPP_CAP_RSIM | OAPP_CAP_TRAD)) == (OAPP_CAP_RSIM | OAPP_CAP_TRAD) && (okai->appExtraMode & OAPPM_AUTO_RESIM)==OAPPM_AUTO_RESIM) { // there is a choice
