@@ -28,7 +28,7 @@
 #define PACKET_STACK
 
 // Connection level HC data retransmission time
-#define HCRETRT 30
+#define HCRETRT 10
 // Connection timeout time
 #define CONTIT 30000
 #define PINGINT 500
@@ -368,7 +368,7 @@ public:
 			//retrtransmission
 			if (state==HC) {
 				if ((CurrentTime - LastPacketSentTime) > HCRETRT)
-					send_message(MAX_INSTS);
+					send_message(MAX_IPM);
 			} else {
 				if ((CurrentTime - LastPacketSentTime) > PINGINT) {
 					//KDBFC(Sending ping);
