@@ -4,6 +4,9 @@
 \usepackage[colorlinks, linkcolor=black]{hyperref}
 \usepackage{color}
 \usepackage[T1]{fontenc}
+
+\usepackage{listings}
+
 \begin{document}
 
 
@@ -82,7 +85,45 @@ The ammount of time I waste re-hacking stuff is extraordinary in ratio to
 
 \section{variable delay?}
 
+\section{Coding Standards}
+All source files shall have the following header elements at the begining of the source file:
+\begin{itemize}
+	\item Name of source file
+	\item Purpose of source fole
+	\item Author name and copyright notice
+\end{itemize}
 
+\lstset{language=C++}
 
+\section{Code Gen Input}
+
+\begin{itemize}
+	\item The input models for code gen models shall be divided into machines, each with distinguished names.
+	\item Each machine may have several parts, each with distinguishing names.
+\end{itemize}
+Sample source file:
+\begin{lstlisting}
+machine <MachineName>;
+part <PartName> {
+	<variable declarations>
+	default <StateName> { // initial state
+		entry {
+			...
+		}
+		on (<EventName>(<EventParamDeclarations...>)) {
+			...
+			transit <NewStateName>;
+		}
+		...
+		exit {
+			...
+		}
+	}
+	...
+	state <StateName> { // another random state
+		...
+	}
+}
+\end{lstlisting}
 
 \end{document}
