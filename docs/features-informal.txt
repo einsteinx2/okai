@@ -1,0 +1,36 @@
+
+
+Open Kaillera feature List
+
+Note to Felip: I suppose a lot of things are implied. But it'd be nice to just list them all so we don't miss them
+when thinking about them. Just keep things at user story level for now.
+
+Primary features:
+
+    * Basic abilities
+          o Ability to play games
+          o Ability to connect to each other by ip address/port
+          o Supporting 3+ players
+
+    * Feature to prevent inputs from being ignored at times of lag
+    * better matchmaking system requirements
+          o look for people with ping < XX and auto-challenge
+          o udp for matchmaking communication - sctp
+          o central server anyone can host
+          o One-port server
+          o ggpo/2df style
+          o NAT punchthrough helper for clients
+    * Must include "ad-hoc" mode so it can be more easily ported to wl devices such as PSP
+    * interfaces
+          o Interface for delay masking with game states
+          o Kaillera interface backward compatibility
+
+
+Good to have objectives:
+
+    * Ability to monitor gameplay framerate
+
+
+Secondary/long term/research objectives:
+
+    * Intelligent input prediction engine to enhance delay masking
