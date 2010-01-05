@@ -42,10 +42,12 @@ This document is intended for current and future developers of open kaillera.
 \subsection{System overview}
 
 The purpose of the system
- - common multiplayer platform for emulators as well as applications such as small games who could make use of it
- - high performance
- - simple programming interface to abstract all networking code
- - open source
+\begin{itemize}
+  \item common multiplayer platform for emulators as well as applications such as small games who could make use of it
+  \item high performance
+  \item simple programming interface to abstract all networking code
+  \item open source
+\end{itemize}
 % This subclause briefy states the purpose of the proposed system or subsystem to which the ConOps applies. It
 % describes the general nature of the system, and identfies the project sponsors, user agencies, development
 % organizations, support agencies, certifiers or certifying bodies, and the operating centers or sites that will run the
@@ -84,15 +86,17 @@ The purpose of the system
 % things wrong with existing system
 %   we need to have a case for a better system and everyone in the dev team needs to have faith that we are making lives better
 kaillera
- - delay in server client architecture
- - scaleability/performance requirements
- - 8 players maximum
-
+\begin{itemize}
+  \item delay in server client architecture
+  \item scaleability/performance requirements
+  \item 8 players maximum
+  \item Restrictive API %
+\end{itemize}
 ggpo
  - 2 players only
  - prefixed game list
  - prefixed system list
- - 
+ - closed/non-shareable source
  
 2df
  - based on early prototype
@@ -100,6 +104,7 @@ ggpo
  - prefixed game list
  - prefixed system list
  - no development kits or anything of that sort
+ - closed/non-shareable source
 
 
 \clearpage
@@ -114,6 +119,7 @@ ggpo
  - p2p concept in reducing delay
  - types of input and masking network delay
    - heuristics to improve delay masking performance
+ - modularization and separation of matchmaking service and p2p playing
 %\subsection{Justication of changes}
 %\subsection{Description of desired changes}
 %\subsection{Priorities among changes}
